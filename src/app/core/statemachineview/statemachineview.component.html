@@ -1,0 +1,154 @@
+<!-- <div class="sticky-header" width="100%" *ngFor="let content of getTapeContent()">
+    <app-tape [content]="content" [animate]="animate"></app-tape>
+</div> -->
+
+<svg id="svg-field" #svgField>
+
+    <marker
+    id="startStateArrowHead"
+    markerWidth="10"
+    markerHeight="7"
+    refX="6"
+    refY="2.5"
+    orient="auto"
+    fill="black"
+    >
+    <polygon points="0 0, 7.5 2.5, 0 5" />
+    </marker>
+
+    <!-- Responds to double-click events on empty canvas areas -->
+    <rect width="100%" height="100%" fill="transparent" (dblclick)="drawState($event)"></rect>
+
+    <!-- Draw straight arrow from one point to another if a transition is being drawn -->
+    <line
+    class="visiblePath"
+    *ngIf="showDrawingTransition()"
+    [attr.x1]="drawingTransitionOrigin().x"
+    [attr.y1]="drawingTransitionOrigin().y"
+    [attr.x2]="drawingTransitionDestination().x"
+    [attr.y2]="drawingTransitionDestination().y"
+    marker-end="url(#arrowhead)"
+    ></line>
+
+    <g *ngFor="let state of getStates()">
+
+        <circle
+        *ngIf="!state.isDeterministic() && showDeterministicStates()"
+        class="deterministic"
+        [attr.r]="outerCircleRadius"
+        [attr.cx]="state.origin.x"
+        [attr.cy]="state.origin.y"
+        />
+
+        <g
+        (mouseup)="onEntireCircleMouseUp($event, state)"
+        (mousedown)="onEntireCircleMouseDown($event, state)"
+        (mouseenter)="onCircleEnter($event, state)"
+        (mouseleave)="onCircleLeave($event, state)"
+        >
+            <g
+            [ngClass]="{
+                outerCircle: true,
+                isActive: isActiveState(state),
+                startConnection: showStartConnection(state) || state.outerCircleHovered,
+                endConnection: showEndConnection(state)
+            }"
+            (mouseup)="onOuterCircleMouseUp($event, state)"
+            (mousedown)="onOuterCircleMouseDown($event, state)"
+            (mouseenter)="onOuterCircleEnter($event, state)"
+            (mouseleave)="onOuterCircleLeave($event, state)"
+            >
+                <circle
+                [attr.cx]="state.x"
+                [attr.cy]="state.y"
+                [attr.r]="state.r">
+                </circle>
+    
+                <circle
+                *ngIf="isFinalState(state)"
+                [attr.r]="state.r - 5"
+                [attr.cx]="state.x"
+                [attr.cy]="state.y">
+                </circle>
+            </g>
+    
+            <circle
+            [ngClass]="{
+                innerCircle: true,
+                isActive: isActiveState(state),
+                endConnection: showEndConnection(state) || state.innerCircleHovered
+            }"
+            [attr.cx]="state.x"
+            [attr.cy]="state.y"
+            [attr.r]="state.r * 0.5"
+            (mouseup)="onInnerCircleMouseUp($event, state)"
+            (mousedown)="onInnerCircleMouseDown($event, state)"
+            (mouseenter)="onInnerCircleEnter($event, state)"
+            (mouseleave)="onInnerCircleLeave($event, state)"
+            (contextmenu)="openStateEditDialog(state, $event)"
+            >
+            </circle>
+        </g>
+
+        <text
+        text-anchor="middle"
+        dominant-baseline="middle"
+        [attr.x]="state.x"
+        [attr.y]="state.y"
+        >
+        {{ state.name }}
+        </text>
+
+        <line
+        *ngIf="isStartState(state)"
+        [attr.x1]="state.origin.x - state.r - START_TRANSITION_ARROW_LENGTH"
+        [attr.x2]="state.origin.x - state.r - ARROW_LENGTH"
+        [attr.y1]="state.origin.y"
+        [attr.y2]="state.origin.y"
+        marker-end="url(#startStateArrowHead)"  
+        ></line>
+    </g>
+
+    <marker
+    id="arrowhead"
+    [attr.markerWidth]="arrow.width"
+    [attr.markerHeight]="arrow.height"
+    [attr.refX]="arrow.refX"
+    [attr.refY]="arrow.refY"
+    orient="auto"
+    fill="black">
+    <polygon [attr.points]="arrow.path()" />
+    </marker>
+
+    <g *ngFor="let transition of stateConnections; let i = index">
+        <path
+            class="visiblePath"
+            [attr.d]="transition.path()"
+            marker-end="url(#arrowhead)"
+        ></path> 
+
+        <path
+            class="invisiblePathClickable"
+            [id]="'transition' + i"
+            [attr.d]="transition.path()"
+            (contextmenu)="editTransition(transition, $event)"
+        ></path>
+
+        <g [attr.transform]="getTranslate(transition, i)">
+            <text
+            *ngFor="let label of labels(transition); let j = index"
+            x="0"
+            [attr.y]="j * fontSize"
+            font-family="Arial"
+            [attr.font-size]="fontSize"
+            dominant-baseline="middle"
+            text-anchor="middle"
+            >
+            {{ label }}
+        </text>
+        </g>
+    </g>
+</svg>
+
+
+

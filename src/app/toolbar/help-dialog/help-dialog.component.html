@@ -1,0 +1,156 @@
+<button class="button-close" mat-button [mat-dialog-close]>
+    <mat-icon>close</mat-icon>
+</button>
+<h1 mat-dialog-title>Bedienungsanweisungen</h1>
+    
+<mat-tab-group class="scrollable-tab-group"  (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Zustand hinzufügen">
+        <div class="tab-content">
+            <div class="video-description">
+                <p> Neue Zustände können per Doppelklick auf die Arbeitsfläche
+                    hinzugefügt werden. </p>
+            </div>
+            <video #videoRef loop muted>
+                <source src="../../../assets/Videos/Zustand hinzufügen.mp4" type="video/mp4">
+                Ihr Browser unterstützt kein Video.
+            </video>
+        </div>
+    </mat-tab>
+    <mat-tab label="Zustand bearbeiten">
+        <div class="tab-content">
+            <div class="video-description">
+                <p> Um Zustände zu ändern/löschen, muss ein Rechtsklick auf
+                    die Mitte des Zustands ausgeführt werden.
+                    Anschließend kann der Zustand in einem Dialogmenü verändert oder
+                    gelöscht werden.</p>
+            </div>
+            <video #videoRef loop muted>
+                <source src="../../../assets/Videos/Zustand bearbeiten.mp4" type="video/mp4">
+                Ihr Browser unterstützt kein Video.
+            </video>
+        </div>
+    </mat-tab>
+    <mat-tab label="Zustand verschieben">
+        <div class="tab-content">
+            <div class="video-description">
+                <p>Um Zustände zu verschieben muss ein Linksklick auf die Mitte des Zustands 
+                    gehalten werden und zur gewünschten Position gezogen werden.</p>
+            </div>
+            <video #videoRef loop muted>
+                <source src="../../../assets/Videos/Zustand verschieben.mp4" type="video/mp4">
+                Ihr Browser unterstützt kein Video.
+            </video>
+        </div>
+    </mat-tab>
+    <mat-tab label="Übergang hinzufügen">
+        <div class="tab-content">
+            <div class="video-description">
+                <p>Um Zustände zu verbinden, muss erstmal mit einem Linksklick vom Rand des Ausgangszustands eine
+                    Linie zum gewünschten Zielzustand gezogen werden.
+                    Anschließend muss ein Eingabesymbol, Schreibsymbol und die Bewegung eingegeben und bestätigt werden. </p>
+            </div>
+            <video #videoRef loop muted>
+                <source src="../../../assets/Videos/Übergang hinzufügen.mp4" type="video/mp4">
+                Ihr Browser unterstützt kein Video.
+            </video>
+        </div>
+    </mat-tab>
+    <mat-tab label="Übergang bearbeiten">
+        <div class="tab-content">
+            <div class="video-description">
+                <p>Um Übergänge zu bearbeiten, muss ein Rechtsklick auf den jeweiligen Übergang ausgeführt werden.
+                    Anschließend kann der Übergang in einem Dialogmenü bearbeitet werden.
+                </p>
+            </div>
+            <video #videoRef loop muted>
+                <source src="../../../assets/Videos/Übergang bearbeiten.mp4" type="video/mp4">
+                Ihr Browser unterstützt kein Video.
+            </video>
+        </div>
+    </mat-tab>
+    <mat-tab label="Übergang + Zustand erstellen">
+        <div class="tab-content">
+            <div class="video-description">
+                <p>Es ist möglich, gleichzeitig einen Übergang und einen Zustand zu erstellen.
+                    Dafür muss mit einem Linksklick vom Rand des Ausgangszustandes eine
+                    Linie auf eine leere Stelle der Arbeitsfläche gezogen werden.</p>
+            </div>
+            <video #videoRef loop muted>
+                <source src="../../../assets/Videos/Übergang mit Zustand erstellen.mp4" type="video/mp4">
+                Ihr Browser unterstützt kein Video.
+            </video>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+
+
+<!-- <h2>Allgemein</h2>
+<ul>
+    <li>Zustand hinzufügen</li>
+    <ul>
+        <li>
+            Neue Zustände können per Doppelklick auf die Arbeitsfläche
+            hinzugefügt werden.
+        </li>
+    </ul>
+
+    <li>Zustände verbinden</li>
+    <ul>
+        <li>
+            Um Zustände zu verbinden, muss vom Rand des Ausgangszustandes eine
+            Linie zum gewünschten Zielzustand gezogen werden.
+        </li>
+        <li>
+            Es ist auch möglich, anstatt einen Zielzustand eine Stelle auf der
+            Arbeitsfläche auszuwählen. <br />
+            Dadurch wird der neue Zielzustand automatisch erstellt.
+        </li>
+    </ul>
+    <li>Elemente ändern/löschen</li>
+    <ul>
+        <li>
+            Um Elemente zu ändern/löschen, muss ein Doppelklick auf das
+            entsprechende Element ausgeführt werden. <br />
+            Anschließend kann das Element in einem Dialogmenü verändert oder
+            gelöscht werden.
+        </li>
+    </ul>
+    <li>Weitere Aktionen</li>
+    <ul>
+        <li>
+            Durch Klicken des Menübuttons (oben links) sind einige weitere
+            Aktionen möglich,<br />
+            wie z.B. abspeichern und laden eines Automaten und
+            Übungsaufgaben/Beispielaufgaben laden.
+        </li>
+    </ul>
+</ul>
+
+<h2>Validierung</h2>
+<ul>
+    <li>Wörter validieren</li>
+    <ul>
+        <li>
+            Um zu prüfen, ob ein bestimmtes Wort vom Automaten akzeptiert wird,
+            muss es in das Worteingabefeld eingegeben werden.<br />
+            Falls die Umrandung das Eingabefeldes grün ist, wird der Automat
+            akzeptiert, bei Rot wird er nicht akzeptiert.
+        </li>
+        <li>
+            Es ist auch möglich, mehrere "akzeptierende" und "nicht
+            akzeptierende" Wörter gleichzeitig zu testen. <br />
+            Die Wörter können durch Betätigen des entsprechenden "+"-Buttons
+            hinzugefügt und anschließend bearbeitet werden.
+        </li>
+    </ul>
+    <li>Wort Schritt für Schritt testen</li>
+    <ul>
+        <li>
+            Mittels der zwei Pfeilbuttons neben dem Worteingabefeld kann das
+            aktuelle Wort Schritt für Schritt durchgeschaltet werden. <br />
+            Die Zustände des Automaten werden daraufhin farblich markiert{{
+                text
+            }}.
+        </li>
+    </ul>
+</ul> -->

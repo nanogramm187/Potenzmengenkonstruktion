@@ -1,0 +1,91 @@
+:host {
+    position: relative;
+  }
+  
+  #svg-field {
+    width: 200%;
+    min-width: 1000px;
+    height: 100%;
+    min-height: 1000px;
+  }
+  
+  .toggleTestcaseView {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
+  
+  .innerCircle {
+    cursor: grab;
+    stroke: transparent;
+    fill: white;
+  }
+  
+  .outerCircle {
+    stroke-width: 2px;
+    stroke: black;
+    fill: white;
+  }
+  
+  .isActive {
+    fill: rgb(52, 236, 52);
+  }
+  
+  .startConnection {
+    fill: green;
+  }
+  
+  .endConnection {
+    fill: green;
+  }
+  
+  text {
+    pointer-events: none;
+    user-select: none;
+  }
+  
+  .visiblePath {
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+  }
+  
+  .invisiblePathClickable {
+    stroke: green;
+    opacity: 0;
+    stroke-width: 10px;
+  }
+  
+  .invisiblePathClickable:hover {
+    stroke: green;
+    opacity: 0.5;
+    stroke-width: 10px;
+  }
+  
+  line {
+    pointer-events: none;
+    stroke: black;
+    stroke-width: 3px;
+  }
+  
+  circle {
+    stroke: black;
+    stroke-width: 2px;
+  }
+  
+  .deterministic {
+    fill: brown;
+    stroke-width: 0px;
+    opacity: 50%;
+  }
+  
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px); /* Blurren des Hintergrundes */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }

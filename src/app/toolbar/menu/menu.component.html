@@ -1,0 +1,71 @@
+<button mat-button [matMenuTriggerFor]="settingsMenu" style="margin-right: 10px">
+    <mat-icon>menu</mat-icon>
+</button>
+
+<mat-menu #settingsMenu class="myMenuItem">
+    <menu mat-menu-item class="myMenuItem" (click)="createNewInstance()">
+        <mat-icon>fiber_new</mat-icon>Neue Instanz
+    </menu>
+
+    <menu mat-menu-item class="myMenuItem" (click)="loadFromBrowserCache()">
+        <mat-icon>open_in_browser</mat-icon>Laden aus Browser-Cache
+    </menu>
+
+    <menu mat-menu-item class="myMenuItem" (click)="saveToBrowserCache()">
+        <mat-icon>save</mat-icon>Speichern in Browser-Cache
+    </menu>
+
+    <label for="inputTag">
+        <menu mat-menu-item class="myMenuItem">
+            <mat-icon>file_upload</mat-icon>
+            Laden aus Datei
+            <input (change)="onFileUpload($event)" id="inputTag" type="file"/>
+        </menu>
+    </label>
+
+    <menu mat-menu-item class="myMenuItem" (click)="saveToLocalStorage()">
+        <mat-icon>file_download</mat-icon>Speichern in Datei
+    </menu>
+
+    <menu 
+        mat-menu-item 
+        class="myMenuItem"
+        [matMenuTriggerFor]="Uebungsaufgaben">
+        <mat-icon>open_in_browser</mat-icon>Übungsaufgaben laden
+    </menu>
+
+    <menu 
+        mat-menu-item 
+        class="myMenuItem"
+        [matMenuTriggerFor]="Vorlesungsbeispiele"
+    >
+        <mat-icon>open_in_browser</mat-icon>Vorlesungsbeispiele laden
+    </menu>
+
+    <menu mat-menu-item class="myMenuItem" (click)="openHelpDialog()">
+        <mat-icon>help</mat-icon>Hilfe
+    </menu>
+
+</mat-menu>
+
+<mat-menu #Vorlesungsbeispiele>
+    <menu
+        mat-menu-item
+        class="myMenuItem"
+        *ngFor="let aufgabe of vorlesungbeispiele"
+        (click)="loadFromJSON(aufgabe)"
+    >
+        {{ aufgabe.turingmachine.title }}
+    </menu>
+</mat-menu>
+
+<mat-menu #Uebungsaufgaben>
+    <menu
+        mat-menu-item
+        class="myMenuItem"
+        *ngFor="let aufgabe of uebungsaufgaben"
+        (click)="loadFromJSON(aufgabe)"
+    >
+        {{ aufgabe.turingmachine.title }}
+    </menu>
+</mat-menu>
