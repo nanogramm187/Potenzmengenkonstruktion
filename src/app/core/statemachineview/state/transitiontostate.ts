@@ -1,5 +1,5 @@
-import { TuringEdge } from "../../endlicherautomat/turingedges";
-import { TuringState } from "../../endlicherautomat/turingstate";
+import { Edge } from "../../endlicherautomat/edge";
+import { State } from "../../endlicherautomat/state";
 import { StatemachineviewComponent } from "../statemachineview.component";
 import { StateMachineViewState } from "./statemachineviewstate";
 import { TransitionFromState } from "./transitionfromstate";
@@ -7,14 +7,14 @@ import { TransitionEditState } from "./transtioneditstate";
 
 export class TransitionToState extends StateMachineViewState {
 
-    protected transitionFrom: TuringState;
-    protected transitionTo: TuringState;
-    protected dummyTransition: TuringEdge;
+    protected transitionFrom: State;
+    protected transitionTo: State;
+    protected dummyTransition: Edge;
   
     constructor(
       statemachineviewComponent: StatemachineviewComponent, 
-      transitionFrom: TuringState,
-      transitionTo: TuringState)
+      transitionFrom: State,
+      transitionTo: State)
     {
       super(statemachineviewComponent);
       this.transitionFrom = transitionFrom;
@@ -27,17 +27,17 @@ export class TransitionToState extends StateMachineViewState {
       this.statemachineviewComponent.changeState(transitionState);
     }
   
-    override onCircleLeave(event: MouseEvent, state: TuringState): void {
+    override onCircleLeave(event: MouseEvent, state: State): void {
       this.dummyTransition.delete();
       const transitionState = new TransitionFromState(this.statemachineviewComponent, this.transitionFrom);
       this.statemachineviewComponent.changeState(transitionState);
     }
   
-    override showStartConnection(state: TuringState): boolean {
+    override showStartConnection(state: State): boolean {
       return this.transitionFrom === state;
     }
   
-    override showEndConnection(state: TuringState): boolean {
+    override showEndConnection(state: State): boolean {
       return this.transitionTo === state;
     }
   }

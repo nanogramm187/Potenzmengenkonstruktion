@@ -1,4 +1,4 @@
-import { StateGraphic } from './stategraphic';
+import { State } from './state';
 import { Automata } from './automata';
 
 export abstract class Edges {
@@ -14,34 +14,34 @@ export abstract class Edges {
         this.edges = this.edges.filter((e) => e !== edge);
     }
 
-    abstract getEdgesTo(destination: StateGraphic): Edge[];
+    abstract getEdgesTo(destination: State): Edge[];
 
-    isConnectedTo(destination: StateGraphic): boolean {
+    isConnectedTo(destination: State): boolean {
         return this.edges.some((edge) => edge.dstState === destination);
     }
 }
 
 export abstract class Edge {
-    private _srcState: StateGraphic;
-    private _dstState: StateGraphic;
+    private _srcState: State;
+    private _dstState: State;
 
-    public get srcState(): StateGraphic {
+    public get srcState(): State {
         return this._srcState;
     }
 
-    public set srcState(value: StateGraphic) {
+    public set srcState(value: State) {
         this._srcState = value;
     }
 
-    public get dstState(): StateGraphic {
+    public get dstState(): State {
         return this._dstState;
     }
 
-    public set dstState(value: StateGraphic) {
+    public set dstState(value: State) {
         this._dstState = value;
     }
 
-    constructor(srcState: StateGraphic, dstState: StateGraphic) {
+    constructor(srcState: State, dstState: State) {
         this._srcState = srcState;
         this._dstState = dstState;
     }

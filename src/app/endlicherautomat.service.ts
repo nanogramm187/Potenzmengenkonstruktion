@@ -5,6 +5,8 @@ import { StateConnection } from './core/endlicherautomat/stateconnections/StateC
 import { StateConnectionFactory } from './core/endlicherautomat/stateconnections/StateConnectionFactory';
 import { Automata } from './core/endlicherautomat/automata';
 import { Direction, TuringEdge } from './core/endlicherautomat/turingedges';
+import { State } from './core/endlicherautomat/state';
+import { Edge } from './core/endlicherautomat/edge';
 
 @Injectable({
   providedIn: 'root'
@@ -39,12 +41,12 @@ export class EndlicherautomatService {
 
   }
 
-  addTransition(from: any, to: any, symbol: string): TuringState {
+  addTransition(from: State, to: State, symbol: string): TuringState {
       return new TuringState(new Point(0, 0));
   }
 
-  addDummyTransition(from: TuringState, to: TuringState): TuringEdge {
-    return new TuringEdge(from, to, '', '', Direction.None);
+  addDummyTransition(from: State, to: State): Edge {
+    return new TuringEdge(from as TuringState, to as TuringState, '', '', Direction.None);
   }
 
   get stateConnections(): StateConnection[] {

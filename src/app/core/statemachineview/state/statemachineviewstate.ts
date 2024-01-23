@@ -1,5 +1,5 @@
 import { Point } from "../../endlicherautomat/drawingprimitives/Point";
-import { TuringState } from "../../endlicherautomat/turingstate";
+import { State } from "../../endlicherautomat/state";
 import { StatemachineviewComponent } from "../statemachineview.component";
 
 export abstract class StateMachineViewState {
@@ -21,21 +21,21 @@ export abstract class StateMachineViewState {
     onMouseDown(event: MouseEvent): void {}
     onMouseUp(event: MouseEvent): void {}
     onMouseMove(event: MouseEvent): void {}
-    onInnerCircleMouseDown(event: MouseEvent, state: TuringState): void {}
-    onInnerCircleMouseUp(event: MouseEvent, state: TuringState): void {}
-    onOuterCircleMouseDown(event: MouseEvent, state: TuringState): void {}
-    onOuterCircleMouseUp(event: MouseEvent, state: TuringState): void {}
-    onEntireCircleMouseDown(event: MouseEvent, state: TuringState): void {}
-    onEntireCircleMouseUp(event: MouseEvent, state: TuringState): void {}
-    onCircleEnter(event: MouseEvent, state: TuringState): void {}
-    onCircleLeave(event: MouseEvent, state: TuringState): void {}
-    onInnerCircleEnter(event: MouseEvent, state: TuringState): void {}
-    onInnerCircleLeave(event: MouseEvent, state: TuringState): void {}
-    onOuterCircleEnter(event: MouseEvent, state: TuringState): void {}
-    onOuterCircleLeave(event: MouseEvent, state: TuringState): void {}
+    onInnerCircleMouseDown(event: MouseEvent, state: State): void {}
+    onInnerCircleMouseUp(event: MouseEvent, state: State): void {}
+    onOuterCircleMouseDown(event: MouseEvent, state: State): void {}
+    onOuterCircleMouseUp(event: MouseEvent, state: State): void {}
+    onEntireCircleMouseDown(event: MouseEvent, state: State): void {}
+    onEntireCircleMouseUp(event: MouseEvent, state: State): void {}
+    onCircleEnter(event: MouseEvent, state: State): void {}
+    onCircleLeave(event: MouseEvent, state: State): void {}
+    onInnerCircleEnter(event: MouseEvent, state: State): void {}
+    onInnerCircleLeave(event: MouseEvent, state: State): void {}
+    onOuterCircleEnter(event: MouseEvent, state: State): void {}
+    onOuterCircleLeave(event: MouseEvent, state: State): void {}
 
-    showStartConnection(state: TuringState): boolean { return false }
-    showEndConnection(state: TuringState): boolean { return false }
+    showStartConnection(state: State): boolean { return false }
+    showEndConnection(state: State): boolean { return false }
 
     showDrawingTransition(): boolean { return false }
     drawingTransitionOrigin(): Point { return Point.zero }

@@ -2,7 +2,7 @@ import { Automata } from './automata';
 import { Point } from './drawingprimitives/Point';
 import { TuringEdge } from './turingedges';
 import { TuringState } from './turingstate';
-import { StateGraphic } from './stategraphic';
+import { State } from './state';
 import { Direction } from './turingedges';
 import { Configuration } from './configuration';
 import { Tapecontent } from './tapecontent';
@@ -71,7 +71,7 @@ export class Turingmachine extends Automata {
         return newEdge;
     }
 
-    override deleteState(state: StateGraphic): void {
+    override deleteState(state: State): void {
         if (!(state instanceof TuringState)) {
             return;
         }
@@ -147,7 +147,7 @@ export class Turingmachine extends Automata {
             }
         }
 
-        StateGraphic.circleRadius = object.circleRadius;
+        State.circleRadius = object.circleRadius;
 
         automata.title = object.title;
         automata.description = object.description;

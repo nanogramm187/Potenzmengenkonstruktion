@@ -1,7 +1,7 @@
 import { Line } from "../drawingprimitives/Line";
 import { Point } from "../drawingprimitives/Point";
 import { Arrow } from "../drawingprimitives/Arrow";
-import { StateGraphic } from "../stategraphic";
+import { State } from "../state";
 import { StateConnection } from "./StateConnection";
 
 export class UnidirectionalStateConnection extends StateConnection {
@@ -31,14 +31,14 @@ export class UnidirectionalStateConnection extends StateConnection {
     private computeSourcePoint(): Point {
         return this.source.origin.moveToPoint(
             this.destination.origin,
-            StateGraphic.circleRadius
+            State.circleRadius
         );
     }
 
     // This method computes the destination point of the line that connects the source and destination states.
     private computeDestinationPoint(): Point {
         return this.destination.origin
-            .moveToPoint(this.source.origin, StateGraphic.circleRadius)
+            .moveToPoint(this.source.origin, State.circleRadius)
             .moveToPoint(this.source.origin, Arrow.transition.width * 2);
     }
 }

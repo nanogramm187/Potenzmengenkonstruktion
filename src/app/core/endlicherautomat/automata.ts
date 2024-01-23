@@ -1,22 +1,16 @@
 import { Configuration } from "./configuration";
-import { StateGraphic } from "./stategraphic";
+import { State } from "./state";
 
 export abstract class Automata {
 
     title: string = "";
     description: string = "";
 
-    abstract states: Set<StateGraphic>;
-    abstract start?: StateGraphic;
-    abstract finals: Set<StateGraphic>;
-    abstract addState(
-        x: number,
-        y: number,
-        id?: number,
-        name?: string
-    ): StateGraphic;
-    abstract deleteState(state: StateGraphic): void;
-
+    abstract states: Set<State>;
+    abstract start?: State;
+    abstract finals: Set<State>;
+    abstract addState(x: number, y: number, id?: number, name?: string): State;
+    abstract deleteState(state: State): void;
     abstract accepting(word: string): Configuration[];
 
     isDeterministic(): boolean {
@@ -27,7 +21,7 @@ export abstract class Automata {
         return {
             title: this.title,
             description: this.description,
-            circleRadius: StateGraphic.circleRadius,
+            circleRadius: State.circleRadius,
             startState: this.start?.id,
             finalStates: [...this.finals].map((s) => s.id),
             states: [...this.states],

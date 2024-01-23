@@ -1,7 +1,8 @@
 import { Edge } from './edge';
 import { Point } from './drawingprimitives/Point';
 
-export abstract class StateGraphic {
+export abstract class State {
+
     static circleRadius: number = 30;
 
     origin: Point;
@@ -31,11 +32,11 @@ export abstract class StateGraphic {
     }
 
     get r(): number {
-        return StateGraphic.circleRadius;
+        return State.circleRadius;
     }
 
     static get innerCircleRadius(): number {
-        return StateGraphic.circleRadius / 2;
+        return State.circleRadius / 2;
     }
 
     constructor(origin: Point, id?: number, name?: string) {
@@ -52,18 +53,18 @@ export abstract class StateGraphic {
         this.name = name ?? 'S' + this.id;
     }
 
-    getConnectionPointToState(destination: StateGraphic): Point {
+    getConnectionPointToState(destination: State): Point {
         return destination.origin.moveToPoint(
             this.origin,
-            StateGraphic.circleRadius
+            State.circleRadius
         );
     }
 
     abstract isDeterministic(): boolean;
 
-    abstract hasConnectionTo(destination: StateGraphic): boolean;
+    abstract hasConnectionTo(destination: State): boolean;
 
-    abstract getEdgesTo(destination: StateGraphic): Edge[];
+    abstract getEdgesTo(destination: State): Edge[];
 
     get ids(): Set<number> {
         return new Set();

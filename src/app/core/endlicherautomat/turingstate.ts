@@ -1,8 +1,8 @@
 import { Point } from './drawingprimitives/Point';
 import { TuringEdge, TuringEdges } from './turingedges';
-import { StateGraphic } from './stategraphic';
+import { State } from './state';
 
-export class TuringState extends StateGraphic {
+export class TuringState extends State {
     private static _ids = new Set<number>();
 
     override get ids(): Set<number> {

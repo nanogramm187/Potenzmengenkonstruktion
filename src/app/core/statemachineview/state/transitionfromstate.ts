@@ -1,6 +1,6 @@
 import { Arrow } from "../../endlicherautomat/drawingprimitives/Arrow";
 import { Point } from "../../endlicherautomat/drawingprimitives/Point";
-import { TuringState } from "../../endlicherautomat/turingstate";
+import { State } from "../../endlicherautomat/state";
 import { StatemachineviewComponent } from "../statemachineview.component";
 import { DefaultState } from "./defaultstate";
 import { StateMachineViewState } from "./statemachineviewstate";
@@ -9,10 +9,10 @@ import { TransitionNewStateEditState } from "./transtionnewstateeditstate";
 
 export class TransitionFromState extends StateMachineViewState {
 
-    private transitionFrom: TuringState;
+    private transitionFrom: State;
     private drawingDestination: Point = Point.zero;
   
-    constructor(statemachineviewComponent: StatemachineviewComponent, transitionFrom: TuringState) {
+    constructor(statemachineviewComponent: StatemachineviewComponent, transitionFrom: State) {
       super(statemachineviewComponent);
       this.transitionFrom = transitionFrom;
     }
@@ -23,18 +23,18 @@ export class TransitionFromState extends StateMachineViewState {
       this.statemachineviewComponent.changeState(transitionState);
     }
   
-    override onEntireCircleMouseDown(event: MouseEvent, state: TuringState): void {
+    override onEntireCircleMouseDown(event: MouseEvent, state: State): void {
       const boundary = this.boundary;
       this.drawingDestination.x = event.clientX - boundary.left;
       this.drawingDestination.y = event.clientY - boundary.top;
     }
   
-    override onCircleEnter(event: MouseEvent, state: TuringState): void {
+    override onCircleEnter(event: MouseEvent, state: State): void {
       const transitionToState = new TransitionToState(this.statemachineviewComponent, this.transitionFrom, state);
       this.changeState(transitionToState);
     }
   
-    override onEntireCircleMouseUp(event: MouseEvent, state: TuringState): void {
+    override onEntireCircleMouseUp(event: MouseEvent, state: State): void {
       this.statemachineviewComponent.changeState(new DefaultState(this.statemachineviewComponent));
     }
   
@@ -52,7 +52,7 @@ export class TransitionFromState extends StateMachineViewState {
       return this.drawingDestination.moveToPoint(this.transitionFrom.origin, Arrow.transition.width * 2);
     }
   
-    override showStartConnection(state: TuringState): boolean {
+    override showStartConnection(state: State): boolean {
       return this.transitionFrom === state;
     }
   

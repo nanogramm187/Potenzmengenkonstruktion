@@ -1,16 +1,16 @@
 import { Shape } from '../drawingprimitives/Shape';
-import { StateGraphic } from '../stategraphic';
+import { State } from '../state';
 import { Point } from '../drawingprimitives/Point';
 import { Edge } from '../edge';
 import { Size } from '../drawingprimitives/Size';
 
 export abstract class StateConnection implements Shape {
-    source: StateGraphic;
-    destination: StateGraphic;
+    source: State;
+    destination: State;
     edges: Edge[];
     arrowHeadSize: Size = new Size(10, 10);
 
-    constructor(source: StateGraphic, destination: StateGraphic) {
+    constructor(source: State, destination: State) {
         this.source = source;
         this.destination = destination;
         this.edges = source.getEdgesTo(destination);

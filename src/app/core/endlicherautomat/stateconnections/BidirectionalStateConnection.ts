@@ -2,12 +2,12 @@ import { Arrow } from "../drawingprimitives/Arrow";
 import { BezierCurve } from "../drawingprimitives/BezierCurve";
 import { Line } from "../drawingprimitives/Line";
 import { Point } from "../drawingprimitives/Point";
-import { StateGraphic } from "../stategraphic";
+import { State } from "../state";
 import { StateConnection } from "./StateConnection";
 
 export class BidirectionalStateConnection extends StateConnection {
     private get controlPointDistance(): number {
-        return StateGraphic.circleRadius * 2;
+        return State.circleRadius * 2;
     }
 
     private get connectionCurve(): BezierCurve {
@@ -20,11 +20,11 @@ export class BidirectionalStateConnection extends StateConnection {
         );
         const sourcePoint = this.source.origin.moveToPoint(
             controlPoint,
-            StateGraphic.circleRadius
+            State.circleRadius
         );
         let destinationPoint = this.destination.origin.moveToPoint(
             controlPoint,
-            StateGraphic.circleRadius
+            State.circleRadius
         );
         destinationPoint = destinationPoint.moveToPoint(
             controlPoint,

@@ -12,7 +12,7 @@ import { TransitionEditDialogComponent } from './transition-edit-dialog/transiti
 import { TuringState } from '../endlicherautomat/turingstate';
 import { StateConnection } from '../endlicherautomat/stateconnections/StateConnection';
 import { Arrow } from '../endlicherautomat/drawingprimitives/Arrow';
-import { StateGraphic } from '../endlicherautomat/stategraphic';
+import { State } from '../endlicherautomat/state';
 import { Point } from '../endlicherautomat/drawingprimitives/Point';
 import { Configuration } from '../endlicherautomat/configuration';
 import { StateMachineViewState } from './state/statemachineviewstate';
@@ -45,7 +45,7 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
 
   private mouseMoveListener: any;
   private mouseUpListener: any;
-  private readonly circleRadius = StateGraphic.circleRadius;
+  private readonly circleRadius = State.circleRadius;
 
   get outerCircleRadius(): number {
     return this.circleRadius + 15;

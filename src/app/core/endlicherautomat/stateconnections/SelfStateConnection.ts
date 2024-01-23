@@ -1,13 +1,13 @@
 import { Arrow } from "../drawingprimitives/Arrow";
 import { CubicBezierCurve } from "../drawingprimitives/BezierCurve";
 import { Point } from "../drawingprimitives/Point";
-import { StateGraphic } from "../stategraphic";
+import { State } from "../state";
 import { StateConnection } from "./StateConnection";
 
 export class SelfStateConnection extends StateConnection {
 
-    private width = StateGraphic.circleRadius * 2;
-    private height = StateGraphic.circleRadius * 2;
+    private width = State.circleRadius * 2;
+    private height = State.circleRadius * 2;
 
     private get connectionCurve(): CubicBezierCurve {
         const controlPointY = this.source.origin.y - this.height;
@@ -40,14 +40,14 @@ export class SelfStateConnection extends StateConnection {
     private computeStartPoint(c1: Point): Point {
         let start = this.source.origin.moveToPoint(
             c1,
-            StateGraphic.circleRadius
+            State.circleRadius
         );
         return start.moveToPoint(c1, Arrow.transition.width * 2);
     }
 
     // This method computes the end point of the path.
     private computeEndPoint(c2: Point): Point {
-        return this.source.origin.moveToPoint(c2, StateGraphic.circleRadius);
+        return this.source.origin.moveToPoint(c2, State.circleRadius);
     }
 
     // This method adjusts the first path control point.

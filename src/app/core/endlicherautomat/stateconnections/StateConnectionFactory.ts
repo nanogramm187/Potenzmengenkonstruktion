@@ -1,5 +1,5 @@
 import { Automata } from "../automata";
-import { StateGraphic } from "../stategraphic";
+import { State } from "../state";
 import { BidirectionalStateConnection } from "./BidirectionalStateConnection";
 import { SelfStateConnection } from "./SelfStateConnection";
 import { StateConnection } from "./StateConnection";
@@ -19,7 +19,7 @@ export class StateConnectionFactory {
         return result;
     }
 
-    static make(source: StateGraphic, destination: StateGraphic): StateConnection | undefined {
+    static make(source: State, destination: State): StateConnection | undefined {
         if (source.hasConnectionTo(destination)) {
             if (source === destination) {
                 return new SelfStateConnection(source, destination);
