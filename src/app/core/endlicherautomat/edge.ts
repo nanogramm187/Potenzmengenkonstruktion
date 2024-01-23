@@ -1,8 +1,9 @@
 import { State } from './state';
-import { Automata } from './automata';
+import { StateMachine } from './statemachine';
 
 export abstract class Edges {
-    automata?: Automata;
+
+    statemachine?: StateMachine;
 
     edges: Edge[] = [];
 
@@ -14,11 +15,11 @@ export abstract class Edges {
         this.edges = this.edges.filter((e) => e !== edge);
     }
 
-    abstract getEdgesTo(destination: State): Edge[];
-
     isConnectedTo(destination: State): boolean {
         return this.edges.some((edge) => edge.dstState === destination);
     }
+
+    abstract getEdgesTo(destination: State): Edge[];
 }
 
 export abstract class Edge {

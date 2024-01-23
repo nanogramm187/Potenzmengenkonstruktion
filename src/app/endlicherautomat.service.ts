@@ -3,7 +3,7 @@ import { TuringState } from './core/endlicherautomat/turingstate';
 import { Point } from './core/endlicherautomat/drawingprimitives/Point';
 import { StateConnection } from './core/endlicherautomat/stateconnections/StateConnection';
 import { StateConnectionFactory } from './core/endlicherautomat/stateconnections/StateConnectionFactory';
-import { Automata } from './core/endlicherautomat/automata';
+import { StateMachine } from './core/endlicherautomat/statemachine';
 import { Direction, TuringEdge } from './core/endlicherautomat/turingedges';
 import { State } from './core/endlicherautomat/state';
 import { Edge } from './core/endlicherautomat/edge';
@@ -13,7 +13,7 @@ import { Edge } from './core/endlicherautomat/edge';
 })
 export class EndlicherautomatService {
 
-  stateMachine!: Automata;
+  stateMachine!: StateMachine;
 
   constructor() { }
 

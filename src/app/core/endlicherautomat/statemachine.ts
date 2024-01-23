@@ -1,7 +1,7 @@
 import { Configuration } from "./configuration";
 import { State } from "./state";
 
-export abstract class Automata {
+export abstract class StateMachine {
 
     title: string = "";
     description: string = "";

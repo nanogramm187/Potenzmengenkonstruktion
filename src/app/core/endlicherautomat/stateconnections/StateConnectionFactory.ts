@@ -1,4 +1,4 @@
-import { Automata } from "../automata";
+import { StateMachine } from "../statemachine";
 import { State } from "../state";
 import { BidirectionalStateConnection } from "./BidirectionalStateConnection";
 import { SelfStateConnection } from "./SelfStateConnection";
@@ -6,10 +6,10 @@ import { StateConnection } from "./StateConnection";
 import { UnidirectionalStateConnection } from "./UnidirectionalStateConnection";
 
 export class StateConnectionFactory {
-    static makeStateConnections(automata: Automata): StateConnection[] {
+    static makeStateConnections(statemachine: StateMachine): StateConnection[] {
         let result: StateConnection[] = [];
-        for (const state1 of automata.states) {
-            for (const state2 of automata.states) {
+        for (const state1 of statemachine.states) {
+            for (const state2 of statemachine.states) {
                 const stateconnection = this.make(state1, state2);
                 if (stateconnection) {
                     result.push(stateconnection);

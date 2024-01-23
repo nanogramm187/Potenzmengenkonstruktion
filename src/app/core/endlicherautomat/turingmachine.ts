@@ -1,4 +1,4 @@
-import { Automata } from './automata';
+import { StateMachine } from './statemachine';
 import { Point } from './drawingprimitives/Point';
 import { TuringEdge } from './turingedges';
 import { TuringState } from './turingstate';
@@ -7,7 +7,7 @@ import { Direction } from './turingedges';
 import { Configuration } from './configuration';
 import { Tapecontent } from './tapecontent';
 
-export class Turingmachine extends Automata {
+export class Turingmachine extends StateMachine {
    
     states = new Set<TuringState>();
 
@@ -60,7 +60,7 @@ export class Turingmachine extends Automata {
 
         this.states = new Set([...this.states, state]);
 
-        state.edges.automata = this;
+        state.edges.statemachine = this;
 
         return state;
     }
