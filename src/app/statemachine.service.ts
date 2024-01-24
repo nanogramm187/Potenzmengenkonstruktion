@@ -27,7 +27,6 @@ export class StatemachineService {
   }
 
   addState(x: number, y: number): State {
-    console.log(x + " " + y);
     return this.stateMachine.addState(x, y);
   }
 

@@ -8,6 +8,6 @@ export class MockState extends State {
     }
 
     override isDeterministic(): boolean {
-        throw true;
+        return true;
     }
 }

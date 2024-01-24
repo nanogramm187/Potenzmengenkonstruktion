@@ -2,7 +2,6 @@
 import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { ChangeDetectorRef } from '@angular/core';
 // Service imports
 import { StatemachineService } from '../../statemachine.service';
 // Model and utility imports
@@ -31,7 +30,6 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
     public statemachineService: StatemachineService, 
     public dialog: MatDialog,
     public zone: NgZone,
-    public cdr: ChangeDetectorRef
   ) {}
 
   private mouseMoveListener: any;
