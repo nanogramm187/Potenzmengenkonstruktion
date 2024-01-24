@@ -1,4 +1,4 @@
-import { State } from "../../endlicherautomat/state";
+import { State } from "../../statemachine/state";
 import { StatemachineviewComponent } from "../statemachineview.component";
 import { DefaultState } from "./defaultstate";
 import { StateMachineViewState } from "./statemachineviewstate";

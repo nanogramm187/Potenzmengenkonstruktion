@@ -1,6 +1,6 @@
-import { Arrow } from "../../endlicherautomat/drawingprimitives/Arrow";
-import { Point } from "../../endlicherautomat/drawingprimitives/Point";
-import { State } from "../../endlicherautomat/state";
+import { Arrow } from "../../statemachine/drawingprimitives/Arrow";
+import { Point } from "../../statemachine/drawingprimitives/Point";
+import { State } from "../../statemachine/state";
 import { StatemachineviewComponent } from "../statemachineview.component";
 import { DefaultState } from "./defaultstate";
 import { StateMachineViewState } from "./statemachineviewstate";

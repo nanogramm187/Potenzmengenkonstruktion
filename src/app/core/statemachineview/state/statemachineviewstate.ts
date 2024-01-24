@@ -1,5 +1,5 @@
-import { Point } from "../../endlicherautomat/drawingprimitives/Point";
-import { State } from "../../endlicherautomat/state";
+import { Point } from "../../statemachine/drawingprimitives/Point";
+import { State } from "../../statemachine/state";
 import { StatemachineviewComponent } from "../statemachineview.component";
 
 export abstract class StateMachineViewState {

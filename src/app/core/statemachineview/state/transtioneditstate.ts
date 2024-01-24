@@ -1,5 +1,5 @@
-import { State } from "../../endlicherautomat/state";
-import { Transition } from "../../endlicherautomat/stateconnections/Transition";
+import { State } from "../../statemachine/state";
+import { Transition } from "../../statemachine/stateconnections/Transition";
 import { StatemachineviewComponent } from "../statemachineview.component";
 import { DefaultState } from "./defaultstate";
 import { StateMachineViewState } from "./statemachineviewstate";

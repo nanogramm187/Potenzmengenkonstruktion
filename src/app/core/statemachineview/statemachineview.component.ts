@@ -4,14 +4,15 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
 // Service imports
-import { EndlicherautomatService } from '../../endlicherautomat.service';
+import { StatemachineService } from '../../statemachine.service';
 // Model and utility imports
-import { Arrow } from '../endlicherautomat/drawingprimitives/Arrow';
-import { State } from '../endlicherautomat/state';
-import { Point } from '../endlicherautomat/drawingprimitives/Point';
+import { Arrow } from '../statemachine/drawingprimitives/Arrow';
+import { State } from '../statemachine/state';
+import { Point } from '../statemachine/drawingprimitives/Point';
 import { StateMachineViewState } from './state/statemachineviewstate';
 import { DefaultState } from './state/defaultstate';
-import { Transition } from '../endlicherautomat/stateconnections/Transition';
+import { Transition } from '../statemachine/stateconnections/Transition';
+import { Label } from '../statemachine/stateconnections/Label';
 
 @Component({
   selector: 'app-statemachineview',
@@ -27,7 +28,7 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
   @ViewChild('svgField') svgFieldElementRef!: ElementRef;
 
   constructor(
-    public statemachineService: EndlicherautomatService, 
+    public statemachineService: StatemachineService, 
     public dialog: MatDialog,
     public zone: NgZone,
     public cdr: ChangeDetectorRef
@@ -202,5 +203,14 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
 
   changeState(state: StateMachineViewState) {
     this.stateMachineViewState = state;
+  }
+
+  // Dummy Functions
+  getTranslate(transition: Transition, index: number): number {
+    return 0
+  }
+
+  labels(transition: Transition): Label[] {
+    return transition.labels()
   }
 }

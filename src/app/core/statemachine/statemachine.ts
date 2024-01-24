@@ -15,13 +15,15 @@ export abstract class StateMachine {
 
     abstract isFinalState(state: State): boolean;
 
-    abstract isStateDeterministic(state: State): boolean;
-
     abstract addTransition(source: State, destination: State): Transition;
+
+    abstract addDummyTransition(source: State, destination: State): Transition;
+
+    abstract getTransition(source: State, destination: State): Transition;
 
     abstract deleteTransition(transition: Transition): void;
 
     isDeterministic(): boolean {
-        return ![...this.getAllStates()].some((state) => !this.isStateDeterministic(state));
+        return ![...this.getAllStates()].some((state) => !state.isDeterministic);
     }
 }

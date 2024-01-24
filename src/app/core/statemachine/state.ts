@@ -33,6 +33,10 @@ export abstract class State {
         return 30;
     }
 
+    get r(): number {
+        return State.circleRadius;
+    }
+
     static get innerCircleRadius(): number {
         return State.circleRadius / 2;
     }
@@ -73,4 +77,6 @@ export abstract class State {
     }
 
     abstract openEditDialog(dialog: MatDialog): MatDialogRef<any, any>;
+
+    abstract isDeterministic(): boolean;
 }

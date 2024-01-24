@@ -1,4 +1,4 @@
-import { State } from "../../endlicherautomat/state";
+import { State } from "../../statemachine/state";
 import { MoveNodeState } from "./movenodestate";
 import { StateMachineViewState } from "./statemachineviewstate";
 import { TransitionFromState } from "./transitionfromstate";

@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
-import { StateMachine } from './core/endlicherautomat/statemachine';
-import { State } from './core/endlicherautomat/state';
-import { StateEditDialogComponent } from './core/statemachineview/state-edit-dialog/state-edit-dialog.component';
+import { StateMachine } from './core/statemachine/statemachine';
+import { State } from './core/statemachine/state';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { TransitionEditDialogComponent } from './core/statemachineview/transition-edit-dialog/transition-edit-dialog.component';
-import { Transition } from './core/endlicherautomat/stateconnections/Transition';
+import { Transition } from './core/statemachine/stateconnections/Transition';
 
 @Injectable({
   providedIn: 'root'
 })
-export class EndlicherautomatService {
+export class StatemachineService {
 
   stateMachine!: StateMachine;
 
@@ -27,10 +25,6 @@ export class EndlicherautomatService {
     return this.stateMachine.isStartState(state);
   }
 
-  isActiveState(state: State): boolean {
-    return false;
-  }
-
   addState(x: number, y: number): State {
     return this.stateMachine.addState(x, y);
   }
@@ -40,11 +34,11 @@ export class EndlicherautomatService {
   }
 
   addTransition(source: State, destination: State): Transition {
-      return this.stateMachine.addTransition(source, destination);
+    return this.stateMachine.addTransition(source, destination);
   }
 
   addDummyTransition(source: State, destination: State): Transition {
-    throw "Not Implemented";
+    return this.stateMachine.addDummyTransition(source, destination);
   }
 
   get transitions(): Transition[] {
@@ -68,8 +62,11 @@ export class EndlicherautomatService {
   }
 
   openTransitionEditDialog(source: State, destination: State, dialog: MatDialog): MatDialogRef<any, any> {
-    // TODO: - Find transition for source and destination.
-    throw "Not implemented"
-    //return transition.openTransitionDialog(dialog);
+    const transition = this.stateMachine.getTransition(source, destination);
+    return transition.openTransitionDialog(dialog);
+  }
+
+  isActiveState(state: State): boolean {
+    return false;
   }
 }

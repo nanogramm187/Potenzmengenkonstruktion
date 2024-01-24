@@ -138,9 +138,9 @@
             <text
             *ngFor="let label of labels(transition); let j = index"
             x="0"
-            [attr.y]="j * fontSize"
+            [attr.y]="j * label.fontSize"
             font-family="Arial"
-            [attr.font-size]="fontSize"
+            [attr.font-size]="label.fontSize"
             dominant-baseline="middle"
             text-anchor="middle"
             >
