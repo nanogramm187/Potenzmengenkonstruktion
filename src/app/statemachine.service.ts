@@ -3,13 +3,14 @@ import { StateMachine } from './core/statemachine/statemachine';
 import { State } from './core/statemachine/state';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Transition } from './core/statemachine/stateconnections/Transition';
+import { MockStateMachine } from './core/mockmachine/MockStateMachine';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StatemachineService {
 
-  stateMachine!: StateMachine;
+  stateMachine: StateMachine = new MockStateMachine();
 
   constructor() { }
 
@@ -26,6 +27,7 @@ export class StatemachineService {
   }
 
   addState(x: number, y: number): State {
+    console.log(x + " " + y);
     return this.stateMachine.addState(x, y);
   }
 

@@ -31,7 +31,6 @@
     ></line>
 
     <g *ngFor="let state of getStates()">
-
         <circle
         *ngIf="!state.isDeterministic() && showDeterministicStates()"
         class="deterministic"

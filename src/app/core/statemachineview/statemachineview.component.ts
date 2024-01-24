@@ -179,6 +179,7 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
   }
 
   getStates(): State[] {
+    console.log(this.statemachineService.states);
     return this.statemachineService.states;
   }
   

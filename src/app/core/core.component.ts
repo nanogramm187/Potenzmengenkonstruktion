@@ -7,7 +7,7 @@ import { StatemachineviewComponent } from "./statemachineview/statemachineview.c
     standalone: true,
     templateUrl: './core.component.html',
     styleUrl: './core.component.scss',
-    imports: [TestcaseviewComponent, StatemachineviewComponent]
+    imports: [StatemachineviewComponent]
 })
 export class CoreComponent {
 

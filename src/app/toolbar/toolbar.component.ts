@@ -6,7 +6,7 @@ import { MenuComponent } from "./menu/menu.component";
     standalone: true,
     templateUrl: './toolbar.component.html',
     styleUrl: './toolbar.component.scss',
-    imports: [MenuComponent]
+    imports: []
 })
 export class ToolbarComponent {
 
