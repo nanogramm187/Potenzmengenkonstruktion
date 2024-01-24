@@ -1,5 +1,5 @@
-import { Edge } from "../../endlicherautomat/edge";
 import { State } from "../../endlicherautomat/state";
+import { Transition } from "../../endlicherautomat/stateconnections/Transition";
 import { StatemachineviewComponent } from "../statemachineview.component";
 import { StateMachineViewState } from "./statemachineviewstate";
 import { TransitionFromState } from "./transitionfromstate";
@@ -9,7 +9,7 @@ export class TransitionToState extends StateMachineViewState {
 
     protected transitionFrom: State;
     protected transitionTo: State;
-    protected dummyTransition: Edge;
+    protected dummyTransition: Transition;
   
     constructor(
       statemachineviewComponent: StatemachineviewComponent, 
@@ -19,7 +19,7 @@ export class TransitionToState extends StateMachineViewState {
       super(statemachineviewComponent);
       this.transitionFrom = transitionFrom;
       this.transitionTo = transitionTo;
-      this.dummyTransition = this.statemachineviewComponent.turingmachineService.addDummyTransition(transitionFrom, transitionTo);
+      this.dummyTransition = this.statemachineviewComponent.statemachineService.addDummyTransition(transitionFrom, transitionTo);
     }
   
     override onMouseUp(event: MouseEvent): void {

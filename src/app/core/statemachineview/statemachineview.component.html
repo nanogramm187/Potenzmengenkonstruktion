@@ -120,7 +120,7 @@
     <polygon [attr.points]="arrow.path()" />
     </marker>
 
-    <g *ngFor="let transition of stateConnections; let i = index">
+    <g *ngFor="let transition of transitions; let i = index">
         <path
             class="visiblePath"
             [attr.d]="transition.path()"

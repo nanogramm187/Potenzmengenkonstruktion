@@ -18,7 +18,7 @@ export class TransitionFromState extends StateMachineViewState {
     }
   
     override onMouseUp(event: MouseEvent): void {
-      const newState = this.statemachineviewComponent.turingmachineService.addState(this.drawingDestination.x, this.drawingDestination.y);
+      const newState = this.statemachineviewComponent.statemachineService.addState(this.drawingDestination.x, this.drawingDestination.y);
       const transitionState = new TransitionNewStateEditState(this.statemachineviewComponent, this.transitionFrom, newState);
       this.statemachineviewComponent.changeState(transitionState);
     }

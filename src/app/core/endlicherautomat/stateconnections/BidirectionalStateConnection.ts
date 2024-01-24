@@ -1,7 +1,6 @@
 import { Arrow } from "../drawingprimitives/Arrow";
 import { BezierCurve } from "../drawingprimitives/BezierCurve";
 import { Line } from "../drawingprimitives/Line";
-import { Point } from "../drawingprimitives/Point";
 import { State } from "../state";
 import { StateConnection } from "./StateConnection";
 
@@ -10,19 +9,19 @@ export class BidirectionalStateConnection extends StateConnection {
         return State.circleRadius * 2;
     }
 
-    private get connectionCurve(): BezierCurve {
+    private connectionCurve(source: State, destination: State): BezierCurve {
         const connectionLine = new Line(
-            this.source.origin,
-            this.destination.origin
+            source.origin,
+            destination.origin
         );
         const controlPoint = connectionLine.getBezierControlPoint(
             this.controlPointDistance
         );
-        const sourcePoint = this.source.origin.moveToPoint(
+        const sourcePoint = source.origin.moveToPoint(
             controlPoint,
             State.circleRadius
         );
-        let destinationPoint = this.destination.origin.moveToPoint(
+        let destinationPoint = destination.origin.moveToPoint(
             controlPoint,
             State.circleRadius
         );
@@ -33,13 +32,13 @@ export class BidirectionalStateConnection extends StateConnection {
         return new BezierCurve(sourcePoint, controlPoint, destinationPoint);
     }
 
-    override path(): string {
-        return this.connectionCurve.path();
+    override path(source: State, destination: State): string {
+        return this.connectionCurve(source, destination).path();
     }
 
-    override getTextPosition(width: number, height: number): Point {
-        return this.connectionCurve
-            .pointSecant(0.5)
-            .getRectangleCenterPoint(width, height);
-    }
+    // override getLabelPosition(width: number, height: number): Point {
+    //     return this.connectionCurve
+    //         .pointSecant(0.5)
+    //         .getRectangleCenterPoint(width, height);
+    // }
 }

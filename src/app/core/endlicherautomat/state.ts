@@ -1,9 +1,7 @@
-import { Edge } from './edge';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Point } from './drawingprimitives/Point';
 
 export abstract class State {
-
-    static circleRadius: number = 30;
 
     origin: Point;
 
@@ -31,8 +29,8 @@ export abstract class State {
         this.origin.y = y;
     }
 
-    get r(): number {
-        return State.circleRadius;
+    static get circleRadius(): number {
+        return 30;
     }
 
     static get innerCircleRadius(): number {
@@ -60,12 +58,6 @@ export abstract class State {
         );
     }
 
-    abstract isDeterministic(): boolean;
-
-    abstract hasConnectionTo(destination: State): boolean;
-
-    abstract getEdgesTo(destination: State): Edge[];
-
     get ids(): Set<number> {
         return new Set();
     }
@@ -79,4 +71,6 @@ export abstract class State {
             name: this.name,
         };
     }
+
+    abstract openEditDialog(dialog: MatDialog): MatDialogRef<any, any>;
 }

@@ -27,10 +27,10 @@ export class MoveNodeState extends StateMachineViewState {
   
     override onMouseMove(event: MouseEvent): void {
       const boundary = this.boundary;
-      if (event.x > boundary.left + this.movingState.r && event.x < boundary.right - this.movingState.r) {
+      if (event.x > boundary.left + State.circleRadius && event.x < boundary.right - State.circleRadius) {
         this.movingStateX = event.clientX - boundary.left;
       }
-      if (event.y > boundary.top + this.movingState.r && event.y < boundary.bottom - this.movingState.r) {
+      if (event.y > boundary.top + State.circleRadius && event.y < boundary.bottom - State.circleRadius) {
         this.movingStateY = event.clientY - boundary.top;
       }
     }

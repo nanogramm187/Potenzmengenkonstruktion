@@ -5,18 +5,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
 // Service imports
 import { EndlicherautomatService } from '../../endlicherautomat.service';
-// Component imports
-import { StateEditDialogComponent } from './state-edit-dialog/state-edit-dialog.component';
-import { TransitionEditDialogComponent } from './transition-edit-dialog/transition-edit-dialog.component';
 // Model and utility imports
-import { TuringState } from '../endlicherautomat/turingstate';
-import { StateConnection } from '../endlicherautomat/stateconnections/StateConnection';
 import { Arrow } from '../endlicherautomat/drawingprimitives/Arrow';
 import { State } from '../endlicherautomat/state';
 import { Point } from '../endlicherautomat/drawingprimitives/Point';
-import { Configuration } from '../endlicherautomat/configuration';
 import { StateMachineViewState } from './state/statemachineviewstate';
 import { DefaultState } from './state/defaultstate';
+import { Transition } from '../endlicherautomat/stateconnections/Transition';
 
 @Component({
   selector: 'app-statemachineview',
@@ -32,16 +27,11 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
   @ViewChild('svgField') svgFieldElementRef!: ElementRef;
 
   constructor(
-    public turingmachineService: EndlicherautomatService, 
+    public statemachineService: EndlicherautomatService, 
     public dialog: MatDialog,
     public zone: NgZone,
     public cdr: ChangeDetectorRef
   ) {}
-
-  private canvas: HTMLCanvasElement = document.createElement('canvas');
-  private ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')!;
-  public fontSize: number = 16; 
-  public fontFamily: string = 'Arial';
 
   private mouseMoveListener: any;
   private mouseUpListener: any;
@@ -49,11 +39,6 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
 
   get outerCircleRadius(): number {
     return this.circleRadius + 15;
-  }
-
-  getTapeContent(): Configuration[] {
-    // return this.turingmachineService.configurationList.configurations;
-    return [];
   }
 
   ngOnInit() {
@@ -88,61 +73,61 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
     this.stateMachineViewState.onMouseUp(event);
   }
 
-  protected onInnerCircleMouseDown(event: MouseEvent, state: TuringState): void {
+  protected onInnerCircleMouseDown(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onInnerCircleMouseDown(event, state);
   }
 
-  protected onInnerCircleMouseUp(event: MouseEvent, state: TuringState): void {
+  protected onInnerCircleMouseUp(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onInnerCircleMouseUp(event, state);
   }
 
-  protected onOuterCircleMouseDown(event: MouseEvent, state: TuringState): void {
+  protected onOuterCircleMouseDown(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onOuterCircleMouseDown(event, state);
   }
 
-  protected onOuterCircleMouseUp(event: MouseEvent, state: TuringState): void {
+  protected onOuterCircleMouseUp(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onOuterCircleMouseUp(event, state);
   }
 
-  protected onEntireCircleMouseDown(event: MouseEvent, state: TuringState): void {
+  protected onEntireCircleMouseDown(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onEntireCircleMouseDown(event, state);
   }
 
-  protected onEntireCircleMouseUp(event: MouseEvent, state: TuringState): void {
+  protected onEntireCircleMouseUp(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onEntireCircleMouseUp(event, state);
   }
 
-  protected onCircleEnter(event: MouseEvent, state: TuringState): void {
+  protected onCircleEnter(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onCircleEnter(event, state);
   }
 
-  protected onCircleLeave(event: MouseEvent, state: TuringState): void {
+  protected onCircleLeave(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onCircleLeave(event, state);
   }
 
-  protected onInnerCircleEnter(event: MouseEvent, state: TuringState): void {
+  protected onInnerCircleEnter(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onInnerCircleEnter(event, state);
   }
 
-  protected onInnerCircleLeave(event: MouseEvent, state: TuringState): void {
+  protected onInnerCircleLeave(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onInnerCircleLeave(event, state);
   }
 
-  protected onOuterCircleEnter(event: MouseEvent, state: TuringState): void {
+  protected onOuterCircleEnter(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onOuterCircleEnter(event, state);
   }
 
-  protected onOuterCircleLeave(event: MouseEvent, state: TuringState): void {
+  protected onOuterCircleLeave(event: MouseEvent, state: State): void {
     this.stateMachineViewState.onOuterCircleLeave(event, state);
   }
 
   /// Returns true, if the transition from the given state is currently being drawn.
-  protected showStartConnection(state: TuringState): boolean {
+  protected showStartConnection(state: State): boolean {
     return this.stateMachineViewState.showStartConnection(state);
   }
 
   /// Returns true, if the transition to the given state is currently being drawn.
-  protected showEndConnection(state: TuringState): boolean {
+  protected showEndConnection(state: State): boolean {
     return this.stateMachineViewState.showEndConnection(state);
   }
 
@@ -162,94 +147,55 @@ export class StatemachineviewComponent implements OnInit, OnDestroy {
     return Arrow.transition;
   }
 
-  get stateConnections(): StateConnection[] {
-    return this.turingmachineService.stateConnections;
+  get transitions(): Transition[] {
+    return this.statemachineService.transitions;
   }
 
   toggleTestcaseView() {
-    this.turingmachineService.toggleTestcaseView();
+    this.statemachineService.toggleTestcaseView();
   }
 
   get testcaseViewIsVisible(): boolean {
-    return this.turingmachineService.testcaseViewIsVisible;
+    return this.statemachineService.testcaseViewIsVisible;
   }
   
-  editTransition(stateConnection: StateConnection, event: MouseEvent): void {
+  editTransition(stateConnection: Transition, event: MouseEvent): void {
     event.preventDefault();
-    const dialogRef = this.dialog.open(TransitionEditDialogComponent, {
-      width: '545px',
-      autoFocus: false,
-      data: {
-        sourceState: stateConnection.source,
-        destinationState: stateConnection.destination,
-      }
-    });
+    const source = stateConnection.source;
+    const destination = stateConnection.destination;
+    this.statemachineService.openTransitionEditDialog(source, destination, this.dialog);
   }
 
-  openStateEditDialog(state: TuringState, event: MouseEvent): void {
+  openStateEditDialog(state: State, event: MouseEvent): void {
     event.preventDefault();
-    const dialogRef = this.dialog.open(StateEditDialogComponent, {
-      width: '270px',
-      data: {state: state}
-    });
+    this.statemachineService.openStateEditDialog(state, this.dialog);
   }
 
   drawState(event: MouseEvent) {
     const x = (event.clientX - (event.target as SVGElement).getBoundingClientRect().left);
     const y = (event.clientY - (event.target as SVGElement).getBoundingClientRect().top);
-    this.turingmachineService.addState(x, y);
+    this.statemachineService.addState(x, y);
   }
 
-  getStates(): Set<TuringState> {
-    return this.turingmachineService.states;
+  getStates(): State[] {
+    return this.statemachineService.states;
   }
   
-  isFinalState(state: TuringState): boolean {
-    return this.turingmachineService.isFinalState(state);
+  isFinalState(state: State): boolean {
+    return this.statemachineService.isFinalState(state);
   }
 
-  isStartState(state: TuringState): boolean {
-    return this.turingmachineService.isStartState(state);
+  isStartState(state: State): boolean {
+    return this.statemachineService.isStartState(state);
   }
 
-  getTextPosition(transition: StateConnection, id: number): Point {
-    // Setzen des Schriftstils für den Canvas-Kontext
-    this.ctx.font = `${this.fontSize}px ${this.fontFamily}`;
-    
-    // Berechnung der Höhe basierend auf der Anzahl der Kanten und der Schriftgröße
-    const height = transition.edges.length * this.fontSize;
-
-    // Berechnung der maximalen Breite der Übergangslabels
-    const width = transition.edges
-      .map((edge) => this.ctx.measureText(edge.transitionLabel()).width)
-      .reduce((a, b) => Math.max(a, b), 0);
-
-    // Abrufen der Textposition von der Übergangsinstanz
-    const position = transition.getTextPosition(width, height);
-
-    // Anpassung der y-Position basierend auf der Anzahl der Kanten
-    const adjusted = new Point(position.x, position.y - (transition.edges.length - 1) * this.fontSize / 2);
-
-    return adjusted;
-  }
-
-  getTranslate(transition: StateConnection, id: number): string {
-    const point = this.getTextPosition(transition, id);
-    return `translate(${point.x}, ${point.y})`;
-  }
-
-  labels(connection: StateConnection): string[] {
-    return connection.edges
-    .map((edge) => edge.transitionLabel())
-  }
-
-  isActiveState(state: TuringState): boolean {
-    return this.turingmachineService.isActiveState(state);
+  isActiveState(state: State): boolean {
+    return this.statemachineService.isActiveState(state);
   }
 
   // Show Not Deterministic States
   showDeterministicStates(): boolean {
-    return this.turingmachineService.showDeterministicStates;
+    return this.statemachineService.showDeterministicStates;
   }
 
   public stateMachineViewState: StateMachineViewState = new DefaultState(this);

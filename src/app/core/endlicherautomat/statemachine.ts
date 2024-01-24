@@ -1,30 +1,27 @@
-import { Configuration } from "./configuration";
 import { State } from "./state";
+import { Transition } from "./stateconnections/Transition";
 
 export abstract class StateMachine {
 
-    title: string = "";
-    description: string = "";
+    abstract getAllStates(): State[];
 
-    abstract states: Set<State>;
-    abstract start?: State;
-    abstract finals: Set<State>;
-    abstract addState(x: number, y: number, id?: number, name?: string): State;
+    abstract getAllTransitions(): Transition[];
+   
+    abstract addState(x: number, y: number): State;
+
     abstract deleteState(state: State): void;
-    abstract accepting(word: string): Configuration[];
+
+    abstract isStartState(state: State): boolean;
+
+    abstract isFinalState(state: State): boolean;
+
+    abstract isStateDeterministic(state: State): boolean;
+
+    abstract addTransition(source: State, destination: State): Transition;
+
+    abstract deleteTransition(transition: Transition): void;
 
     isDeterministic(): boolean {
-        return ![...this.states].some((state) => !state.isDeterministic());
-    }
-
-    toJSON(): Object {
-        return {
-            title: this.title,
-            description: this.description,
-            circleRadius: State.circleRadius,
-            startState: this.start?.id,
-            finalStates: [...this.finals].map((s) => s.id),
-            states: [...this.states],
-        };
+        return ![...this.getAllStates()].some((state) => !this.isStateDeterministic(state));
     }
 }

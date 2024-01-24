@@ -1,7 +1,6 @@
-import { Edge } from "../../endlicherautomat/edge";
 import { State } from "../../endlicherautomat/state";
+import { Transition } from "../../endlicherautomat/stateconnections/Transition";
 import { StatemachineviewComponent } from "../statemachineview.component";
-import { TransitionEditDialogComponent } from "../transition-edit-dialog/transition-edit-dialog.component";
 import { DefaultState } from "./defaultstate";
 import { StateMachineViewState } from "./statemachineviewstate";
 
@@ -9,7 +8,7 @@ export class TransitionNewStateEditState extends StateMachineViewState {
 
     transitionFrom: State;
     transitionTo: State;
-    dummyTransition: Edge;
+    dummyTransition: Transition;
   
     constructor(
       statemachineviewComponent: StatemachineviewComponent, 
@@ -19,20 +18,18 @@ export class TransitionNewStateEditState extends StateMachineViewState {
       super(statemachineviewComponent);
       this.transitionFrom = transitionFrom;
       this.transitionTo = transitionTo;
-      this.dummyTransition = this.statemachineviewComponent.turingmachineService.addDummyTransition(transitionFrom, transitionTo);
+      this.dummyTransition = this.statemachineviewComponent.statemachineService.addDummyTransition(transitionFrom, transitionTo);
   
-      const dialogRef = this.statemachineviewComponent.dialog.open(TransitionEditDialogComponent, {
-        width: '545px',
-        autoFocus: false,
-        data: {
-          sourceState: this.transitionFrom,
-          destinationState: this.transitionTo,
-        }
-      });
+      const dialogRef = this.statemachineviewComponent
+      .statemachineService
+      .openTransitionEditDialog(
+        this.transitionFrom,
+        this.transitionTo,
+        this.statemachineviewComponent.dialog);
   
       dialogRef.afterClosed().subscribe(result => {
         if (!result) {
-          this.statemachineviewComponent.turingmachineService.deleteState(this.transitionTo);
+          this.statemachineviewComponent.statemachineService.deleteState(this.transitionTo);
         }
         this.transitionFrom.outerCircleHovered = false;
         this.transitionTo.outerCircleHovered = false;

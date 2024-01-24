@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { TuringState } from './core/endlicherautomat/turingstate';
-import { Point } from './core/endlicherautomat/drawingprimitives/Point';
-import { StateConnection } from './core/endlicherautomat/stateconnections/StateConnection';
-import { StateConnectionFactory } from './core/endlicherautomat/stateconnections/StateConnectionFactory';
 import { StateMachine } from './core/endlicherautomat/statemachine';
-import { Direction, TuringEdge } from './core/endlicherautomat/turingedges';
 import { State } from './core/endlicherautomat/state';
-import { Edge } from './core/endlicherautomat/edge';
+import { StateEditDialogComponent } from './core/statemachineview/state-edit-dialog/state-edit-dialog.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TransitionEditDialogComponent } from './core/statemachineview/transition-edit-dialog/transition-edit-dialog.component';
+import { Transition } from './core/endlicherautomat/stateconnections/Transition';
 
 @Injectable({
   providedIn: 'root'
@@ -17,40 +15,40 @@ export class EndlicherautomatService {
 
   constructor() { }
 
-  get states(): Set<any> {
-    return new Set<any>();
+  get states(): State[] {
+    return this.stateMachine.getAllStates();
   }
 
-  isFinalState(state: any): boolean {
-    return true;
+  isFinalState(state: State): boolean {
+    return this.stateMachine.isFinalState(state);
   }
 
-  isStartState(state: any): boolean {
-    return true;
+  isStartState(state: State): boolean {
+    return this.stateMachine.isStartState(state);
   }
 
-  isActiveState(state: any): boolean {
-    return true;
+  isActiveState(state: State): boolean {
+    return false;
   }
 
-  addState(x: number, y: number): TuringState {
-    return new TuringState(new Point(x, y));
+  addState(x: number, y: number): State {
+    return this.stateMachine.addState(x, y);
   }
 
-  deleteState(state: any): void {
-
+  deleteState(state: State): void {
+    this.stateMachine.deleteState(state);
   }
 
-  addTransition(from: State, to: State, symbol: string): TuringState {
-      return new TuringState(new Point(0, 0));
+  addTransition(source: State, destination: State): Transition {
+      return this.stateMachine.addTransition(source, destination);
   }
 
-  addDummyTransition(from: State, to: State): Edge {
-    return new TuringEdge(from as TuringState, to as TuringState, '', '', Direction.None);
+  addDummyTransition(source: State, destination: State): Transition {
+    throw "Not Implemented";
   }
 
-  get stateConnections(): StateConnection[] {
-    return StateConnectionFactory.makeStateConnections(this.stateMachine);
+  get transitions(): Transition[] {
+    return this.stateMachine.getAllTransitions();
   }
 
   toggleTestcaseView(): void {
@@ -63,5 +61,15 @@ export class EndlicherautomatService {
 
   get showDeterministicStates(): boolean {
     return true;
+  }
+
+  openStateEditDialog(state: State, dialog: MatDialog): MatDialogRef<any, any> {
+    return state.openEditDialog(dialog);
+  }
+
+  openTransitionEditDialog(source: State, destination: State, dialog: MatDialog): MatDialogRef<any, any> {
+    // TODO: - Find transition for source and destination.
+    throw "Not implemented"
+    //return transition.openTransitionDialog(dialog);
   }
 }
