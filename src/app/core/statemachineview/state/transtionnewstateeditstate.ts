@@ -18,7 +18,7 @@ export class TransitionNewStateEditState extends StateMachineViewState {
       super(statemachineviewComponent);
       this.transitionFrom = transitionFrom;
       this.transitionTo = transitionTo;
-      this.dummyTransition = this.statemachineviewComponent.statemachineService.addDummyTransition(transitionFrom, transitionTo);
+      this.dummyTransition = this.statemachineviewComponent.statemachineService.addTransition(transitionFrom, transitionTo);
   
       const dialogRef = this.statemachineviewComponent
       .statemachineService
@@ -34,7 +34,9 @@ export class TransitionNewStateEditState extends StateMachineViewState {
         this.transitionFrom.outerCircleHovered = false;
         this.transitionTo.outerCircleHovered = false;
         this.transitionTo.outerCircleHovered = false;
-        this.dummyTransition.delete();
+        if (this.dummyTransition.isEmpty()) {
+          this.statemachineviewComponent.statemachineService.removeTransition(this.dummyTransition);
+        }
         this.statemachineviewComponent.changeState(new DefaultState(this.statemachineviewComponent));
       });
     }

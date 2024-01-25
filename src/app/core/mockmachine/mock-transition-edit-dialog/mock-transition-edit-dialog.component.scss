@@ -1,0 +1,53 @@
+.add-button {
+    color: white;
+    background-color: green;
+    width: 100%;
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.input-field {
+    width: 31%;
+}
+
+table input, table select {
+    text-align: center;
+    width: 32px;
+    font-size: large;
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+*:not(.mat-icon):not(h1):not(th.mat-header-cell) {
+    font-size: large;
+}
+
+.action-buttons {
+    margin-bottom: 0px;
+}
+
+td, th {
+    text-align: center;
+}
+
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+    padding-left: 0px;
+}
+
+table select {
+    height: 27px;
+    width: 40px;
+}
+
+th.mat-header-cell {
+    font-size: 13px !important;
+    text-align: center !important;
+}
+

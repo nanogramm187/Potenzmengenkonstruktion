@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>
+    Übergang von {{ data.source.name }} nach
+    {{ data.destination.name }} bearbeiten
+</h1>
+
+<mat-form-field>
+    <mat-label>Bedingung</mat-label>
+    <input matInput [(ngModel)]="symbol" />
+</mat-form-field>
+
+<div *ngFor="let mySymbol of data.symbols;">
+    {{ mySymbol }}
+</div>
+
+<button mat-icon-button mat-dialog-close (click)="add()">
+    <mat-icon>add</mat-icon>
+</button>
+
+<button mat-icon-button mat-dialog-close (click)="close()">
+    <mat-icon>close</mat-icon>
+</button>

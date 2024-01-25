@@ -1,4 +1,10 @@
+import { Point } from "../drawingprimitives/Point";
+import { Transition } from "./Transition";
+
 export class Label {
+
+    constructor(public text: string = "", transition: Transition) { }
+
     private canvas: HTMLCanvasElement = document.createElement('canvas');
     private ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')!;
     public fontSize: number = 16; 
@@ -16,7 +22,7 @@ export class Label {
     //   }
 
 
-    // getTextPosition(transition: StateConnection, id: number): Point {
+    // getTextPosition(): Point {
     //     // Setzen des Schriftstils für den Canvas-Kontext
     //     this.ctx.font = `${this.fontSize}px ${this.fontFamily}`;
         

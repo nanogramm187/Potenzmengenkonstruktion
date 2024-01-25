@@ -19,7 +19,7 @@ export class TransitionToState extends StateMachineViewState {
       super(statemachineviewComponent);
       this.transitionFrom = transitionFrom;
       this.transitionTo = transitionTo;
-      this.dummyTransition = this.statemachineviewComponent.statemachineService.addDummyTransition(transitionFrom, transitionTo);
+      this.dummyTransition = this.statemachineviewComponent.statemachineService.addTransition(transitionFrom, transitionTo);
     }
   
     override onMouseUp(event: MouseEvent): void {
@@ -28,7 +28,9 @@ export class TransitionToState extends StateMachineViewState {
     }
   
     override onCircleLeave(event: MouseEvent, state: State): void {
-      this.dummyTransition.delete();
+      if (this.dummyTransition.isEmpty()) {
+        this.statemachineviewComponent.statemachineService.removeTransition(this.dummyTransition);
+      }
       const transitionState = new TransitionFromState(this.statemachineviewComponent, this.transitionFrom);
       this.statemachineviewComponent.changeState(transitionState);
     }

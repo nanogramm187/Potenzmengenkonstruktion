@@ -31,7 +31,9 @@ export class TransitionEditState extends StateMachineViewState {
         this.statemachineviewComponent.dialog);
 
     dialogRef.afterClosed().subscribe(result => {
-      this.dummyTransition.delete();
+      if (this.dummyTransition.isEmpty()) {
+        this.statemachineviewComponent.statemachineService.removeTransition(this.dummyTransition);
+      }
       this.statemachineviewComponent.changeState(transitionState);
       this.transitionFrom.outerCircleHovered = false;
       this.transitionTo.outerCircleHovered = false;

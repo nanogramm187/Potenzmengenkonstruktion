@@ -1,5 +1,6 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Point } from './drawingprimitives/Point';
+import { Transition } from './stateconnections/Transition';
 
 export abstract class State {
 
@@ -12,6 +13,8 @@ export abstract class State {
     innerCircleHovered: boolean = false;
 
     outerCircleHovered: boolean = false;
+
+    transitions: Set<Transition> = new Set();
 
     get x(): number {
         return this.origin.x;
@@ -41,18 +44,10 @@ export abstract class State {
         return State.circleRadius / 2;
     }
 
-    constructor(origin: Point, id?: number, name?: string) {
-        let newID = id ?? 0;
-
-        while (this.ids.has(newID)) {
-            newID++;
-        }
-
-        this.id = newID;
-        this.addID(newID);
-
+    constructor(origin: Point) {
         this.origin = origin;
-        this.name = name ?? 'S' + this.id;
+        this.name = "";
+        this.id = 0;
     }
 
     getConnectionPointToState(destination: State): Point {
@@ -62,11 +57,11 @@ export abstract class State {
         );
     }
 
-    get ids(): Set<number> {
-        return new Set();
+    hasConnectionTo(state: State): boolean {
+        return [...this.transitions].some((transition) => {
+            return transition.destination === state;
+        });
     }
-
-    addID(id: number) {}
 
     toJSON(): any {
         return {

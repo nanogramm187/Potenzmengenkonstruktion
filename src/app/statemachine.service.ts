@@ -38,8 +38,8 @@ export class StatemachineService {
     return this.stateMachine.addTransition(source, destination);
   }
 
-  addDummyTransition(source: State, destination: State): Transition {
-    return this.stateMachine.addDummyTransition(source, destination);
+  removeTransition(transition: Transition): void {
+    return this.stateMachine.deleteTransition(transition);
   }
 
   get transitions(): Transition[] {
@@ -63,7 +63,7 @@ export class StatemachineService {
   }
 
   openTransitionEditDialog(source: State, destination: State, dialog: MatDialog): MatDialogRef<any, any> {
-    const transition = this.stateMachine.getTransition(source, destination);
+    const transition = this.stateMachine.addTransition(source, destination);
     return transition.openTransitionDialog(dialog);
   }
 
