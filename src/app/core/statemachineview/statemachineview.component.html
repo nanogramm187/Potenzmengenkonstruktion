@@ -1,7 +1,3 @@
-<!-- <div class="sticky-header" width="100%" *ngFor="let content of getTapeContent()">
-    <app-tape [content]="content" [animate]="animate"></app-tape>
-</div> -->
-
 <svg id="svg-field" #svgField>
 
     <marker
@@ -133,19 +129,17 @@
             (contextmenu)="editTransition(transition, $event)"
         ></path>
 
-        <g [attr.transform]="getTranslate(transition, i)">
-            <text
+        <text
             *ngFor="let label of labels(transition); let j = index"
-            x="0"
-            [attr.y]="j * label.fontSize"
-            font-family="Arial"
-            [attr.font-size]="label.fontSize"
+            [attr.x]="label.x"
+            [attr.y]="label.y"
+            [attr.font-family]="transition.fontFamily"
+            [attr.font-size]="transition.fontSize"
             dominant-baseline="middle"
             text-anchor="middle"
             >
-            {{ label }}
-        </text>
-        </g>
+            {{ label.text }}
+            </text>
     </g>
 </svg>
 

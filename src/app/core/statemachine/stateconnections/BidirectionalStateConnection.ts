@@ -1,27 +1,29 @@
 import { Arrow } from "../drawingprimitives/Arrow";
 import { BezierCurve } from "../drawingprimitives/BezierCurve";
 import { Line } from "../drawingprimitives/Line";
+import { Point } from "../drawingprimitives/Point";
 import { State } from "../state";
 import { StateConnection } from "./StateConnection";
 
 export class BidirectionalStateConnection extends StateConnection {
+    
     private get controlPointDistance(): number {
         return State.circleRadius * 2;
     }
 
-    private connectionCurve(source: State, destination: State): BezierCurve {
+    private connectionCurve(): BezierCurve {
         const connectionLine = new Line(
-            source.origin,
-            destination.origin
+            this.source.origin,
+            this.destination.origin
         );
         const controlPoint = connectionLine.getBezierControlPoint(
             this.controlPointDistance
         );
-        const sourcePoint = source.origin.moveToPoint(
+        const sourcePoint = this.source.origin.moveToPoint(
             controlPoint,
             State.circleRadius
         );
-        let destinationPoint = destination.origin.moveToPoint(
+        let destinationPoint = this.destination.origin.moveToPoint(
             controlPoint,
             State.circleRadius
         );
@@ -32,13 +34,13 @@ export class BidirectionalStateConnection extends StateConnection {
         return new BezierCurve(sourcePoint, controlPoint, destinationPoint);
     }
 
-    override path(source: State, destination: State): string {
-        return this.connectionCurve(source, destination).path();
+    override path(): string {
+        return this.connectionCurve().path();
     }
 
-    // override getLabelPosition(width: number, height: number): Point {
-    //     return this.connectionCurve
-    //         .pointSecant(0.5)
-    //         .getRectangleCenterPoint(width, height);
-    // }
+    override calculateRectanglePlacementAbovePath(width: number, height: number): Point {
+        return this.connectionCurve()
+            .pointSecant(0.5)
+            .getRectangleCenterPoint(width, height);
+    }
 }

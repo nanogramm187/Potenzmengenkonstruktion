@@ -4,18 +4,19 @@ import { Transition } from "../statemachine/stateconnections/Transition";
 import { MockTransitionEditDialogComponent } from "./mock-transition-edit-dialog/mock-transition-edit-dialog.component";
 
 export class MockTransition extends Transition {
+    
 
     symbols: string[] = [];
 
     override isEmpty(): boolean {
         return this.symbols.length === 0;
     }
-
-    override labels(): Label[] {
-        return this.symbols.map(symbol => new Label(symbol, this));
-    }
     
     override openTransitionDialog(dialog: MatDialog): MatDialogRef<any, any> {
         return dialog.open(MockTransitionEditDialogComponent, { width: '250px', data: this });
+    }
+
+    override displayText(): string[] {
+        return this.symbols;
     }
 }
