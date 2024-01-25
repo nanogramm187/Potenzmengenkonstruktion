@@ -1,0 +1,3 @@
+[submodule "statemachine"]
+	path = statemachine
+	url = https://git.w-hs.de/pi-lab/thi/statemachine
