@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MockState } from '../MockState';
 import { MatIcon } from '@angular/material/icon';
-import { StatemachineService } from '../../../statemachine.service';
+import { StatemachineService } from '../../../../statemachine/src/lib/statemachine.service';
 
 @Component({
   selector: 'app-mock-state-edit-dialog',

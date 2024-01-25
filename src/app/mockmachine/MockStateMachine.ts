@@ -1,7 +1,7 @@
-import { Point } from "../statemachine/drawingprimitives/Point";
-import { State } from "../statemachine/state";
-import { Transition } from "../statemachine/stateconnections/Transition";
-import { StateMachine } from "../statemachine/statemachine";
+import { Point } from "../../../statemachine/src/lib/statemachine/drawingprimitives/Point";
+import { State } from "../../../statemachine/src/lib/statemachine/state";
+import { Transition } from "../../../statemachine/src/lib/statemachine/stateconnections/Transition";
+import { StateMachine } from "../../../statemachine/src/lib/statemachine/statemachine";
 import { MockState } from "./MockState";
 import { MockTransition } from "./MockTransition";
 

@@ -1,18 +1,16 @@
 import { Injectable } from '@angular/core';
-import { StateMachine } from './core/statemachine/statemachine';
-import { State } from './core/statemachine/state';
+import { StateMachine } from './statemachine/statemachine';
+import { State } from './statemachine/state';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Transition } from './core/statemachine/stateconnections/Transition';
-import { MockStateMachine } from './core/mockmachine/MockStateMachine';
+import { Transition } from './statemachine/stateconnections/Transition';
+import { MockStateMachine } from '../../../src/app/mockmachine/MockStateMachine';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StatemachineService {
 
-  stateMachine: StateMachine = new MockStateMachine();
-
-  constructor() { }
+  public stateMachine!: StateMachine;
 
   get states(): State[] {
     return this.stateMachine.getAllStates();

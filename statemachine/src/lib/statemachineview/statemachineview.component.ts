@@ -3,7 +3,7 @@ import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@an
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 // Service imports
-import { StatemachineService } from '../../statemachine.service';
+import { StatemachineService } from '../statemachine.service';
 // Model and utility imports
 import { Arrow } from '../statemachine/drawingprimitives/Arrow';
 import { State } from '../statemachine/state';

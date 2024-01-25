@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./header/header.component";
 import { ToolbarComponent } from "./toolbar/toolbar.component";
-import { CoreComponent } from "./core/core.component";
 import { FooterComponent } from "./footer/footer.component";
+import { CoreComponent } from '../../statemachine/src/public-api'; 
+import { StatemachineService } from '../../statemachine/src/lib/statemachine.service';
+import { MockStateMachine } from './mockmachine/MockStateMachine';
 
 @Component({
     selector: 'app-root',
@@ -15,4 +17,9 @@ import { FooterComponent } from "./footer/footer.component";
 })
 export class AppComponent {
   title = 'endlicherautomat';
+
+  constructor(public service: StatemachineService) {
+    service.stateMachine = new MockStateMachine();
+  }
+
 }
