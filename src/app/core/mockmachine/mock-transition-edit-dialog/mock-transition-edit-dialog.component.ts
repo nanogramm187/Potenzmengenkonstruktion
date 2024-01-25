@@ -21,6 +21,7 @@ export class MockTransitionEditDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<MockTransitionEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MockTransition) {
+      this.dialogRef.backdropClick().subscribe(() => this.close());
   }
 
   add(): void {
@@ -29,6 +30,6 @@ export class MockTransitionEditDialogComponent {
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.data.isEmpty());
   }
 }

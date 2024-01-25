@@ -1,4 +1,3 @@
-import { transition } from "@angular/animations";
 import { State } from "./state";
 import { Transition } from "./stateconnections/Transition";
 
@@ -32,7 +31,7 @@ export abstract class StateMachine {
         newState.id = this.makeId();
         newState.name = `q${newState.id}`;
 
-        this.allStates = new Set([...this.allStates, newState]);
+        this.allStates.add(newState);
 
         return newState;
     }
@@ -82,7 +81,7 @@ export abstract class StateMachine {
         // If transition does not exist, create it.
         if (transition == undefined) {
             transition = this.makeTransition(source, destination);
-            source.transitions = new Set([...source.transitions, transition]);
+            source.transitions.add(transition);
         }
 
         return transition;

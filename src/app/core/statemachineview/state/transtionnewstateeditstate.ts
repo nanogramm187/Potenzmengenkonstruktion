@@ -27,8 +27,8 @@ export class TransitionNewStateEditState extends StateMachineViewState {
         this.transitionTo,
         this.statemachineviewComponent.dialog);
   
-      dialogRef.afterClosed().subscribe(result => {
-        if (!result) {
+      dialogRef.afterClosed().subscribe(transitionIsEmpty => {
+        if (transitionIsEmpty) {
           this.statemachineviewComponent.statemachineService.deleteState(this.transitionTo);
         }
         this.transitionFrom.outerCircleHovered = false;
