@@ -1,11 +1,9 @@
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Label } from "../../../statemachine/src/lib/statemachine/stateconnections/Label";
 import { Transition } from "../../../statemachine/src/lib/statemachine/stateconnections/Transition";
 import { MockTransitionEditDialogComponent } from "./mock-transition-edit-dialog/mock-transition-edit-dialog.component";
 
 export class MockTransition extends Transition {
     
-
     symbols: string[] = [];
 
     override isEmpty(): boolean {
