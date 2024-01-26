@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { HelpDialogComponent } from '../help-dialog/help-dialog.component';
+import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MatIcon, MatMenu, MatMenuTrigger],
+  imports: [MatIcon, MatMenu, MatMenuTrigger, CommonModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })

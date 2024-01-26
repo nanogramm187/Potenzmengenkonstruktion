@@ -5,7 +5,7 @@ import { HeaderComponent } from "./header/header.component";
 import { ToolbarComponent } from "./toolbar/toolbar.component";
 import { FooterComponent } from "./footer/footer.component";
 import { CoreComponent } from '../../statemachine/src/public-api'; 
-import { StatemachineService } from '../../statemachine/src/lib/statemachine.service';
+import { StatemachineService } from '../../statemachine/src/lib/statemachine/statemachine.service';
 import { MockStateMachine } from './mockmachine/MockStateMachine';
 
 @Component({
