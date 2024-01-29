@@ -6,7 +6,7 @@ import { ToolbarComponent } from "./toolbar/toolbar.component";
 import { FooterComponent } from "./footer/footer.component";
 import { CoreComponent } from '../../statemachine/src/public-api'; 
 import { StatemachineService } from '../../statemachine/src/lib/statemachine/statemachine.service';
-import { MockStateMachine } from './mockmachine/MockStateMachine';
+import { EndlicheMachine } from './endlicherautomat/EndlicheMachine';
 
 @Component({
     selector: 'app-root',
@@ -19,7 +19,7 @@ export class AppComponent {
   title = 'endlicherautomat';
 
   constructor(public service: StatemachineService) {
-    service.stateMachine = new MockStateMachine();
+    service.stateMachine = new EndlicheMachine();
   }
 
 }
