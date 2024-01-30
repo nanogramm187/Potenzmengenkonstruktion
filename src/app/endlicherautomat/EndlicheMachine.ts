@@ -4,6 +4,9 @@ import { StateMachine } from "../../../statemachine/src/lib/statemachine/statema
 import { EndlicherState } from "./EndlicherState";
 
 export class EndlicheMachine extends StateMachine {
+
+    static epsilon = "ε";
+
     override makeState(x: number, y: number, id: number): State {
         return new EndlicherState(new Point(x, y), id);
     }
