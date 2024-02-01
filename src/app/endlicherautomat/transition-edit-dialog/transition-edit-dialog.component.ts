@@ -8,11 +8,12 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-transition-edit-dialog',
   standalone: true,
-  imports: [MatIcon, CommonModule, MatFormFieldModule, FormsModule, MatInputModule, MatTableModule, MatDialogModule],
+  imports: [MatButtonModule, MatIcon, CommonModule, MatFormFieldModule, FormsModule, MatInputModule, MatTableModule, MatDialogModule],
   templateUrl: './transition-edit-dialog.component.html',
   styleUrl: './transition-edit-dialog.component.scss'
 })
