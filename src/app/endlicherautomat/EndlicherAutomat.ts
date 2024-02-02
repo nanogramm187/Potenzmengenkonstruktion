@@ -3,7 +3,7 @@ import { State } from "../../../statemachine/src/lib/statemachine/state";
 import { StateMachine } from "../../../statemachine/src/lib/statemachine/statemachine";
 import { EndlicherState } from "./EndlicherState";
 
-export class EndlicheMachine extends StateMachine {
+export class EndlicherAutomat extends StateMachine {
 
     static epsilon = "ε";
 

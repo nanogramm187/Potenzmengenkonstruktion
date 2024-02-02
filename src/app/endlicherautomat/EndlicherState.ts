@@ -1,6 +1,6 @@
 import { State } from "../../../statemachine/src/lib/statemachine/state";
 import { Transition } from "../../../statemachine/src/lib/statemachine/stateconnections/Transition";
-import { EndlicheMachine } from "./EndlicheMachine";
+import { EndlicherAutomat } from "./EndlicherAutomat";
 import { EndlicheTransition } from "./EndlicheTransition";
 
 export class EndlicherState extends State {
@@ -16,7 +16,7 @@ export class EndlicherState extends State {
             const concreteTransition = transition as EndlicheTransition;
             const transitionSymbols = concreteTransition.transitionSymbols;
 
-            if (transitionSymbols.includes(EndlicheMachine.epsilon)) {
+            if (transitionSymbols.includes(EndlicherAutomat.epsilon)) {
                 return false;
             }
 

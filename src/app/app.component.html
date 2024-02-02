@@ -1,4 +1,7 @@
-<app-header></app-header>
+<app-header title="Endlicher Automat"></app-header>
 <app-toolbar></app-toolbar>
-<app-core class="core-component"></app-core>
+<div class="container">
+    <app-core class="item"></app-core>
+    <app-testcase class="item" *ngIf="testCaseViewIsVisible"></app-testcase>
+</div>
 <app-footer></app-footer>

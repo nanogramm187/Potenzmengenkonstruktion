@@ -1,67 +1,12 @@
-.tape-input {
-    border-radius: 5px;
-    border-width: 2px;
-    border-style: solid;
-    box-sizing: border-box;
-    height: 30px;
-    font-size: large;
-  }
-  
-  button.pressed {
-    background-color: #ddd;
-  }
-  
-  input {
-    margin-top: 1px;
-    margin-right: 5px;
-    border: none;
-    height: 30px;
-    font-size: large;
-  }
-  
-  .spacer {
-    flex: 1 1 auto;
-  }
-  
-  .input,
-  .text {
-    padding-left: 5px;
-    border: 1px solid #ccc;
-    font-size: large;
-  }
-  
-  .text {
-    visibility: hidden;
-    white-space: pre;
-  }
-  
-  .detailsContainer {
-    position: relative;
-    margin-right: 8px;
-    min-width: 50px;
-    max-width: max-content;
-  }
-  
-  .detailsInput {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 5px;
-    background-color: transparent;
-  }
-  
-  .toggleTestcaseView {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .toggleTestcaseView img {
-    width: 30px;
-    height: 30px;
-  }
+:host {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
