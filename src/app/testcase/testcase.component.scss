@@ -1,66 +1,65 @@
 .testview {
-    margin: 10px;
-  }
-  
-  .testview > div {
-    padding-top: 10px; /* Abstand von oben */
-    padding-bottom: 10px; /* Abstand von unten */
-  }
-  
-  .notready {
-    font-size: 1.2rem;
-    text-align: center;
-    margin: 5px 5px 5px 5px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 5px;
-    border-color: #778899;
-    margin-left: 10px;
-  }
-  
-  .column2 {
-    display: grid;
-    grid-template-columns: 1fr auto; /* Drei Spalten: für Bandinhalt, Ergebnis und Icons */
-    gap: 10px; /* Abstand zwischen den Elementen */
-  }
-  
-  .header {
-      text-align: left;
-      font-size: 1.2rem;
-      grid-row: 1;
-      grid-column-start: 1;
-      grid-column-end: -1;
-      margin-top: auto;
-      margin-bottom: auto;
-  }
-  
-  .inputField {
-    border-radius: 5px; /* Wert nach Wunsch anpassen */
-    box-shadow: none;
-    outline: none;
-    border-radius: 5px;
-    border-width: 3px;
-    border-style: solid;
-    border-color: red;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-  
-  .accepting {
-    border-color: green;
-  }
-  
-  .firstRow {
-      grid-row: 1;
-  }
-  
-  .firstColumn {
-      grid-column: 1;
-  }
-  
-  .lastColumn {
-      grid-column: -1;
-  }
-  
+  margin: 10px;
+}
+
+.testview > div {
+  padding-top: 10px; /* Abstand von oben */
+  padding-bottom: 10px; /* Abstand von unten */
+}
+
+.notready {
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 5px 5px 5px 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 5px;
+  border-color: #778899;
+  margin-left: 10px;
+}
+
+.column2 {
+  display: grid;
+  grid-template-columns: 1fr auto; /* Drei Spalten: für Bandinhalt, Ergebnis und Icons */
+  gap: 10px; /* Abstand zwischen den Elementen */
+}
+
+.header {
+  text-align: left;
+  font-size: 1.2rem;
+  grid-row: 1;
+  grid-column-start: 1;
+  grid-column-end: -1;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.inputField {
+  border-radius: 5px; /* Wert nach Wunsch anpassen */
+  box-shadow: none;
+  outline: none;
+  border-radius: 5px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: red;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.accepting {
+  border-color: green;
+}
+
+.firstRow {
+  grid-row: 1;
+}
+
+.firstColumn {
+  grid-column: 1;
+}
+
+.lastColumn {
+  grid-column: -1;
+}

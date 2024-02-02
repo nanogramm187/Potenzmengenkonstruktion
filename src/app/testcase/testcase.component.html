@@ -1,7 +1,5 @@
 <div class="testview">
-  <div
-    *ngIf="isDeterministic(); then deterministic; else notdeterministic"
-  ></div>
+  <div *ngIf="isDeterministic(); then deterministic; else notdeterministic"></div>
   <div *ngIf="isStartStateDefined(); then ready; else notready"></div>
 </div>
 
