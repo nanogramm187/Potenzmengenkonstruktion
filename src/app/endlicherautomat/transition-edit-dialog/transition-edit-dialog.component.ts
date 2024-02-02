@@ -52,7 +52,6 @@ export class TransitionEditDialogComponent implements OnInit {
   removeCell(index: number) {
     this.data.transitionSymbols.splice(index, 1);
     this.data.transitionSymbols = [...this.data.transitionSymbols]
-    if (this.data.isEmpty()) { this.data.delete() }
   }
 
   reset() {
