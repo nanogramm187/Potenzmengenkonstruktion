@@ -17,7 +17,8 @@ export class EndlicheTransition extends Transition {
     transitionSymbols: string[] = []
 
     override displayText(): string[] {
-        return [this.transitionSymbols.join(", ")];
+        const result = this.transitionSymbols.join(", ")
+        return result.length ? [result] : []
     }
 
     override openTransitionDialog(dialog: MatDialog): MatDialogRef<any, any> {

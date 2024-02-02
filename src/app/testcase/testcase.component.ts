@@ -7,6 +7,7 @@ import { StatemachineService } from '../../../statemachine/src/lib/statemachine/
 import { Testcase } from './testcase';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { TestcaseService } from './testcase.service';
 
 @Component({
   selector: 'app-testcase',
@@ -23,9 +24,8 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './testcase.component.scss',
 })
 export class TestcaseComponent {
-  private testcases: Testcase[] = [];
-
-  constructor(public service: StatemachineService) {}
+  
+  constructor(public service: StatemachineService, public testcase: TestcaseService) {}
 
   isDeterministic(): boolean {
     return this.service.isDeterministic();
@@ -36,14 +36,14 @@ export class TestcaseComponent {
   }
 
   getTestcases(): Testcase[] {
-    return this.testcases;
+    return this.testcase.testcases;
   }
 
   addAcceptingInput() {
-    this.testcases.push(new Testcase());
+    this.testcase.addAcceptingInput();
   }
 
   removeAcceptingInput(index: number) {
-    this.testcases.splice(index, 1);
+    this.testcase.removeAcceptingInput(index);
   }
 }
