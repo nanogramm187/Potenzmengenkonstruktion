@@ -4,7 +4,7 @@ import { TransitionEditDialogComponent } from "./transition-edit-dialog/transiti
 import { EndlicherState } from "./EndlicherState";
 
 export class EndlicheTransition extends Transition {
-
+    
     override source: EndlicherState;
     override destination: EndlicherState;
 
