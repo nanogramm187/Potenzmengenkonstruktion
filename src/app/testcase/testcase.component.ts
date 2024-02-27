@@ -8,6 +8,7 @@ import { Testcase } from './testcase';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TestcaseService } from './testcase.service';
+import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 
 @Component({
   selector: 'app-testcase',
@@ -25,7 +26,7 @@ import { TestcaseService } from './testcase.service';
 })
 export class TestcaseComponent {
   
-  constructor(public service: StatemachineService, public testcase: TestcaseService) {}
+  constructor(public service: StatemachineService) {}
 
   isDeterministic(): boolean {
     return this.service.isDeterministic();
@@ -35,15 +36,35 @@ export class TestcaseComponent {
     return this.service.isStartStateDefined();
   }
 
-  getTestcases(): Testcase[] {
-    return this.testcase.testcases;
+  get acceptingTestcases(): Testcase[] {
+    return (this.service.stateMachine as EndlicherAutomat).positiveTestcases;
+  }
+
+  set acceptingTestcases(testcases: Testcase[]) {
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases = testcases;
+  }
+
+  get notAcceptingTestcases(): Testcase[] {
+    return (this.service.stateMachine as EndlicherAutomat).negativeTestcases;
+  }
+
+  set notAcceptingTestcases(testcases: Testcase[]) {
+    (this.service.stateMachine as EndlicherAutomat).negativeTestcases = testcases;
   }
 
   addAcceptingInput() {
-    this.testcase.addAcceptingInput();
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.push(new Testcase(this.service.stateMachine as EndlicherAutomat));
   }
 
   removeAcceptingInput(index: number) {
-    this.testcase.removeAcceptingInput(index);
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.splice(index, 1);
+  }
+
+  addNotAcceptingInput() {
+    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.push(new Testcase(this.service.stateMachine as EndlicherAutomat));
+  }
+
+  removeNotAcceptingInput(index: number) {
+    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.splice(index, 1);
   }
 }

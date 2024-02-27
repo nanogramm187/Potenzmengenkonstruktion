@@ -34,7 +34,7 @@
       <mat-icon>add</mat-icon>
     </button>
 
-    <ng-container *ngFor="let item of getTestcases(); let i = index">
+    <ng-container *ngFor="let item of acceptingTestcases; let i = index">
       <input
         [ngClass]="{
           inputField: true,
@@ -53,5 +53,36 @@
         <mat-icon>delete</mat-icon>
       </button>
     </ng-container>
+
+
+    <label class="header">Nicht akzeptierte Eingaben</label>
+    <button
+      class="lastColumn"
+      mat-icon-button
+      (click)="addNotAcceptingInput()"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+
+    <ng-container *ngFor="let item of notAcceptingTestcases; let i = index">
+      <input
+        [ngClass]="{
+          inputField: true,
+          secondColumn: true,
+          accepting: !item.isAccepting()
+        }"
+        type="text"
+        [(ngModel)]="item.input"
+      />
+
+      <button
+        mat-icon-button
+        class="lastColumn"
+        (click)="removeNotAcceptingInput(i)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </ng-container>
+
   </div>
 </ng-template>
