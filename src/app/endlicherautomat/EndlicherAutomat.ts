@@ -7,9 +7,6 @@ import { EndlicherState } from "./EndlicherState";
 
 export class EndlicherAutomat extends StateMachine {
 
-    title = "";
-    description = "";
-
     positiveTestcases: Testcase[] = [];
     negativeTestcases: Testcase[] = [];
 
