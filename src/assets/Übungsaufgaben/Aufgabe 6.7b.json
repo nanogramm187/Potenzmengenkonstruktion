@@ -1,0 +1,1 @@
+{"finalStates":[],"states":[{"origin":{"y":50,"x":100},"name":"S0","id":0,"transitions":[]}],"description":"Zahlen ohne führende Nullen vor dem Komma.","title":"Aufgabe 6.7b","startState":0,"positiveTestcases":[{"input":"0.001"}],"negativeTestcases":[{"input":"00.1"},{"input":"010.1"}]}

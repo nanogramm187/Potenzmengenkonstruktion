@@ -37,17 +37,25 @@ export class EndlicherState extends State {
         return true;
     }
 
-    private move(c: string): EndlicherState[] {
+    move(c: string): EndlicherState[] {
         return this.transitions
         .filter((transition) => transition.includesSymbol(c))
         .map((transition) => transition.destination)
     }
 
-    private eClosure(s: EndlicherState): EndlicherState[] {
-        let result = [s];
+    static move2(s: EndlicherState[], c: string): Set<EndlicherState> {
+        let result = new Set<EndlicherState>();
+        for (const t of s) {
+            result = new Set([...result, ...t.move(c)]);
+        }
+        return result;
+    }
+
+    eClosure(): EndlicherState[] {
+        let result: EndlicherState[] = [this];
         let index = 0;
         while (index < result.length) {
-            let newElements = result[index].move('ε');
+            const newElements = result[index].move('ε');
             for (const element of newElements) {
                 if (!result.includes(element)) {
                     result.push(element);
@@ -56,5 +64,28 @@ export class EndlicherState extends State {
             index = index + 1;
         }
         return result;
+    }
+
+    static eClosure2(s: Set<EndlicherState>): EndlicherState[] {
+        let result = [...s];
+        let index = 0;
+        while (index < result.length) {
+            let newElements = result[index].eClosure();
+            for (const element of newElements) {
+                if (!result.some((e) => e == element)) {
+                    result.push(element);
+                }
+            }
+            index = index + 1;
+        }
+        return result;
+    }
+
+    override toJSON(): Object {
+        return {
+            id: this.id,
+            origin: this.origin,
+            transitions: this.transitions
+        }
     }
 }

@@ -28,4 +28,11 @@ export class EndlicheTransition extends Transition {
     includesSymbol(symbol: string): boolean {
         return this.transitionSymbols.includes(symbol);
     }
+
+    override toJSON(): Object {
+        return {
+            destination: this.destination.id,
+            transitionSymbols: this.transitionSymbols
+        }
+    }
 }

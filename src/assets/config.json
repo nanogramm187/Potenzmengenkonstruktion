@@ -1,0 +1,17 @@
+{
+    "Vorlesungsbeispiele": [
+        { "filename": "DFA_AnzahlEinsenGerade" },
+        { "filename": "DFA_DrittletztesZeichen0"},
+        { "filename": "DFA_ganzeZahlen"},
+        { "filename": "NFA_DrittletztesZeichen0"},
+        { "filename": "NFA_Wort_endet_mit_abba"}
+    ],
+    "Übungsaufgaben": [
+        { "filename": "Aufgabe 6.1"},
+        { "filename": "Aufgabe 6.2"},
+        { "filename": "Aufgabe 6.5"},
+        { "filename": "Aufgabe 6.7b"},
+        { "filename": "Aufgabe 6.8"},
+        { "filename": "Aufgabe 7.2c"}
+    ]
+}
