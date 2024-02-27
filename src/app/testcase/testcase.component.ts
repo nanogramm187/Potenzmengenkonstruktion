@@ -28,6 +28,10 @@ export class TestcaseComponent {
   
   constructor(public service: StatemachineService) {}
 
+  get stateMachine(): EndlicherAutomat {
+    return this.service.stateMachine as EndlicherAutomat;
+  }
+
   isDeterministic(): boolean {
     return this.service.isDeterministic();
   }
@@ -67,4 +71,48 @@ export class TestcaseComponent {
   removeNotAcceptingInput(index: number) {
     (this.service.stateMachine as EndlicherAutomat).negativeTestcases.splice(index, 1);
   }
+
+  getAcceptedWordsCount() {
+    let acceptedWordsCount = 0;
+    this.stateMachine.positiveTestcases.forEach((testcase) => {
+        if (testcase.isAccepting()) {
+            acceptedWordsCount++;
+        }
+    });
+    this.stateMachine.negativeTestcases.forEach((testcase) => {
+        if (!testcase.isAccepting()) {
+            acceptedWordsCount++;
+        }
+    });
+    return acceptedWordsCount;
+}
+
+getWordsCount() {
+    return (
+        this.stateMachine.positiveTestcases.length +
+        this.stateMachine.negativeTestcases.length
+    );
+}
+
+getAcceptedWordsPercentage() {
+    return !isNaN(
+        (this.getAcceptedWordsCount() / this.getWordsCount()) * 100
+    )
+        ? (
+              (this.getAcceptedWordsCount() / this.getWordsCount()) *
+              100
+          ).toFixed(1)
+        : '0.0';
+}
+
+  getAcceptedWordsDivColour() {
+    let color: string = 'grey';
+    if (this.getWordsCount() && this.stateMachine.startState) {
+        color = 'red';
+        if (this.getWordsCount() == this.getAcceptedWordsCount()) {
+            color = 'green';
+        }
+    }
+    return color;
+}
 }

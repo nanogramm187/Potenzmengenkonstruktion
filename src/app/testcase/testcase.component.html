@@ -1,6 +1,5 @@
 <div class="testview">
   <div *ngIf="isDeterministic(); then deterministic; else notdeterministic"></div>
-  <div *ngIf="isStartStateDefined(); then ready; else notready"></div>
 </div>
 
 <ng-template #deterministic>
@@ -19,11 +18,23 @@
   </mat-checkbox>
 </ng-template>
 
-<ng-template #notready>
-  <div class="notready">Startzustand fehlt</div>
-</ng-template>
+  <div
+        *ngIf="this.service.stateMachine.startState != undefined"
+        id="testsSuccessRate"
+        [ngStyle]="{ 'border-color': getAcceptedWordsDivColour() }"
+    >
+        Testfälle: {{ getAcceptedWordsCount() }}/{{ getWordsCount() }} ({{
+            getAcceptedWordsPercentage()
+        }}%)
+    </div>
+    <div
+        *ngIf="this.service.stateMachine.startState == undefined"
+        id="testsSuccessRate"
+        [ngStyle]="{ 'border-color': getAcceptedWordsDivColour() }"
+    >
+        Testfälle: Kein Startzustand
+    </div>
 
-<ng-template #ready>
   <div class="column2">
     <label class="header">Akzeptierte Eingaben</label>
     <button
@@ -85,4 +96,4 @@
     </ng-container>
 
   </div>
-</ng-template>
+
