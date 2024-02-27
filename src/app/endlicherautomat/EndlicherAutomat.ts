@@ -105,6 +105,7 @@ export class EndlicherAutomat extends StateMachine {
         // Create all states
         for (const state of object.states) {
             const newState = automata.makeState(state.origin.x, state.origin.y, state.id)
+            newState.name = state.name;
             automata.allStates.push(newState);
             states.set(state.id, newState);
         }
