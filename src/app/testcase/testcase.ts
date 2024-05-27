@@ -9,7 +9,7 @@ export class Testcase {
     }
 
     isAccepting(): boolean {
-        return this.automat.isAcceptingWord(this.input).isAccepting!;;
+        return this.automat.isAcceptingWord(this.input).isAccepting!;
     }
 
     toJSON(): Object {

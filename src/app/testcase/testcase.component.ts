@@ -7,7 +7,6 @@ import { StatemachineService } from '../../../statemachine/src/lib/statemachine/
 import { Testcase } from './testcase';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TestcaseService } from './testcase.service';
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 
 @Component({
