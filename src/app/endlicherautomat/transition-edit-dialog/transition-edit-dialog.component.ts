@@ -21,6 +21,8 @@ export class TransitionEditDialogComponent implements OnInit {
 
   newSymbol = '';
 
+  displayedColumns: string[] = ['symbol', 'actions'];
+
   private get firstField(): HTMLElement | null  {
     return document.getElementById('modalinput');
   }
