@@ -1,70 +1,26 @@
-<h1 mat-dialog-title>
-    Übergang von {{ data.source.name }} nach
-    {{ data.destination.name }} bearbeiten
-</h1>
-
-<div mat-dialog-content>
-    <form class="input-container">
-        <!-- Eingabesymbol -->
-        <mat-form-field>
-            <input
-                #firstField
-                id="transition-symbol"
-                matInput
-                type="text"
-                autocomplete="off"
-                [(ngModel)]="symbol"
-                maxlength="1"
-                name="transition-symbol"
-                placeholder="Eingabesymbol"
-            />
-        </mat-form-field>
-    </form>
-
-    <button
-        mat-raised-button
-        color="primary"
-        class="add-button"
-        [disabled]="symbol.length == 0"
-        (click)="addSymbol()"
-        >
-        <mat-icon>add</mat-icon>
-        Hinzufügen
-    </button>
-
-    <div>
-        <table mat-table [dataSource]="data.transitionSymbols">
-            
-            <!-- Übergangssymbol -->
-            <ng-container matColumnDef="transitionSymbol">
-                <th mat-header-cell *matHeaderCellDef>Eingabesymbol</th>
-                <td mat-cell *matCellDef="let symbol; let i = index">
-                    <input type="text" [(ngModel)]="data.transitionSymbols[i]" maxlength="1" placeholder="Enter symbol" />
-                </td>
-            </ng-container>
-    
-            <!-- Löschen Button -->
-            <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let symbol, let i = index">
-                    <button mat-icon-button (click)="removeCell(i)">
-                        <mat-icon class="delete-icon">delete</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
-    
-            <tr mat-header-row *matHeaderRowDef="['transitionSymbol', 'action']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['transitionSymbol', 'action']"></tr>
-        </table>
+<div class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Überschrift</div>
+      <input #modalinput type="text" class="modal-input" placeholder="Eingabesymbol" [(ngModel)]="newSymbol">
+      <button class="modal-button full-width" (click)="addRow()">Hinzufügen</button>
+      <table class="modal-table">
+        <thead>
+          <tr>
+            <th>Eingabesymbol</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of data.transitionSymbols; let i = index">
+            <td><input type="text" class="modal-input" [(ngModel)]="data.transitionSymbols[i]"></td>
+            <td><button class="modal-button" (click)="removeRow(i)">Löschen</button></td>
+          </tr>
+          <tr *ngIf="data.transitionSymbols.length === 0" class="placeholder-row">
+            <td><input type="text" class="modal-input placeholder" disabled></td>
+            <td><button class="modal-button placeholder" disabled>Löschen</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="modal-button full-width" (click)="closeModal()">Okay</button>
     </div>
-    
-    <div class="action-buttons" mat-dialog-actions>
-        <button
-            class="button-ok"
-            mat-stroked-button
-            (click)="close()"
-        >
-            Ok
-        </button>
-    </div>
-</div>
+  </div>
