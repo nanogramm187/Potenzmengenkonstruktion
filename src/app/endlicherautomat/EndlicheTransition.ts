@@ -22,7 +22,7 @@ export class EndlicheTransition extends Transition {
     }
 
     override openTransitionDialog(dialog: MatDialog): MatDialogRef<any, any> {
-        return dialog.open(TransitionEditDialogComponent, { width: '250px', data: this });
+        return dialog.open(TransitionEditDialogComponent, { data: this });
     }
 
     includesSymbol(symbol: string): boolean {

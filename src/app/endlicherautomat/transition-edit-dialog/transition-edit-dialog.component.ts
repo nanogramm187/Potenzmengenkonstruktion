@@ -19,19 +19,21 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class TransitionEditDialogComponent implements OnInit {
 
-  symbol: string = '';
+  newSymbol = '';
+
+  displayedColumns: string[] = ['symbol', 'actions'];
 
   private get firstField(): HTMLElement | null  {
-    return document.getElementById('transition-symbol');
+    return document.getElementById('modalinput');
   }
 
   constructor(
     public dialogRef: MatDialogRef<TransitionEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EndlicheTransition) {
-    this.dialogRef.backdropClick().subscribe(() => this.close());
+    this.dialogRef.backdropClick().subscribe(() => this.closeModal());
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && this.symbol.length > 0) {
-        this.addSymbol();
+      if (e.key === 'Enter' && this.newSymbol.length > 0) {
+        this.addRow();
         e.preventDefault();
       }
     });
@@ -41,25 +43,25 @@ export class TransitionEditDialogComponent implements OnInit {
     this.firstField?.focus();
   }
 
-  addSymbol() {
-    if (this.symbol == '') {
+  addRow() {
+    if (this.newSymbol == '') {
       return;
     }
-    this.data.transitionSymbols = [...this.data.transitionSymbols, this.symbol]
+    this.data.transitionSymbols = [...this.data.transitionSymbols, this.newSymbol]
     this.reset();
   }
 
-  removeCell(index: number) {
+  removeRow(index: number) {
     this.data.transitionSymbols.splice(index, 1);
     this.data.transitionSymbols = [...this.data.transitionSymbols]
   }
 
   reset() {
-    this.symbol = '';
+    this.newSymbol = '';
     this.firstField?.focus();
   }
 
-  close() {
+  closeModal() {
     this.dialogRef.close(this.data.isEmpty());
   }
 }

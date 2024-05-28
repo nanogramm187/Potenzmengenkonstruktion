@@ -8,14 +8,13 @@ import { CoreComponent } from '../../statemachine/src/public-api';
 import { StatemachineService } from '../../statemachine/src/lib/statemachine/statemachine.service';
 import { EndlicherAutomat } from './endlicherautomat/EndlicherAutomat';
 import { TestcaseComponent } from './testcase/testcase.component';
-import { TapeComponent } from './tape/tape.component';
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
-    imports: [TapeComponent, CommonModule, RouterOutlet, HeaderComponent, ToolbarComponent, CoreComponent, FooterComponent, TestcaseComponent]
+    imports: [CommonModule, RouterOutlet, HeaderComponent, ToolbarComponent, CoreComponent, FooterComponent, TestcaseComponent]
 })
 export class AppComponent {
   title = 'endlicherautomat';

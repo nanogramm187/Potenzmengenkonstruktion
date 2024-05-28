@@ -1,53 +1,66 @@
-.add-button {
-    color: white;
-    background-color: green;
-    width: 100%;
-}
-
-.button-ok {
-    width: 100%;
-}
-
-.input-container {
+.modal-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
+    width: fit-content; /* Modal passt sich der Größe des Inhalts an */
+    max-width: 100%; /* Sicherstellen, dass es nicht über die Bildschirmbreite hinausgeht */
+    box-sizing: border-box;
+  }
+  
+  .title-container {
     width: 100%;
-}
-
-table input, table select {
-    text-align: center;
-    width: 32px;
-    font-size: large;
-}
-
-table {
-    table-layout: fixed;
+  }
+  
+  .title {
+    word-break: break-word; /* Sicherstellen, dass der Text umgebrochen wird */
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%; /* Titel passt sich der maximalen Breite des Containers an */
+  }
+  
+  .full-width {
     width: 100%;
-}
-
-*:not(.mat-icon):not(h1):not(th.mat-header-cell) {
-    font-size: large;
-}
-
-.action-buttons {
-    margin-bottom: 0px;
-}
-
-td, th {
-    text-align: center;
-}
-
-th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
-    padding-left: 0px;
-}
-
-table select {
-    height: 27px;
-    width: 40px;
-}
-
-th.mat-header-cell {
-    font-size: 13px !important;
-    text-align: center !important;
-}
-
+    box-sizing: border-box;
+  }
+  
+  .table-container {
+    max-height: 400px; /* Beschränken Sie die maximale Höhe der Tabelle, um das Layout zu bewahren */
+    overflow-y: auto; /* Ermöglichen Sie das Scrollen innerhalb der Tabelle */
+  }
+  
+  .modal-table {
+    width: 100%; /* Sicherstellen, dass die Tabelle die volle Breite einnimmt */
+    border-collapse: collapse;
+  }
+  
+  .modal-table th, .modal-table td {
+    padding: 8px;
+  }
+  
+  .modal-table th {
+    text-align: left;
+  }
+  
+  .placeholder-row {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    border: none;
+  }
+  
+  .placeholder {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  
+  button.full-width {
+    width: 100%; /* Sicherstellen, dass die Buttons die volle Breite einnehmen */
+    min-height: 36px; /* Mindesthöhe für die Buttons */
+  }
+  
+  .action-button {
+    display: flex;
+    justify-content: center; /* Button-Inhalt zentrieren */
+    align-items: center; /* Button-Inhalt zentrieren */
+    box-sizing: border-box; /* Padding und Border einbeziehen */
+  }
