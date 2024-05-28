@@ -1,0 +1,48 @@
+<svg width="100%" height="10">
+</svg>
+<svg [attr.viewBox]="'0 0 ' + viewboxWidth + ' 80'">
+  <g transform="translate(0, 2)">
+    <g
+      #animatedElement
+      *ngFor="let i of indices;"
+    >
+      <rect
+        [attr.x]="cellXPosition(i)"
+        y="0"
+        [attr.width]="cellWidth"
+        [attr.height]="cellHeight"
+        stroke="black"
+        fill="white"
+      ></rect>
+      <text
+      class="fade-text"
+        [attr.x]="cellMidXPosition(i)"
+        y="35"
+        font-family="Arial"
+        font-size="24"
+        text-anchor="middle"
+      >
+        {{ contentAtIndex(i) }}
+      </text>
+      <text
+        [attr.x]="cellMidXPosition(i)"
+        y="70"
+        font-family="Arial"
+        font-size="14"
+        text-anchor="middle"
+      >
+        {{ tapeNumber(i) }}
+      </text>
+    </g>
+
+    <rect
+      [attr.x]="cellXPosition(centerCellIndex)"
+      y="0"
+      [attr.width]="cellWidth"
+      [attr.height]="cellHeight"
+      stroke="black"
+      stroke-width="4"
+      fill="none"
+    ></rect>
+  </g>
+</svg>

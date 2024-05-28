@@ -1,9 +1,10 @@
 <app-header title="Endlicher Automat"></app-header>
 <app-toolbar></app-toolbar>
 <div class="container">
-    <!-- <div class="item" style="flex-grow: 1;">
-    </div> -->
-    <app-core class="item"></app-core>
+    <div class="item" style="flex-grow: 1;">
+        <app-tape class="sticky-header"></app-tape>
+        <app-core style="height: 100%; flex-grow: 1;"></app-core>
+    </div>
     <app-testcase class="item" *ngIf="testCaseViewIsVisible"></app-testcase>
 </div>
 <app-footer></app-footer>

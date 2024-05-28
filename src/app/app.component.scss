@@ -19,3 +19,13 @@
   background-color: #ddd;
   overflow: scroll;
 }
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px); /* Blurren des Hintergrundes */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
