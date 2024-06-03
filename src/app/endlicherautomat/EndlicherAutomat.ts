@@ -7,6 +7,44 @@ import { EndlicherState } from "./EndlicherState";
 
 export class EndlicherAutomat extends StateMachine {
 
+    set input(input: string) {
+        this._input = input;
+    }
+
+    get input(): string {
+        return this._input.substring(0, this.splitPosition);
+    }
+    
+    splitPosition = 0;
+
+    skipToEnd() {
+        this.splitPosition = this._input.length;
+    }
+
+    nextStep() {
+        if (this.splitPosition < this._input.length) {
+            this.splitPosition += 1;
+        }
+    }
+
+    previousStep() {
+        if (this.splitPosition > 0) {
+            this.splitPosition -= 1;
+        }
+    }
+
+    reset() {
+    this.splitPosition = 0;
+    }
+
+    hasPreviousStep(): boolean {
+    return this.splitPosition > 0;
+    }
+
+    hasNextStep(): boolean {
+    return this.splitPosition < this._input.length;
+    }
+
     positiveTestcases: Testcase[] = [];
     negativeTestcases: Testcase[] = [];
 

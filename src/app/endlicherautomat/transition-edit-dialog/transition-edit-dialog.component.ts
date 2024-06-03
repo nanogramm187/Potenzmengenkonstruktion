@@ -61,6 +61,11 @@ export class TransitionEditDialogComponent implements OnInit {
     this.firstField?.focus();
   }
 
+  okay() {
+    this.addRow();
+    this.closeModal();
+  }
+
   closeModal() {
     this.dialogRef.close(this.data.isEmpty());
   }

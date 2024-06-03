@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { StatemachineService } from '../../../../statemachine/src/lib/statemachine/statemachine.service';
+import { TapeService } from './tape.service';
 
 @Component({
     selector: 'app-tape-controls',
@@ -12,7 +13,7 @@ import { StatemachineService } from '../../../../statemachine/src/lib/statemachi
 })
 export class TapeControlsComponent implements OnInit {
 
-  constructor(public service: StatemachineService) { }
+  constructor(public service: TapeService) { }
 
   ngOnInit(): void {}
 

@@ -35,14 +35,13 @@
       </text>
     </g>
 
-    <rect
-      [attr.x]="cellXPosition(centerCellIndex)"
-      y="0"
-      [attr.width]="cellWidth"
-      [attr.height]="cellHeight"
-      stroke="black"
+    <line
+      [attr.x1]="center()"
+      y1="0"
+      [attr.x2]="center()"
+      [attr.y2]="cellHeight"
+      stroke="red"
       stroke-width="4"
-      fill="none"
-    ></rect>
+    ></line>
   </g>
 </svg>

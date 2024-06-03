@@ -3,6 +3,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ApplicationRef } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { StatemachineService } from '../../../../statemachine/src/lib/statemachine/statemachine.service';
+import { TapeService } from '../../toolbar/tape-controls/tape.service';
 
 @Component({
     selector: 'app-tape',
@@ -16,6 +17,10 @@ export class TapeComponent implements AfterViewInit {
 
   readonly cellWidth: number = 50;
   readonly cellHeight: number = 50;
+
+  get splitPosition(): number {
+    return this.tapeService.splitPosition;
+  }
 
   get visibleCells(): number {
     let tapeViewWidth = this.elRef.nativeElement.offsetWidth;
@@ -52,6 +57,7 @@ export class TapeComponent implements AfterViewInit {
   constructor(
     private elRef: ElementRef, 
     private service: StatemachineService, 
+    private tapeService: TapeService,
     private ref: ChangeDetectorRef, 
     private appRef: ApplicationRef) {
     // this.service.testcaseViewToggled = (() => this.appRef.tick());
@@ -63,12 +69,15 @@ export class TapeComponent implements AfterViewInit {
 
   // Calculates the relative index for each tape cell
   tapeIndex(index: number): number {
-    return index - this.centerCellIndex;
+    return (index + this.splitPosition) - this.centerCellIndex;
   }
 
   tapeNumber(index: number): number {
-    const tapecontent = this.service.input;
-    return index - this.centerCellIndex + tapecontent.length;
+    return (index + this.splitPosition) - this.centerCellIndex;
+  }
+
+  center(): number {
+    return (this.centerCellIndex * this.cellWidth - this.cellWidth)
   }
 
   // Calculates the X position of a cell
@@ -82,7 +91,7 @@ export class TapeComponent implements AfterViewInit {
   }
 
   contentAtIndex(index: number): string {
-    const tapecontent = this.service.input;
+    const tapecontent = this.service.stateMachine._input;
     const tapeNumber = this.tapeNumber(index);
     if (tapeNumber >= 0 && tapeNumber < tapecontent.length) {
       return tapecontent[tapeNumber];
