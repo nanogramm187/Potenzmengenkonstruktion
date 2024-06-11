@@ -1,20 +1,2 @@
-.move-right {
-  animation: moveRight 1s ease-in-out forwards;
-}
 
-.move-left {
-  animation: moveLeft 1s ease-in-out forwards;
-}
-
-@keyframes moveRight {
-  to {
-    transform: translateX(50px);
-  }
-}
-
-@keyframes moveLeft {
-  to {
-    transform: translateX(-50px);
-  }
-}
 

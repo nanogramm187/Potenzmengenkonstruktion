@@ -43,6 +43,10 @@ export class TransitionEditDialogComponent implements OnInit {
     this.firstField?.focus();
   }
 
+  epsilon() {
+    this.newSymbol = 'ε';
+  }
+
   addRow() {
     if (this.newSymbol == '') {
       return;
@@ -50,6 +54,12 @@ export class TransitionEditDialogComponent implements OnInit {
     this.data.transitionSymbols = [...this.data.transitionSymbols, this.newSymbol]
     this.reset();
   }
+
+  epsilonRow(index: number) {
+    this.data.transitionSymbols[index] = 'ε';
+    this.data.transitionSymbols = [...this.data.transitionSymbols]
+  }
+
 
   removeRow(index: number) {
     this.data.transitionSymbols.splice(index, 1);

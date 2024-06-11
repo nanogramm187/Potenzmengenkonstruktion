@@ -60,7 +60,7 @@ export class TapeComponent implements AfterViewInit {
     private tapeService: TapeService,
     private ref: ChangeDetectorRef, 
     private appRef: ApplicationRef) {
-    // this.service.testcaseViewToggled = (() => this.appRef.tick());
+    this.service.testcaseViewToggled = (() => this.appRef.tick());
   }
 
   ngAfterViewInit() {
