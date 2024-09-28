@@ -2,10 +2,23 @@
   padding: 10px;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse; /* Merge borders */
+}
+th, td {
+  border: 1px solid black; /* Add borders to cells */
+  padding: 8px; /* Add padding inside cells */
+  text-align: center; /* Center-align text */
+  background-color: #f2f2f2; /* Light gray background for headers */
+
+}
+
+/*
 .column2 {
   display: grid;
-  grid-template-columns: 1fr auto; /* Drei Spalten: für Bandinhalt, Ergebnis und Icons */
-  gap: 10px; /* Abstand zwischen den Elementen */
+  grid-template-columns: 1fr auto; /* Drei Spalten: für Bandinhalt, Ergebnis und Icons 
+  gap: 10px; /* Abstand zwischen den Elementen 
 }
 
 .header {
@@ -18,7 +31,7 @@
 }
 
 .inputField {
-  border-radius: 5px; /* Wert nach Wunsch anpassen */
+  border-radius: 5px; /* Wert nach Wunsch anpassen 
   box-shadow: none;
   outline: none;
   border-radius: 5px;
@@ -57,3 +70,4 @@
   padding-top: 5px;
   padding-bottom: 5px;
 }
+*/
