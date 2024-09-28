@@ -1,1 +1,0 @@
-{"description":"Wörter, in denen nach 'b' ein 'a' folgt.","title":"Aufgabe 6.1","states":[{"id":0,"name":"S0","transitions":[],"origin":{"x":100,"y":50}}],"startState":0,"finalStates":[],"negativeTestcases":[{"input":"b"},{"input":"aaab"},{"input":"aaabab"}],"positiveTestcases":[{"input":"a"},{"input":"aa"},{"input":"aaba"},{"input":"aababa"},{"input":"baaa"}]}

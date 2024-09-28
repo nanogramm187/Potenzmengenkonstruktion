@@ -1,1 +1,0 @@
-{"description":"Wörter, die mit 'abba' enden.","title":"Aufgabe 6.5","startState":0,"finalStates":[],"states":[{"origin":{"x":100,"y":50},"id":0,"name":"S0","transitions":[]}],"positiveTestcases":[{"input":"abba"},{"input":"cabba"},{"input":"aaabba"},{"input":"bababba"},{"input":"cbcabba"}],"negativeTestcases":[{"input":""},{"input":"abbaa"},{"input":"bb"},{"input":"aabbac"}]}
