@@ -8,6 +8,8 @@ import { Testcase } from './testcase';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
+import { TestcaseService } from './testcase.service';
+import { StateMachine } from 'statemachine/src/lib/statemachine/statemachine';
 
 @Component({
   selector: 'app-testcase',
@@ -24,8 +26,10 @@ import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
   styleUrl: './testcase.component.scss',
 })
 export class TestcaseComponent {
-  
-  constructor(public service: StatemachineService) {}
+  constructor(
+    public service: StatemachineService,
+    public testcaseService: TestcaseService
+  ) {}
 
   get stateMachine(): EndlicherAutomat {
     return this.service.stateMachine as EndlicherAutomat;
@@ -44,7 +48,8 @@ export class TestcaseComponent {
   }
 
   set acceptingTestcases(testcases: Testcase[]) {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases = testcases;
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases =
+      testcases;
   }
 
   get notAcceptingTestcases(): Testcase[] {
@@ -52,66 +57,72 @@ export class TestcaseComponent {
   }
 
   set notAcceptingTestcases(testcases: Testcase[]) {
-    (this.service.stateMachine as EndlicherAutomat).negativeTestcases = testcases;
+    (this.service.stateMachine as EndlicherAutomat).negativeTestcases =
+      testcases;
   }
 
   addAcceptingInput() {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.push(new Testcase(this.service.stateMachine as EndlicherAutomat));
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.push(
+      new Testcase(this.service.stateMachine as EndlicherAutomat)
+    );
   }
 
   removeAcceptingInput(index: number) {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.splice(index, 1);
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.splice(
+      index,
+      1
+    );
   }
 
   addNotAcceptingInput() {
-    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.push(new Testcase(this.service.stateMachine as EndlicherAutomat));
+    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.push(
+      new Testcase(this.service.stateMachine as EndlicherAutomat)
+    );
   }
 
   removeNotAcceptingInput(index: number) {
-    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.splice(index, 1);
+    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.splice(
+      index,
+      1
+    );
   }
 
   getAcceptedWordsCount() {
     let acceptedWordsCount = 0;
     this.stateMachine.positiveTestcases.forEach((testcase) => {
-        if (testcase.isAccepting()) {
-            acceptedWordsCount++;
-        }
+      if (testcase.isAccepting()) {
+        acceptedWordsCount++;
+      }
     });
     this.stateMachine.negativeTestcases.forEach((testcase) => {
-        if (!testcase.isAccepting()) {
-            acceptedWordsCount++;
-        }
+      if (!testcase.isAccepting()) {
+        acceptedWordsCount++;
+      }
     });
     return acceptedWordsCount;
-}
+  }
 
-getWordsCount() {
+  getWordsCount() {
     return (
-        this.stateMachine.positiveTestcases.length +
-        this.stateMachine.negativeTestcases.length
+      this.stateMachine.positiveTestcases.length +
+      this.stateMachine.negativeTestcases.length
     );
-}
+  }
 
-getAcceptedWordsPercentage() {
-    return !isNaN(
-        (this.getAcceptedWordsCount() / this.getWordsCount()) * 100
-    )
-        ? (
-              (this.getAcceptedWordsCount() / this.getWordsCount()) *
-              100
-          ).toFixed(1)
-        : '0.0';
-}
+  getAcceptedWordsPercentage() {
+    return !isNaN((this.getAcceptedWordsCount() / this.getWordsCount()) * 100)
+      ? ((this.getAcceptedWordsCount() / this.getWordsCount()) * 100).toFixed(1)
+      : '0.0';
+  }
 
   getAcceptedWordsDivColour() {
     let color: string = 'grey';
     if (this.getWordsCount() && this.stateMachine.startState) {
-        color = 'red';
-        if (this.getWordsCount() == this.getAcceptedWordsCount()) {
-            color = 'green';
-        }
+      color = 'red';
+      if (this.getWordsCount() == this.getAcceptedWordsCount()) {
+        color = 'green';
+      }
     }
     return color;
-}
+  }
 }

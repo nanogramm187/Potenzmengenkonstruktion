@@ -4,22 +4,24 @@ import { StatemachineService } from '../../../statemachine/src/lib/statemachine/
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TestcaseService {
-
-  constructor(public service: StatemachineService) { }
+  constructor(public service: StatemachineService) {}
 
   get testcases(): Testcase[] {
     return (this.service.stateMachine as EndlicherAutomat).positiveTestcases;
   }
 
   set testcases(testcases: Testcase[]) {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases = testcases;
+    (this.service.stateMachine as EndlicherAutomat).positiveTestcases =
+      testcases;
   }
 
   addAcceptingInput() {
-    this.testcases.push(new Testcase(this.service.stateMachine as EndlicherAutomat));
+    this.testcases.push(
+      new Testcase(this.service.stateMachine as EndlicherAutomat)
+    );
   }
 
   removeAcceptingInput(index: number) {
