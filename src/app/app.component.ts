@@ -9,6 +9,7 @@ import { StatemachineService } from '../../statemachine/src/lib/statemachine/sta
 import { EndlicherAutomat } from './endlicherautomat/EndlicherAutomat';
 import { TestcaseComponent } from './testcase/testcase.component';
 import { TapeComponent } from './endlicherautomat/tape/tape.component';
+import { DfaDialogComponent } from './dfa-dialog/dfa-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ import { TapeComponent } from './endlicherautomat/tape/tape.component';
     CoreComponent,
     FooterComponent,
     TestcaseComponent,
+    DfaDialogComponent,
   ],
 })
 export class AppComponent {

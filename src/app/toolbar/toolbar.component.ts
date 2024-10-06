@@ -6,16 +6,25 @@ import { TestcasebuttonComponent } from '../../../statemachine/src/lib/testcaseb
 import { InputComponent } from '../../../statemachine/src/lib/input/input.component';
 import { StatemachineService } from '../../../statemachine/src/lib/statemachine/statemachine.service';
 import { TapeControlsComponent } from './tape-controls/tape-controls.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DfaDialogComponent } from '../dfa-dialog/dfa-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss',
-  imports: [TapeControlsComponent, MenuComponent, TestcasebuttonComponent, MatToolbarModule, InputComponent, FormsModule],
+  imports: [
+    TapeControlsComponent,
+    MenuComponent,
+    TestcasebuttonComponent,
+    MatToolbarModule,
+    InputComponent,
+    FormsModule,
+  ],
 })
 export class ToolbarComponent {
-  constructor(public service: StatemachineService) {}
+  constructor(public dialog: MatDialog, public service: StatemachineService) {}
 
   get title(): string {
     return this.service.stateMachine.title;
@@ -31,5 +40,17 @@ export class ToolbarComponent {
 
   set description(description: string) {
     this.service.stateMachine.description = description;
+  }
+
+  openDfaDialog() {
+    const dfaData = this.service.dfa; // Hole das DFA aus dem Service
+    const dialogRef = this.dialog.open(DfaDialogComponent, {
+      width: '600px',
+      data: { dfa: dfaData }, // Übergebe das DFA an die Dialog-Komponente
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // Hier kannst du etwas tun, nachdem das Dialogfenster geschlossen wurde
+    });
   }
 }
