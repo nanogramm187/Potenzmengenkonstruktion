@@ -39,13 +39,12 @@ export class TestcaseComponent implements AfterViewChecked {
   focusedInput: HTMLInputElement | null = null;
 
   @ViewChild('firstCellInput', { static: false }) firstCellInput!: ElementRef;
-  private isFirstFocusApplied: boolean = false; // Flag to control focusing
+  private isFirstFocusApplied: boolean = false;
 
   ngAfterViewChecked() {
-    // Focus on the first input cell only if it hasn't been focused yet
     if (!this.isFirstFocusApplied && this.firstCellInput) {
       this.firstCellInput.nativeElement.focus();
-      this.isFirstFocusApplied = true; // Set flag to true after focusing
+      this.isFirstFocusApplied = true;
     }
   }
 
@@ -98,7 +97,34 @@ export class TestcaseComponent implements AfterViewChecked {
     }
   }
 
+  solution: string[][] = [
+    ['S0, (A)', 'S0', 'S1'],
+    ['S0, S1', 'S0', 'S1'],
+  ];
+
   checkTable() {
+    const tableRows = document.querySelectorAll('tbody tr'); // Tabellenzeilen
+    tableRows.forEach((row, rowIndex) => {
+      const cells = row.querySelectorAll('td'); // Zellen der aktuellen Zeile
+      cells.forEach((cell, cellIndex) => {
+        const input = cell.querySelector('input'); // Eingabefeld in der Zelle
+        const inputValue = input ? input.value.trim() : ''; // Aktueller Wert der Zelle
+        const expectedValue = this.solution[rowIndex][cellIndex]; // Vergleiche mit der Lösung
+
+        // Zelle und Input rot oder grün färben
+        if (inputValue === expectedValue) {
+          cell.style.backgroundColor = 'lightgreen';
+          if (input) {
+            input.style.backgroundColor = 'lightgreen';
+          }
+        } else {
+          cell.style.backgroundColor = 'red';
+          if (input) {
+            input.style.backgroundColor = 'red';
+          }
+        }
+      });
+    });
     setTimeout(() => {
       if (this.firstCellInput) {
         this.firstCellInput.nativeElement.focus();
