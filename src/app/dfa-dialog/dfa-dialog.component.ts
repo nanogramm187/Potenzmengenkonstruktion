@@ -6,6 +6,7 @@ import { CoreComponent } from 'statemachine/src/public-api';
 @Component({
   selector: 'app-dfa-dialog',
   templateUrl: './dfa-dialog.component.html',
+  styleUrls: ['./dfa-dialog.component.scss'],
   standalone: true,
   imports: [CoreComponent],
 })
