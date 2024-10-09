@@ -1,4 +1,10 @@
-import { Component } from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
@@ -9,7 +15,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 import { TestcaseService } from './testcase.service';
-import { StateMachine } from 'statemachine/src/lib/statemachine/statemachine';
 
 @Component({
   selector: 'app-testcase',
@@ -25,11 +30,114 @@ import { StateMachine } from 'statemachine/src/lib/statemachine/statemachine';
   templateUrl: './testcase.component.html',
   styleUrl: './testcase.component.scss',
 })
-export class TestcaseComponent {
+export class TestcaseComponent implements AfterViewChecked {
   constructor(
     public service: StatemachineService,
     public testcaseService: TestcaseService
   ) {}
+
+  focusedInput: HTMLInputElement | null = null;
+
+  @ViewChild('firstCellInput', { static: false }) firstCellInput!: ElementRef;
+  private isFirstFocusApplied: boolean = false; // Flag to control focusing
+
+  ngAfterViewChecked() {
+    // Focus on the first input cell only if it hasn't been focused yet
+    if (!this.isFirstFocusApplied && this.firstCellInput) {
+      this.firstCellInput.nativeElement.focus();
+      this.isFirstFocusApplied = true; // Set flag to true after focusing
+    }
+  }
+
+  setFocusedCell(input: HTMLInputElement) {
+    this.focusedInput = input;
+  }
+
+  setFocusedValue(value: string) {
+    //Wenn ein Input Feld fokussiert wird
+    if (this.focusedInput) {
+      const currentValue = this.focusedInput.value;
+      //Values mit Komma trennen etc.
+      const valuesArray = currentValue
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item);
+      //Index des Values finden
+      const valueIndex = valuesArray.findIndex(
+        (item) => item.toLowerCase() === value.toLowerCase()
+      );
+
+      //Toggle für value
+      if (valueIndex !== -1) {
+        valuesArray.splice(valueIndex, 1);
+      } else {
+        valuesArray.push(value);
+      }
+
+      //A und E bleiben am Ende des Arrays
+      const sortedArray = valuesArray.sort((a, b) => {
+        const specialOrder = ['(a)', '(e)'];
+        const aLower = a.toLowerCase();
+        const bLower = b.toLowerCase();
+
+        if (specialOrder.includes(aLower) && !specialOrder.includes(bLower)) {
+          return 1;
+        } else if (
+          !specialOrder.includes(aLower) &&
+          specialOrder.includes(bLower)
+        ) {
+          return -1;
+        } else {
+          return a.localeCompare(b);
+        }
+      });
+
+      this.focusedInput.value = sortedArray.join(', ');
+      //Fokus bleibt in der Zelle
+      this.focusedInput.focus();
+    }
+  }
+
+  checkTable() {
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    });
+  }
+
+  resetTable() {
+    const inputs = document.querySelectorAll('.table-container input');
+
+    inputs.forEach((input) => {
+      (input as HTMLInputElement).value = '';
+    });
+
+    this.focusedInput = null;
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    });
+  }
+
+  get uniqueTransitionSymbols(): string[] {
+    const symbolSet = new Set<string>();
+
+    this.stateMachine.getAllTransitions().forEach((transition) => {
+      // Übergänge einzeln trennen
+      transition.labels().forEach((label) => {
+        const symbols = label.text.split(',');
+        symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
+      });
+    });
+
+    return Array.from(symbolSet);
+  }
+
+  get currentZustaende(): string[] {
+    return this.stateMachine.getAllStates().map((state) => state.name);
+  }
 
   get stateMachine(): EndlicherAutomat {
     return this.service.stateMachine as EndlicherAutomat;

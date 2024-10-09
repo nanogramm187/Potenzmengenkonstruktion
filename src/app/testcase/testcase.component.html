@@ -1,29 +1,3 @@
-
-<div class="container mt-5">
-  <h1>Empty Data Table</h1>
-  <div class="table-responsive">
-      <table class="table table-bordered">
-          <thead class="thead-dark">
-              <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Calories</th>
-              </tr>
-          </thead>
-          <tbody>
-              <!-- Empty rows with visible borders -->
-              <tr>
-                  <td colspan="4" class="text-center">No data available</td>
-              </tr>
-          </tbody>
-      </table>
-  </div>
-</div>
-
-
-
-
 <div class="testview">
   <div *ngIf="isDeterministic(); then deterministic; else notdeterministic"></div>
 </div>
@@ -43,6 +17,50 @@
     <div>Zeige nichtdeterministische Zustände</div>
   </mat-checkbox>
 </ng-template>
+
+<div class="table-container">
+  <div>
+    <!--Buttons für Anfangs-, End- und alle anderen Zustände-->
+    <div class="state-buttons">
+      <button (click)="setFocusedValue('(A)')">A</button>
+      <button (click)="setFocusedValue('(E)')">E</button>
+      <button *ngFor="let zustand of currentZustaende" (click)="setFocusedValue(zustand)">
+        {{ zustand }}
+      </button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>SDFA</th>
+          <!--Tabellenkopf gefüllt mit Übergangssymbolen-->
+          <th *ngFor="let symbol of uniqueTransitionSymbols">{{ symbol }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--Zeilen passen sind den Zuständen an-->
+        <tr *ngFor="let zustaende of currentZustaende">
+          <!--Input-Zellen mit Fokus-->
+          <td>
+            <input type="text" class="full-width-input" #firstCellInput (focus)="setFocusedCell(firstCellInput)" />
+          </td>
+          <td *ngFor="let symbol of uniqueTransitionSymbols">
+            <input type="text" class="full-width-input" #symbolInput (focus)="setFocusedCell(symbolInput)" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Prüf- und Reset-Button -->
+    <div class="state-buttons">
+      <div class="button-container">
+      <button class="left-button" (click)="checkTable()">Prüfen</button>
+      <button class="right-button"(click)="resetTable()">Zurücksetzen</button>
+    </div>  
+  </div>
+</div>
+</div>
+
+
 <!--
   <div
         *ngIf="this.service.stateMachine.startState != undefined"

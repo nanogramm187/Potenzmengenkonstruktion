@@ -1,18 +1,135 @@
 :host {
+  display: block;
+  justify-content: center;
   padding: 10px;
+}
+
+.full-width-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  box-sizing: border-box;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  width: 100%; 
 }
 
 table {
   width: 100%;
-  border-collapse: collapse; /* Merge borders */
+  border-collapse: collapse;
+  margin-top: 0px; 
+  margin-bottom: 20px;
 }
-th, td {
-  border: 1px solid black; /* Add borders to cells */
-  padding: 8px; /* Add padding inside cells */
-  text-align: center; /* Center-align text */
-  background-color: #f2f2f2; /* Light gray background for headers */
 
+th, td {
+  border: 1px solid black;
+  padding: 0px;
+  text-align: center;
+  background-color: white;
+  width: 100px;
 }
+
+.testview {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  padding: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.state-buttons {
+  display: flex;
+  justify-content: center; 
+  margin-bottom: 20px; }
+
+.state-buttons button {
+  background-color: white; 
+  color: black; 
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 5px 15px; 
+  margin: 0 5px;
+  cursor: pointer; 
+  transition: background-color 0.3s, transform 0.2s; 
+}
+
+.state-buttons button:hover {
+  background-color: #65a800; 
+  transform: scale(1.05); 
+}
+
+.state-buttons button:active {
+  transform: scale(0.95); 
+}
+
+.button-container {
+  display: flex;             
+  justify-content: space-between; 
+  width: 100%;             
+}
+
+.left-button, .right-button {
+  background-color: white;   /* Adjust button styles as needed */
+  color: black;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  padding: 5px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.left-button:hover, .right-button:hover {
+  background-color: #65a800; /* Change on hover */
+  transform: scale(1.05);
+}
+
+.left-button:active, .right-button:active {
+  transform: scale(0.95); /* Active state */
+}
+
+.message-box {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-size: 200px;
+  font-weight: 500;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+
+    &.deterministic {
+      border-color: #4caf50;
+      color: #4caf50;
+    }
+
+    &.not-deterministic {
+      border-color: #f44336; 
+      color: #f44336;
+    }
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+
+    .mat-checkbox-label {
+      margin-left: 5px;
+    }
+  }
+
+
 
 /*
 .column2 {
