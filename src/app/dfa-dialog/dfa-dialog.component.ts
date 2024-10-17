@@ -28,7 +28,9 @@ export class DfaDialogComponent {
 
   get uniqueTransitionSymbols(): string[] {
     const symbolSet = new Set<string>();
-    this.stateMachine.getAllTransitions().forEach((transition) => {
+
+
+    this.stateMachine.constructDFA().getAllTransitions().forEach((transition) => {
       transition.labels().forEach((label) => {
         const symbols = label.text.split(',');
         symbols.forEach((symbol) => symbolSet.add(symbol.trim()));

@@ -6,7 +6,6 @@ import { EndlicheTransition } from './EndlicheTransition';
 import { EndlicherState } from './EndlicherState';
 
 export class EndlicherAutomat extends StateMachine {
-  public dfa?: EndlicherAutomat;
 
   set input(input: string) {
     this._input = input;
@@ -96,17 +95,15 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   override createInstanceFromJSON(object: any): StateMachine {
-    this.dfa = this.constructDFA(object);
     return this.fromJSON(object);
   }
 
-  constructDFA(object: any): EndlicherAutomat {
-    const nfa = this.fromJSON(object); // NFA laden
+  constructDFA(): EndlicherAutomat {
     const dfa = new EndlicherAutomat(); // Neuer Automat für den DFA
 
     // 1. Bestimme den Startzustand des DFA (epsilon-Hülle des Startzustands des NFA)
     const startStateSet = new Set<EndlicherState>([
-      nfa.startState as EndlicherState,
+      this.startState as EndlicherState,
     ]);
     const startStateClosure = EndlicherState.eClosure2(startStateSet);
 
@@ -142,7 +139,7 @@ export class EndlicherAutomat extends StateMachine {
       }
 
       // Berechne die möglichen Übergänge für jedes Eingabesymbol
-      const symbols = this.getAllTransitionSymbols(nfa);
+      const symbols = this.getAllTransitionSymbols();
 
       for (const symbol of symbols) {
         // Berechne die neuen Zustände bei diesem Symbol
@@ -194,9 +191,9 @@ export class EndlicherAutomat extends StateMachine {
       .join(',');
   }
 
-  private getAllTransitionSymbols(nfa: EndlicherAutomat): string[] {
+  private getAllTransitionSymbols(): string[] {
     const symbols = new Set<string>();
-    for (const state of nfa.allStates) {
+    for (const state of this.allStates) {
       for (const transition of (state as EndlicherState).transitions) {
         transition.transitionSymbols.forEach((symbol) => symbols.add(symbol));
       }
