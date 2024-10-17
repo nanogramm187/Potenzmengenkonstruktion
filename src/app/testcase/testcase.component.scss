@@ -74,14 +74,20 @@ th, td {
   width: 100%;             
 }
 
-.left-button, .right-button {
-  background-color: white;   
-  color: black;
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 5px;
-  padding: 5px 15px;
-  cursor: pointer;
+.left-button {
+  background-color: rgb(52, 236, 52) !important;
+}
+
+.right-button {
+  background-color: red !important;
+}
+
+.left-button:hover {
+  background-color: green !important;
+}
+
+.right-button:hover {
+  background-color: darkred !important;
 }
 
 /*

@@ -6,6 +6,8 @@ import { EndlicheTransition } from './EndlicheTransition';
 import { EndlicherState } from './EndlicherState';
 
 export class EndlicherAutomat extends StateMachine {
+  public dfa?: EndlicherAutomat;
+
   set input(input: string) {
     this._input = input;
   }
@@ -94,12 +96,124 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   override createInstanceFromJSON(object: any): StateMachine {
-    this.constructDFA(object);
+    this.dfa = this.constructDFA(object);
     return this.fromJSON(object);
   }
 
-  constructDFA(object: any): StateMachine {
-    return this.fromJSON(object);
+  constructDFA(object: any): EndlicherAutomat {
+    const nfa = this.fromJSON(object); // NFA laden
+    const dfa = new EndlicherAutomat(); // Neuer Automat für den DFA
+
+    // 1. Bestimme den Startzustand des DFA (epsilon-Hülle des Startzustands des NFA)
+    const startStateSet = new Set<EndlicherState>([
+      nfa.startState as EndlicherState,
+    ]);
+    const startStateClosure = EndlicherState.eClosure2(startStateSet);
+
+    // 2. Erstelle eine Map zur Verfolgung der Zustandskombinationen im DFA
+    const dfaStateMap = new Map<string, Set<EndlicherState>>();
+    const startStateKey = this.getStateKey(startStateClosure);
+    dfaStateMap.set(startStateKey, new Set(startStateClosure));
+
+    // Erstelle den Startzustand für den DFA
+    const startDFAState = new EndlicherState(new Point(0, 0), 0);
+    startDFAState.name = startStateKey; // Name des Startzustands setzen
+    dfa.startState = startDFAState;
+    dfa.allStates.push(startDFAState);
+
+    // 3. Verarbeite die Zustandskombinationen
+    const unprocessedStates: Set<EndlicherState>[] = [
+      new Set(startStateClosure),
+    ];
+
+    while (unprocessedStates.length > 0) {
+      const currentNFAStates = unprocessedStates.pop()!;
+      const currentStateKey = this.getStateKey(Array.from(currentNFAStates));
+
+      // Falls dieser Zustand noch nicht im DFA ist, füge ihn hinzu
+      let currentDFAState: EndlicherState | undefined = dfa.allStates.find(
+        (s) => s.name === currentStateKey
+      ) as EndlicherState; // Hier wird der Zustand als EndlicherState behandelt
+
+      if (!currentDFAState) {
+        currentDFAState = new EndlicherState(new Point(0, 0), 0); // Erstelle einen neuen EndlicherState
+        currentDFAState.name = currentStateKey;
+        dfa.allStates.push(currentDFAState);
+      }
+
+      // Berechne die möglichen Übergänge für jedes Eingabesymbol
+      const symbols = this.getAllTransitionSymbols(nfa);
+
+      for (const symbol of symbols) {
+        // Berechne die neuen Zustände bei diesem Symbol
+        const nextNFAStates = EndlicherState.move2(
+          Array.from(currentNFAStates),
+          symbol
+        );
+        const nextNFAStateClosure = new Set(
+          EndlicherState.eClosure2(nextNFAStates)
+        );
+
+        const nextStateKey = this.getStateKey(Array.from(nextNFAStateClosure));
+
+        // Finde den Zielzustand im DFA oder erstelle ihn, falls er noch nicht existiert
+        let nextDFAState: EndlicherState | undefined = dfa.allStates.find(
+          (s) => s.name === nextStateKey
+        ) as EndlicherState; // Typumwandlung von State zu EndlicherState
+
+        if (!nextDFAState) {
+          nextDFAState = new EndlicherState(new Point(0, 0), 0); // Falls der Zustand noch nicht existiert, erstelle einen neuen EndlicherState
+          nextDFAState.name = nextStateKey;
+          dfa.allStates.push(nextDFAState); // Füge den neuen Zustand zur Liste hinzu
+        }
+
+        // Füge die Transition vom aktuellen Zustand zu den nächsten Zuständen hinzu
+        const transition = new EndlicheTransition(
+          currentDFAState,
+          nextDFAState
+        );
+        transition.transitionSymbols.push(symbol);
+        currentDFAState.transitions.push(transition);
+
+        // Falls diese Zustandskombination noch nicht verarbeitet wurde, füge sie zur Liste hinzu
+        if (!dfaStateMap.has(nextStateKey)) {
+          dfaStateMap.set(nextStateKey, nextNFAStateClosure);
+          unprocessedStates.push(nextNFAStateClosure);
+        }
+      }
+    }
+
+    // 4. Rückgabe des vollständigen DFA
+    return dfa;
+  }
+
+  private getStateKey(states: EndlicherState[]): string {
+    return states
+      .map((state) => state.name)
+      .sort()
+      .join(',');
+  }
+
+  private getAllTransitionSymbols(nfa: EndlicherAutomat): string[] {
+    const symbols = new Set<string>();
+    for (const state of nfa.allStates) {
+      for (const transition of (state as EndlicherState).transitions) {
+        transition.transitionSymbols.forEach((symbol) => symbols.add(symbol));
+      }
+    }
+    return Array.from(symbols);
+  }
+
+  get uniqueTransitionSymbols(): string[] {
+    const symbolSet = new Set<string>();
+    this.getAllTransitions().forEach((transition) => {
+      transition.labels().forEach((label) => {
+        const symbols = label.text.split(',');
+        symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
+      });
+    });
+
+    return Array.from(symbolSet);
   }
 
   override saveToLocalStorage(): void {

@@ -113,9 +113,9 @@ export class TestcaseComponent implements AfterViewChecked {
 
         // Zelle und Input rot oder grün färben
         if (inputValue === expectedValue) {
-          cell.style.backgroundColor = 'lightgreen';
+          cell.style.backgroundColor = 'rgb(52, 236, 52)';
           if (input) {
-            input.style.backgroundColor = 'lightgreen';
+            input.style.backgroundColor = 'rgb(52, 236, 52)';
           }
         } else {
           cell.style.backgroundColor = 'red';
@@ -133,25 +133,29 @@ export class TestcaseComponent implements AfterViewChecked {
   }
 
   resetTable() {
-    const inputs = document.querySelectorAll('.table-container input');
-
-    inputs.forEach((input) => {
-      (input as HTMLInputElement).value = '';
+    const tableRows = document.querySelectorAll('tbody tr'); // Get all rows
+    tableRows.forEach((row) => {
+      const cells = row.querySelectorAll('td'); // Get all cells
+      cells.forEach((cell) => {
+        const input = cell.querySelector('input'); // Get input in the cell
+        if (input) {
+          (input as HTMLInputElement).value = ''; // Clear the input value
+          input.style.backgroundColor = 'white'; // Set input background color to white
+        }
+        cell.style.backgroundColor = 'white'; // Set cell background color to white
+      });
     });
 
     this.focusedInput = null;
     setTimeout(() => {
       if (this.firstCellInput) {
-        this.firstCellInput.nativeElement.focus();
+        this.firstCellInput.nativeElement.focus(); // Focus on the first input if needed
       }
     });
   }
-
   get uniqueTransitionSymbols(): string[] {
     const symbolSet = new Set<string>();
-
     this.stateMachine.getAllTransitions().forEach((transition) => {
-      // Übergänge einzeln trennen
       transition.labels().forEach((label) => {
         const symbols = label.text.split(',');
         symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
@@ -160,7 +164,6 @@ export class TestcaseComponent implements AfterViewChecked {
 
     return Array.from(symbolSet);
   }
-
   get currentZustaende(): string[] {
     return this.stateMachine.getAllStates().map((state) => state.name);
   }

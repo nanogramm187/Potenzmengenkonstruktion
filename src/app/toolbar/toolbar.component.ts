@@ -43,11 +43,9 @@ export class ToolbarComponent {
   }
 
   openDfaDialog() {
-    const dfaData = this.service.dfa;
     const dialogRef = this.dialog.open(DfaDialogComponent, {
       width: '60vw',
       height: '40vw',
-      data: { dfa: dfaData },
     });
   }
 }
