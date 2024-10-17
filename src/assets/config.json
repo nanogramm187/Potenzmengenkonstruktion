@@ -1,14 +1,9 @@
 {
     "Vorlesungsbeispiele": [
-        { "filename": "DFA_AnzahlEinsenGerade" },
-        { "filename": "DFA_ganzeZahlen"},
-        { "filename": "DFA_DrittletztesZeichen0"},
-        { "filename": "NFA_DrittletztesZeichen0"},
-        { "filename": "NFA_Wort_endet_mit_abba"}
+
     ],
     "Uebungsaufgaben": [
-       
+
         { "filename": "Uebungsaufgabe_6_5"}
-       
     ]
 }
