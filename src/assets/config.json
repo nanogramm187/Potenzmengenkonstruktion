@@ -7,11 +7,8 @@
         { "filename": "NFA_Wort_endet_mit_abba"}
     ],
     "Uebungsaufgaben": [
-        { "filename": "Aufgabe 6.1"},
-        { "filename": "Aufgabe 6.2"},
-        { "filename": "Aufgabe 6.5"},
-        { "filename": "Aufgabe 6.7b"},
-        { "filename": "Aufgabe 6.8"},
-        { "filename": "Aufgabe 7.2c"}
+       
+        { "filename": "Uebungsaufgabe_6_5"}
+       
     ]
 }
