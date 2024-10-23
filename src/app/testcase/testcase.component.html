@@ -24,7 +24,7 @@
     <div class="state-buttons">
       <button (click)="setFocusedValue('(A)')">A</button>
       <button (click)="setFocusedValue('(E)')">E</button>
-      <button *ngFor="let zustand of currentZustaende" (click)="setFocusedValue(zustand)">
+      <button *ngFor="let zustand of dfaZustaende" (click)="setFocusedValue(zustand)">
         {{ zustand }}
       </button>
     </div>
@@ -39,7 +39,7 @@
       </thead>
       <tbody>
         <!--Zeilen passen sind den Zuständen an-->
-        <tr *ngFor="let zustaende of currentZustaende">
+        <tr *ngFor="let zustaende of dfaZustaende">
           <!--Input-Zellen mit Fokus-->
           <td>
             <input type="text" class="full-width-input" #firstCellInput (focus)="setFocusedCell(firstCellInput)" />

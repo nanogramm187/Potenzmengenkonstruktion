@@ -97,34 +97,34 @@ export class TestcaseComponent implements AfterViewChecked {
     }
   }
 
-  solution: string[][] = [
-    ['S0, (A)', 'S0', 'S1'],
-    ['S0, S1', 'S0', 'S1'],
-  ];
-
   checkTable() {
+    const dfaTable = this.stateMachine.generateDFATable(); // Generate the DFA table
     const tableRows = document.querySelectorAll('tbody tr'); // Tabellenzeilen
+
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td'); // Zellen der aktuellen Zeile
       cells.forEach((cell, cellIndex) => {
-        const input = cell.querySelector('input'); // Eingabefeld in der Zelle
-        const inputValue = input ? input.value.trim() : ''; // Aktueller Wert der Zelle
-        const expectedValue = this.solution[rowIndex][cellIndex]; // Vergleiche mit der Lösung
+        const input = cell.querySelector('input') as HTMLInputElement | null; // Eingabefeld in der Zelle
+        if (input) {
+          // Überprüfen, ob das input-Element existiert
+          const inputValue = input.value
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, ''); // Wert normalisieren (ohne Leerzeichen, in Kleinbuchstaben)
+          const expectedValue = dfaTable[rowIndex + 1][cellIndex]
+            .toLowerCase()
+            .replace(/\s+/g, ''); // Erwarteter Wert normalisieren
 
-        // Zelle und Input rot oder grün färben
-        if (inputValue === expectedValue) {
-          cell.style.backgroundColor = 'rgb(52, 236, 52)';
-          if (input) {
-            input.style.backgroundColor = 'rgb(52, 236, 52)';
-          }
-        } else {
-          cell.style.backgroundColor = 'red';
-          if (input) {
-            input.style.backgroundColor = 'red';
+          // Input rot oder grün färben
+          if (inputValue === expectedValue) {
+            input.style.backgroundColor = 'rgb(52, 236, 52)'; // Grün bei richtigem Wert
+          } else {
+            input.style.backgroundColor = 'red'; // Rot bei falschem Wert
           }
         }
       });
     });
+
     setTimeout(() => {
       if (this.firstCellInput) {
         this.firstCellInput.nativeElement.focus();
@@ -153,23 +153,17 @@ export class TestcaseComponent implements AfterViewChecked {
       }
     });
   }
-  get uniqueTransitionSymbols(): string[] {
-    const symbolSet = new Set<string>();
-    this.stateMachine.getAllTransitions().forEach((transition) => {
-      transition.labels().forEach((label) => {
-        const symbols = label.text.split(',');
-        symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
-      });
-    });
-
-    return Array.from(symbolSet);
-  }
-  get currentZustaende(): string[] {
-    return this.stateMachine.getAllStates().map((state) => state.name);
-  }
 
   get stateMachine(): EndlicherAutomat {
     return this.service.stateMachine as EndlicherAutomat;
+  }
+
+  get uniqueTransitionSymbols(): string[] {
+    return this.stateMachine.uniqueTransitionSymbols;
+  }
+
+  get dfaZustaende(): string[] {
+    return this.stateMachine.dfaZustaende;
   }
 
   isDeterministic(): boolean {
