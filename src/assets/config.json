@@ -1,9 +1,9 @@
 {
     "Vorlesungsbeispiele": [
-
+        { "filename": "Vorlesungsbeispiel"}
     ],
     "Uebungsaufgaben": [
-
-        { "filename": "Uebungsaufgabe_6_5"}
+        { "filename": "Uebungsaufgabe_6_5"},
+        { "filename": "Uebungsaufgabe_6_9"}
     ]
 }
