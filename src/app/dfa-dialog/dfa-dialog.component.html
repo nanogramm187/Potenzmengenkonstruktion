@@ -1,23 +1,13 @@
 <h1 mat-dialog-title>Deterministischer Automat (DFA)</h1>
-<div mat-dialog-content class="mat-dialog-content">
-    <div mat-dialog-content>
-      <table>
-        <thead>
-          <tr>
-            <th>SDFA</th>
-            <!--Tabellenkopf gefüllt mit Übergangssymbolen-->
-            <th *ngFor="let symbol of uniqueTransitionSymbols">{{ symbol }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!--Zeilen passen sind den Zuständen an-->
-          <tr *ngFor="let zustaende of currentZustaende">
-            <td>{{zustaende}}
-            </td>
-            <td *ngFor="let symbol of uniqueTransitionSymbols">{{zustaende}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    
-</div>
+<table>
+  <thead>
+    <tr>
+      <th *ngFor="let header of dfaTable[0]">{{ header }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of dfaTable.slice(1)">
+      <td *ngFor="let cell of row">{{ cell }}</td>
+    </tr>
+  </tbody>
+</table>

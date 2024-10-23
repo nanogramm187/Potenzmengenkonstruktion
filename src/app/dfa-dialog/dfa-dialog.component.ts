@@ -17,6 +17,8 @@ import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
   imports: [MatDialogModule, MatTableModule, CommonModule],
 })
 export class DfaDialogComponent {
+  dfaTable: string[][] = [];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { table: any[] },
     private service: StatemachineService
@@ -27,20 +29,13 @@ export class DfaDialogComponent {
   }
 
   get uniqueTransitionSymbols(): string[] {
-    const symbolSet = new Set<string>();
-
-
-    this.stateMachine.constructDFA().getAllTransitions().forEach((transition) => {
-      transition.labels().forEach((label) => {
-        const symbols = label.text.split(',');
-        symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
-      });
-    });
-
-    return Array.from(symbolSet);
+    return this.stateMachine.uniqueTransitionSymbols;
   }
 
-  get currentZustaende(): string[] | undefined {
-    return this.stateMachine.getAllStates().map((state) => state.name);
+  get dfaZustaende(): string[] {
+    return this.stateMachine.dfaZustaende;
+  }
+  ngOnInit(): void {
+    this.dfaTable = this.stateMachine.generateDFATable();
   }
 }

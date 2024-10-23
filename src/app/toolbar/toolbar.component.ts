@@ -44,8 +44,9 @@ export class ToolbarComponent {
 
   openDfaDialog() {
     const dialogRef = this.dialog.open(DfaDialogComponent, {
-      width: '60vw',
-      height: '40vw',
+      maxWidth: '90vw', // Set max-width to prevent the dialog from being too wide
+      maxHeight: '90vh', // Set max-height to prevent overflow
+      autoFocus: false, // Prevents the dialog from auto-scrolling to an input field
     });
   }
 }

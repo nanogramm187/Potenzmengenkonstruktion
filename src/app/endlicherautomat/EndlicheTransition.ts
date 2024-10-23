@@ -1,38 +1,41 @@
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Transition } from "../../../statemachine/src/lib/statemachine/stateconnections/Transition";
-import { TransitionEditDialogComponent } from "./transition-edit-dialog/transition-edit-dialog.component";
-import { EndlicherState } from "./EndlicherState";
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Transition } from '../../../statemachine/src/lib/statemachine/stateconnections/Transition';
+import { TransitionEditDialogComponent } from './transition-edit-dialog/transition-edit-dialog.component';
+import { EndlicherState } from './EndlicherState';
 
 export class EndlicheTransition extends Transition {
-    
-    override source: EndlicherState;
-    override destination: EndlicherState;
+  override source: EndlicherState;
+  override destination: EndlicherState;
+  transitionSymbols: string[];
 
-    constructor(source: EndlicherState, destination: EndlicherState) {
-        super();
-        this.source = source;
-        this.destination = destination;
-    }
+  constructor(
+    source: EndlicherState,
+    destination: EndlicherState,
+    transitionSymbols?: string[]
+  ) {
+    super();
+    this.source = source;
+    this.destination = destination;
+    this.transitionSymbols = transitionSymbols || [];
+  }
 
-    transitionSymbols: string[] = []
+  override displayText(): string[] {
+    const result = this.transitionSymbols.join(', ');
+    return result.length ? [result] : [];
+  }
 
-    override displayText(): string[] {
-        const result = this.transitionSymbols.join(", ")
-        return result.length ? [result] : []
-    }
+  override openTransitionDialog(dialog: MatDialog): MatDialogRef<any, any> {
+    return dialog.open(TransitionEditDialogComponent, { data: this });
+  }
 
-    override openTransitionDialog(dialog: MatDialog): MatDialogRef<any, any> {
-        return dialog.open(TransitionEditDialogComponent, { data: this });
-    }
+  includesSymbol(symbol: string): boolean {
+    return this.transitionSymbols.includes(symbol);
+  }
 
-    includesSymbol(symbol: string): boolean {
-        return this.transitionSymbols.includes(symbol);
-    }
-
-    override toJSON(): Object {
-        return {
-            destination: this.destination.id,
-            transitionSymbols: this.transitionSymbols
-        }
-    }
+  override toJSON(): Object {
+    return {
+      destination: this.destination.id,
+      transitionSymbols: this.transitionSymbols,
+    };
+  }
 }
