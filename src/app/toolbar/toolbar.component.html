@@ -1,7 +1,8 @@
+<!-- Menu component with a base URL for navigation -->
 <app-menu baseURL="../"></app-menu>
+
 <!--<app-input title="Worteingabe"></app-input>
 <app-tape-controls></app-tape-controls> -->
-
 <!-- <div class="detailsContainer">
     <span class="text">
         {{ title }}
@@ -22,11 +23,15 @@
         [(ngModel)]="this.description"
         placeholder="Beschreibung"
     />
-    </div> -->
+    </div> 
+-->
 
+<!-- Spacer element for layout -->
 <span class="spacer"></span>
-<button mat-raised-button color="primary" (click)="openDfaDialog()" class="modern-button">
+
+<!-- Button to trigger the action to display the DFA table -->
+<button mat-raised-button color="primary" (click)="openDfaTable()" class="modern-button">
     Lösung anzeigen
-  </button>
+</button>
   
 <!--<app-testcasebutton></app-testcasebutton>-->

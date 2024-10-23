@@ -1,46 +1,58 @@
 import {
   AfterViewChecked,
-  AfterViewInit,
   Component,
   ElementRef,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { StatemachineService } from '../../../statemachine/src/lib/statemachine/statemachine.service';
-import { Testcase } from './testcase';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
-import { TestcaseService } from './testcase.service';
+import { InputTableService } from './inputTable.service';
 
 @Component({
-  selector: 'app-testcase',
+  selector: 'app-inputTable',
   standalone: true,
   imports: [
     CommonModule,
     MatCheckboxModule,
-    MatIcon,
     FormsModule,
     MatIconModule,
     MatButtonModule,
   ],
-  templateUrl: './testcase.component.html',
-  styleUrl: './testcase.component.scss',
+  templateUrl: './inputTable.component.html',
+  styleUrl: './inputTable.component.scss',
 })
-export class TestcaseComponent implements AfterViewChecked {
+export class InputTableComponent implements AfterViewChecked {
   constructor(
     public service: StatemachineService,
-    public testcaseService: TestcaseService
+    public inputTableService: InputTableService
   ) {}
 
-  focusedInput: HTMLInputElement | null = null;
-
   @ViewChild('firstCellInput', { static: false }) firstCellInput!: ElementRef;
+  focusedInput: HTMLInputElement | null = null;
   private isFirstFocusApplied: boolean = false;
 
+  get stateMachine(): EndlicherAutomat {
+    return this.service.stateMachine as EndlicherAutomat;
+  }
+
+  get uniqueTransitionSymbols(): string[] {
+    return this.stateMachine.uniqueTransitionSymbols;
+  }
+
+  get automataStates(): string[] {
+    return this.stateMachine.automataStates;
+  }
+
+  isDeterministic(): boolean {
+    return this.service.isDeterministic();
+  }
+
+  // Focus on the first input after view is checked
   ngAfterViewChecked() {
     if (!this.isFirstFocusApplied && this.firstCellInput) {
       this.firstCellInput.nativeElement.focus();
@@ -53,27 +65,26 @@ export class TestcaseComponent implements AfterViewChecked {
   }
 
   setFocusedValue(value: string) {
-    //Wenn ein Input Feld fokussiert wird
+    // Updates the focused input's value based on the button clicked
     if (this.focusedInput) {
       const currentValue = this.focusedInput.value;
-      //Values mit Komma trennen etc.
       const valuesArray = currentValue
         .split(',')
         .map((item) => item.trim())
         .filter((item) => item);
-      //Index des Values finden
+
       const valueIndex = valuesArray.findIndex(
         (item) => item.toLowerCase() === value.toLowerCase()
       );
 
-      //Toggle für value
+      // Toggle for value
       if (valueIndex !== -1) {
         valuesArray.splice(valueIndex, 1);
       } else {
         valuesArray.push(value);
       }
 
-      //A und E bleiben am Ende des Arrays
+      // Sort values with special handling for '(a)' and '(e)'
       const sortedArray = valuesArray.sort((a, b) => {
         const specialOrder = ['(a)', '(e)'];
         const aLower = a.toLowerCase();
@@ -92,109 +103,127 @@ export class TestcaseComponent implements AfterViewChecked {
       });
 
       this.focusedInput.value = sortedArray.join(', ');
-      //Fokus bleibt in der Zelle
+
       this.focusedInput.focus();
     }
   }
 
-  checkTable() {
-    const dfaTable = this.stateMachine.generateDFATable(); // Generate the DFA table
-    const tableRows = document.querySelectorAll('tbody tr'); // Tabellenzeilen
+  // Suggests the correct input
+  learningMode() {
+    const dfaTable = this.stateMachine.generateDFATable();
+    const tableRows = document.querySelectorAll('tbody tr');
+    const suggestions: {
+      rowIndex: number;
+      cellIndex: number;
+      correctValue: string;
+    }[] = [];
 
     tableRows.forEach((row, rowIndex) => {
-      const cells = row.querySelectorAll('td'); // Zellen der aktuellen Zeile
+      const cells = row.querySelectorAll('td');
       cells.forEach((cell, cellIndex) => {
-        const input = cell.querySelector('input') as HTMLInputElement | null; // Eingabefeld in der Zelle
+        const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
-          // Überprüfen, ob das input-Element existiert
-          const inputValue = input.value
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, ''); // Wert normalisieren (ohne Leerzeichen, in Kleinbuchstaben)
-          const expectedValue = dfaTable[rowIndex + 1][cellIndex]
-            .toLowerCase()
-            .replace(/\s+/g, ''); // Erwarteter Wert normalisieren
+          const inputValue = input.value.trim().toLowerCase();
+          const expectedValue = dfaTable[rowIndex + 1][cellIndex].toLowerCase();
 
-          // Input rot oder grün färben
-          if (inputValue === expectedValue) {
-            input.style.backgroundColor = 'rgb(52, 236, 52)'; // Grün bei richtigem Wert
-          } else {
-            input.style.backgroundColor = 'red'; // Rot bei falschem Wert
+          if (inputValue !== expectedValue) {
+            suggestions.push({
+              rowIndex,
+              cellIndex,
+              correctValue: expectedValue.toUpperCase(),
+            });
           }
         }
       });
     });
 
-    setTimeout(() => {
-      if (this.firstCellInput) {
-        this.firstCellInput.nativeElement.focus();
-      }
-    });
+    // Highlight incorrect inputs with suggestions
+    if (suggestions.length > 0) {
+      suggestions.forEach((suggestion) => {
+        const { rowIndex, cellIndex, correctValue } = suggestion;
+        const cell = tableRows[rowIndex].querySelectorAll('td')[cellIndex];
+        const input = cell.querySelector('input') as HTMLInputElement | null;
+
+        if (input) {
+          input.style.backgroundColor = 'orange';
+          input.setAttribute('title', `Vorschlag: ${correctValue}`);
+        }
+      });
+    }
   }
 
-  resetTable() {
-    const tableRows = document.querySelectorAll('tbody tr'); // Get all rows
-    tableRows.forEach((row) => {
-      const cells = row.querySelectorAll('td'); // Get all cells
-      cells.forEach((cell) => {
-        const input = cell.querySelector('input'); // Get input in the cell
+  // Compares the input table with table from dfa
+  checkTable() {
+    const dfaTable = this.stateMachine.generateDFATable();
+    const tableRows = document.querySelectorAll('tbody tr');
+    const CORRECT_COLOR = 'rgb(52, 236, 52)';
+    const INCORRECT_COLOR = 'red';
+
+    tableRows.forEach((row, rowIndex) => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell, cellIndex) => {
+        const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
-          (input as HTMLInputElement).value = ''; // Clear the input value
-          input.style.backgroundColor = 'white'; // Set input background color to white
+          const inputValue = input.value
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, '');
+          const expectedValue = dfaTable[rowIndex + 1][cellIndex]
+            .toLowerCase()
+            .replace(/\s+/g, '');
+
+          inputValue === expectedValue
+            ? (input.style.backgroundColor = CORRECT_COLOR)
+            : (input.style.backgroundColor = INCORRECT_COLOR);
         }
-        cell.style.backgroundColor = 'white'; // Set cell background color to white
       });
     });
+    this.firstCellInput.nativeElement.focus();
+  }
 
-    this.focusedInput = null;
-    setTimeout(() => {
-      if (this.firstCellInput) {
-        this.firstCellInput.nativeElement.focus(); // Focus on the first input if needed
-      }
+  // Resets input and color in every cell
+  resetTable() {
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach((row) => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell) => {
+        const input = cell.querySelector('input');
+        if (input) {
+          (input as HTMLInputElement).value = '';
+          input.style.backgroundColor = 'white';
+        }
+      });
     });
+    this.focusedInput = null;
+    this.firstCellInput.nativeElement.focus();
   }
 
-  get stateMachine(): EndlicherAutomat {
-    return this.service.stateMachine as EndlicherAutomat;
-  }
-
-  get uniqueTransitionSymbols(): string[] {
-    return this.stateMachine.uniqueTransitionSymbols;
-  }
-
-  get dfaZustaende(): string[] {
-    return this.stateMachine.dfaZustaende;
-  }
-
-  isDeterministic(): boolean {
-    return this.service.isDeterministic();
-  }
-
+  /** 
   isStartStateDefined(): boolean {
     return this.service.isStartStateDefined();
   }
 
-  get acceptingTestcases(): Testcase[] {
+  get acceptingTestcases(): InputTable[] {
     return (this.service.stateMachine as EndlicherAutomat).positiveTestcases;
   }
 
-  set acceptingTestcases(testcases: Testcase[]) {
+  set acceptingTestcases(testcases: InputTable[]) {
     (this.service.stateMachine as EndlicherAutomat).positiveTestcases =
       testcases;
   }
 
-  get notAcceptingTestcases(): Testcase[] {
+  get notAcceptingTestcases(): InputTable[] {
     return (this.service.stateMachine as EndlicherAutomat).negativeTestcases;
   }
 
-  set notAcceptingTestcases(testcases: Testcase[]) {
+  set notAcceptingTestcases(testcases: InputTable[]) {
     (this.service.stateMachine as EndlicherAutomat).negativeTestcases =
       testcases;
   }
 
   addAcceptingInput() {
     (this.service.stateMachine as EndlicherAutomat).positiveTestcases.push(
-      new Testcase(this.service.stateMachine as EndlicherAutomat)
+      new InputTable(this.service.stateMachine as EndlicherAutomat)
     );
   }
 
@@ -207,7 +236,7 @@ export class TestcaseComponent implements AfterViewChecked {
 
   addNotAcceptingInput() {
     (this.service.stateMachine as EndlicherAutomat).negativeTestcases.push(
-      new Testcase(this.service.stateMachine as EndlicherAutomat)
+      new InputTable(this.service.stateMachine as EndlicherAutomat)
     );
   }
 
@@ -256,4 +285,5 @@ export class TestcaseComponent implements AfterViewChecked {
     }
     return color;
   }
+  */
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+/**import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { StatemachineService } from '../../../../statemachine/src/lib/statemachine/statemachine.service';
@@ -41,3 +41,4 @@ export class TapeControlsComponent implements OnInit {
     return this.service.hasNextStep();
   }
 }
+*/

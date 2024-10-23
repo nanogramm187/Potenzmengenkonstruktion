@@ -19,45 +19,50 @@
 </ng-template>
 
 <div class="table-container">
+  <div class="buttons">
+  <!-- Button to activate learning mode -->
+  <button (click)="learningMode()">Lernmodus aktivieren</button>
+  </div>
   <div>
-    <!--Buttons für Anfangs-, End- und alle anderen Zustände-->
-    <div class="state-buttons">
+    <div class="buttons">
+      <!-- Buttons to set focused value to A and E -->
       <button (click)="setFocusedValue('(A)')">A</button>
       <button (click)="setFocusedValue('(E)')">E</button>
-      <button *ngFor="let zustand of dfaZustaende" (click)="setFocusedValue(zustand)">
-        {{ zustand }}
+      <!-- Dynamic buttons for each state in automataStates -->
+      <button *ngFor="let state of automataStates" (click)="setFocusedValue(state)">
+        {{ state }}
       </button>
     </div>
-
     <table>
       <thead>
         <tr>
-          <th>SDFA</th>
-          <!--Tabellenkopf gefüllt mit Übergangssymbolen-->
+          <th>SDFA</th>       
+           <!-- Dynamic headers for each unique transition symbol -->
           <th *ngFor="let symbol of uniqueTransitionSymbols">{{ symbol }}</th>
         </tr>
       </thead>
       <tbody>
-        <!--Zeilen passen sind den Zuständen an-->
-        <tr *ngFor="let zustaende of dfaZustaende">
-          <!--Input-Zellen mit Fokus-->
+        <!-- Rows for each state in automataStates -->
+        <tr *ngFor="let state of automataStates">
           <td>
+            <!-- Input for the first cell of the row -->
             <input type="text" class="full-width-input" #firstCellInput (focus)="setFocusedCell(firstCellInput)" />
           </td>
+          <!-- Inputs for each unique transition symbol -->
           <td *ngFor="let symbol of uniqueTransitionSymbols">
             <input type="text" class="full-width-input" #symbolInput (focus)="setFocusedCell(symbolInput)" />
           </td>
         </tr>
       </tbody>
     </table>
-    <!-- Prüf- und Reset-Button -->
-    <div class="state-buttons">
+    <div class="buttons">
       <div class="button-container">
+        <!-- Buttons to check the table and reset it -->
         <button class="left-button" (click)="checkTable()">Prüfen</button>
         <button class="right-button" (click)="resetTable()">Zurücksetzen</button>
       </div>  
+    </div>
   </div>
-</div>
 </div>
 
 

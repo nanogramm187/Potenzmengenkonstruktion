@@ -7,9 +7,9 @@ import { FooterComponent } from '../../statemachine/src/lib/footer/footer.compon
 import { CoreComponent } from '../../statemachine/src/public-api';
 import { StatemachineService } from '../../statemachine/src/lib/statemachine/statemachine.service';
 import { EndlicherAutomat } from './endlicherautomat/EndlicherAutomat';
-import { TestcaseComponent } from './testcase/testcase.component';
-import { TapeComponent } from './endlicherautomat/tape/tape.component';
-import { DfaDialogComponent } from './dfa-dialog/dfa-dialog.component';
+import { InputTableComponent } from './inputTable/inputTable.component';
+//import { TapeComponent } from './endlicherautomat/tape/tape.component';
+import { DfaTableComponent } from './dfaTable/dfaTable.component';
 
 @Component({
   selector: 'app-root',
@@ -17,15 +17,15 @@ import { DfaDialogComponent } from './dfa-dialog/dfa-dialog.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   imports: [
-    TapeComponent,
+    //TapeComponent,
     CommonModule,
     RouterOutlet,
     HeaderComponent,
     ToolbarComponent,
     CoreComponent,
     FooterComponent,
-    TestcaseComponent,
-    DfaDialogComponent,
+    InputTableComponent,
+    DfaTableComponent,
   ],
 })
 export class AppComponent {
@@ -35,7 +35,9 @@ export class AppComponent {
     service.stateMachine = new EndlicherAutomat();
   }
 
+  /** 
   get testCaseViewIsVisible(): boolean {
     return this.service.testCaseViewIsVisible;
   }
+  */
 }

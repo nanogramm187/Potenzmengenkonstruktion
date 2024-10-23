@@ -4,21 +4,15 @@
   padding: 10px;
 }
 
-td { 
-  padding: 0; /* Entfernt jegliches Padding */
-  vertical-align: middle; /* Zentriert den Inhalt vertikal */
-}
-
 .full-width-input {
   display: flex;
   width: 100%;
-  height: 100%; /* Setzt die Höhe des Inputs auf 100% der Zelle */
+  height: 100%; 
   border: none;
   box-sizing: border-box;
   font-size: 16px;
-  vertical-align: middle; /* Vertikale Ausrichtung */
+  vertical-align: middle; 
 }
-
 
 .table-container {
   display: flex;
@@ -52,15 +46,16 @@ th, td {
   padding: 10px;
   font-size: 20px;
   font-weight: 500;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
-.state-buttons {
+.buttons {
   display: flex;
   justify-content: center; 
-  margin-bottom: 20px; }
+  margin-bottom: 20px; 
+}
 
-.state-buttons button {
+.buttons button {
   background-color: white; 
   color: black; 
   border-radius: 5px;
@@ -71,7 +66,7 @@ th, td {
   cursor: pointer; 
 }
 
-.state-buttons button:hover {
+.buttons button:hover {
   background-color: #65a800; 
 }
 
@@ -130,9 +125,6 @@ th, td {
       margin-left: 5px;
     }
   }
-
-
-
 
 .column2 {
   display: grid;

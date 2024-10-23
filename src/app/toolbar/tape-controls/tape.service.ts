@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/*import { Injectable } from '@angular/core';
 import { StatemachineService } from '../../../../statemachine/src/lib/statemachine/statemachine.service';
 import { EndlicherAutomat } from '../../endlicherautomat/EndlicherAutomat';
 
@@ -41,3 +41,4 @@ export class TapeService {
     return this.endlicherAutomat.hasNextStep();
   }
 }
+*/

@@ -1,22 +1,18 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { StatemachineService } from '../../../statemachine/src/lib/statemachine/statemachine.service';
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 
 @Component({
-  selector: 'app-dfa-dialog',
-  templateUrl: './dfa-dialog.component.html',
-  styleUrls: ['./dfa-dialog.component.scss'],
+  selector: 'app-dfaTable',
+  templateUrl: './dfaTable.component.html',
+  styleUrls: ['./dfaTable.component.scss'],
   standalone: true,
   imports: [MatDialogModule, MatTableModule, CommonModule],
 })
-export class DfaDialogComponent {
+export class DfaTableComponent {
   dfaTable: string[][] = [];
 
   constructor(
@@ -32,9 +28,11 @@ export class DfaDialogComponent {
     return this.stateMachine.uniqueTransitionSymbols;
   }
 
-  get dfaZustaende(): string[] {
-    return this.stateMachine.dfaZustaende;
+  get automataStates(): string[] {
+    return this.stateMachine.automataStates;
   }
+
+  // Lifecycle hook: Initializes DFA table when the component is loaded
   ngOnInit(): void {
     this.dfaTable = this.stateMachine.generateDFATable();
   }

@@ -6,16 +6,18 @@ import { EndlicherState } from './EndlicherState';
 export class EndlicheTransition extends Transition {
   override source: EndlicherState;
   override destination: EndlicherState;
-  transitionSymbols: string[];
+  transitionSymbols: string[] = [];
 
   constructor(
     source: EndlicherState,
     destination: EndlicherState,
+    // Optional array of symbols for the transition
     transitionSymbols?: string[]
   ) {
     super();
     this.source = source;
     this.destination = destination;
+    // Initialize transition symbols or set to empty array
     this.transitionSymbols = transitionSymbols || [];
   }
 

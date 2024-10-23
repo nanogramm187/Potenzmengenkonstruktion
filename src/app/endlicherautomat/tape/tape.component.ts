@@ -1,3 +1,4 @@
+/**
 import { Component, Input, OnInit, ElementRef, AfterViewInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { ApplicationRef } from '@angular/core';
@@ -100,3 +101,4 @@ export class TapeComponent implements AfterViewInit {
     }
   }
 }
+*/

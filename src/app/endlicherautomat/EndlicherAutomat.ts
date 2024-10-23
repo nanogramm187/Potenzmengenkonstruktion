@@ -1,7 +1,7 @@
 import { Result } from '../../../statemachine/src/lib/statemachine/Result';
 import { Point } from '../../../statemachine/src/lib/statemachine/drawingprimitives/Point';
 import { StateMachine } from '../../../statemachine/src/lib/statemachine/statemachine';
-import { Testcase } from '../testcase/testcase';
+import { InputTable } from '../inputTable/inputTable';
 import { EndlicheTransition } from './EndlicheTransition';
 import { EndlicherState } from './EndlicherState';
 
@@ -16,6 +16,7 @@ export class EndlicherAutomat extends StateMachine {
 
   splitPosition = 0;
 
+  /*
   skipToEnd() {
     this.splitPosition = this._input.length;
   }
@@ -42,12 +43,230 @@ export class EndlicherAutomat extends StateMachine {
 
   hasNextStep(): boolean {
     return this.splitPosition < this._input.length;
-  }
+  }*/
 
-  positiveTestcases: Testcase[] = [];
-  negativeTestcases: Testcase[] = [];
+  positiveTestcases: InputTable[] = [];
+  negativeTestcases: InputTable[] = [];
 
   static epsilon = 'ε';
+
+  // Method to construct a DFA from this automaton
+  constructDFA(): EndlicherAutomat {
+    const dfa = new EndlicherAutomat();
+
+    // Determine the start state of the DFA (epsilon closure of the NFA start state)
+    const startStateSet = new Set<EndlicherState>([
+      this.startState as EndlicherState,
+    ]);
+    const startStateClosure = EndlicherState.eClosure2(startStateSet);
+    const startStateClosureSet = new Set(startStateClosure);
+
+    // Create a map to track state combinations in the DFA
+    const dfaStateMap = new Map<string, Set<EndlicherState>>();
+    const startStateKey = this.getStateKey(Array.from(startStateClosureSet));
+    dfaStateMap.set(startStateKey, startStateClosureSet);
+
+    // Create the start state for the DFA
+    const startDFAState = new EndlicherState(new Point(0, 0), 0);
+    startDFAState.name = startStateKey; // Name des Startzustands setzen
+    dfa.startState = startDFAState;
+    dfa.allStates.push(startDFAState);
+
+    // Check if the start state is a final state
+    if (this.containsFinalState(startStateClosureSet)) {
+      dfa.finalStates.add(startDFAState);
+    }
+
+    // Process state combinations
+    const unprocessedStates: Set<EndlicherState>[] = [startStateClosureSet];
+
+    while (unprocessedStates.length > 0) {
+      const currentNFAStates = unprocessedStates.pop()!;
+      const currentStateKey = this.getStateKey(Array.from(currentNFAStates));
+
+      // Check if this state already exists in the DFA
+      let currentDFAState: EndlicherState | undefined = dfa.allStates.find(
+        (s) => s.name === currentStateKey
+      ) as EndlicherState;
+
+      // If the state does not exist, create it
+      if (!currentDFAState) {
+        currentDFAState = new EndlicherState(new Point(0, 0), 0); // Erstelle einen neuen EndlicherState
+        currentDFAState.name = currentStateKey;
+        dfa.allStates.push(currentDFAState);
+
+        // Check if the current state contains a final state
+        if (this.containsFinalState(currentNFAStates)) {
+          dfa.finalStates.add(currentDFAState); // Markiere den DFA-Zustand als final
+        }
+      }
+
+      // Calculate possible transitions for each input symbol
+      const symbols = this.getAllTransitionSymbols();
+
+      for (const symbol of symbols) {
+        // Calculate new NFA states for this symbol
+        const nextNFAStates = EndlicherState.move2(
+          Array.from(currentNFAStates),
+          symbol
+        );
+        const nextNFAStateClosure = new Set(
+          EndlicherState.eClosure2(new Set(nextNFAStates))
+        );
+
+        const nextStateKey = this.getStateKey(Array.from(nextNFAStateClosure));
+
+        // Find the next DFA state or create it if it doesn't exist
+        let nextDFAState: EndlicherState | undefined = dfa.allStates.find(
+          (s) => s.name === nextStateKey
+        ) as EndlicherState;
+
+        if (!nextDFAState) {
+          nextDFAState = new EndlicherState(new Point(0, 0), 0); // Neuer Zustand
+          nextDFAState.name = nextStateKey;
+          dfa.allStates.push(nextDFAState);
+
+          // Check if this new state is final
+          if (this.containsFinalState(nextNFAStateClosure)) {
+            dfa.finalStates.add(nextDFAState); // Markiere den Zustand als final
+          }
+        }
+
+        // Check if the transition already exists
+        let existingTransition = currentDFAState.transitions.find(
+          (transition) => transition.destination === nextDFAState
+        );
+
+        if (existingTransition) {
+          // Add the symbol to the existing transition if not already included
+          if (!existingTransition.transitionSymbols.includes(symbol)) {
+            existingTransition.transitionSymbols.push(symbol);
+          }
+        } else {
+          // Create a new transition if it does not exist
+          const transition = new EndlicheTransition(
+            currentDFAState,
+            nextDFAState
+          );
+          transition.transitionSymbols.push(symbol);
+          currentDFAState.transitions.push(transition);
+        }
+
+        // If this state combination hasn't been processed yet, add it to the list
+        if (!dfaStateMap.has(nextStateKey)) {
+          dfaStateMap.set(nextStateKey, nextNFAStateClosure);
+          unprocessedStates.push(nextNFAStateClosure);
+        }
+      }
+    }
+
+    // Return the complete DFA
+    return dfa;
+  }
+
+  // Check if any of the given states are final states
+  containsFinalState(states: Set<EndlicherState>): boolean {
+    return Array.from(states).some((state) => this.finalStates.has(state));
+  }
+
+  // Generate a table representing the DFA's states and transitions
+  generateDFATable(): string[][] {
+    const dfaTable: string[][] = [];
+    const dfa = this.constructDFA();
+    const dfaStates = dfa.getAllStates();
+    const transitionSymbols = dfa.getAllTransitionSymbols();
+
+    // Add the header row
+    const headerRow = ['SDFA', ...transitionSymbols];
+    dfaTable.push(headerRow);
+
+    // Iterate through each DFA state
+    for (const dfaState of dfaStates) {
+      const row: string[] = [];
+
+      // Check if the state is a start state or an end state
+      let stateName = dfaState.name;
+      if (dfa.isStartState(dfaState)) {
+        stateName += ', (A)';
+      }
+      if (dfa.isFinalState(dfaState)) {
+        stateName += ', (E)';
+      }
+
+      row.push(stateName); // Add to the row
+
+      // For each transition symbol, find the destination states
+      for (const symbol of transitionSymbols) {
+        const destinationStates = new Set(
+          dfaState.transitions
+            .filter(
+              (transition): transition is EndlicheTransition =>
+                transition instanceof EndlicheTransition &&
+                transition.includesSymbol(symbol)
+            )
+            .map((transition) => transition.destination.name) // Assuming 'destination' refers to the target state
+        );
+
+        const stateList = Array.from(destinationStates).join(', ');
+
+        // If stateList is empty, replace with ∅
+        row.push(stateList !== '' ? stateList : '∅');
+      }
+
+      // Empty Columns wont be added
+      if (row[0] !== '' && !row.slice(1).every((cell) => cell === '∅')) {
+        dfaTable.push(row);
+      }
+    }
+    return dfaTable;
+  }
+
+  // Create a unique key for a set of states
+  private getStateKey(states: EndlicherState[]): string {
+    return states
+      .map((state) => state.name)
+      .sort()
+      .join(', ');
+  }
+
+  // Get all unique transition symbols from all states in the DFA
+  private getAllTransitionSymbols(): string[] {
+    const symbols = new Set<string>();
+    for (const state of this.allStates) {
+      for (const transition of (state as EndlicherState).transitions) {
+        transition.transitionSymbols.forEach((symbol) => symbols.add(symbol));
+      }
+    }
+    return Array.from(symbols);
+  }
+
+  // Get unique transition symbols used in the DFA
+  get uniqueTransitionSymbols(): string[] {
+    const symbolSet = new Set<string>();
+    this.constructDFA()
+      .getAllTransitions()
+      .forEach((transition) => {
+        transition.labels().forEach((label) => {
+          const symbols = label.text.split(',');
+          symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
+        });
+      });
+
+    return Array.from(symbolSet);
+  }
+
+  // Returns an array of unique state names from all states
+  get automataStates(): string[] {
+    const stateSet = new Set<string>();
+
+    this.getAllStates().forEach((state) => {
+      state.name.split(',').forEach((name) => {
+        stateSet.add(name.trim());
+      });
+    });
+
+    return Array.from(stateSet);
+  }
 
   override makeState(x: number, y: number, id: number): EndlicherState {
     return new EndlicherState(new Point(x, y), id);
@@ -95,238 +314,6 @@ export class EndlicherAutomat extends StateMachine {
 
   override createInstanceFromJSON(object: any): StateMachine {
     return this.fromJSON(object);
-  }
-
-  constructDFA(): EndlicherAutomat {
-    const dfa = new EndlicherAutomat(); // Neuer Automat für den DFA
-
-    // 1. Bestimme den Startzustand des DFA (epsilon-Hülle des Startzustands des NFA)
-    const startStateSet = new Set<EndlicherState>([
-      this.startState as EndlicherState,
-    ]);
-    const startStateClosure = EndlicherState.eClosure2(startStateSet);
-
-    // Konvertiere das Ergebnis von eClosure2 (Array) in ein Set
-    const startStateClosureSet = new Set(startStateClosure);
-
-    // 2. Erstelle eine Map zur Verfolgung der Zustandskombinationen im DFA
-    const dfaStateMap = new Map<string, Set<EndlicherState>>();
-    const startStateKey = this.getStateKey(Array.from(startStateClosureSet));
-    dfaStateMap.set(startStateKey, startStateClosureSet);
-
-    // Erstelle den Startzustand für den DFA
-    const startDFAState = new EndlicherState(new Point(0, 0), 0);
-    startDFAState.name = startStateKey; // Name des Startzustands setzen
-    dfa.startState = startDFAState;
-    dfa.allStates.push(startDFAState);
-
-    // Überprüfe, ob der Startzustand einen Endzustand enthält
-    if (this.containsFinalState(startStateClosureSet)) {
-      dfa.finalStates.add(startDFAState);
-    }
-
-    // 3. Verarbeite die Zustandskombinationen
-    const unprocessedStates: Set<EndlicherState>[] = [startStateClosureSet];
-
-    while (unprocessedStates.length > 0) {
-      const currentNFAStates = unprocessedStates.pop()!;
-      const currentStateKey = this.getStateKey(Array.from(currentNFAStates));
-
-      // Falls dieser Zustand noch nicht im DFA ist, füge ihn hinzu
-      let currentDFAState: EndlicherState | undefined = dfa.allStates.find(
-        (s) => s.name === currentStateKey
-      ) as EndlicherState;
-
-      if (!currentDFAState) {
-        currentDFAState = new EndlicherState(new Point(0, 0), 0); // Erstelle einen neuen EndlicherState
-        currentDFAState.name = currentStateKey;
-        dfa.allStates.push(currentDFAState);
-
-        // Überprüfe, ob dieser Zustand einen Endzustand enthält
-        if (this.containsFinalState(currentNFAStates)) {
-          dfa.finalStates.add(currentDFAState); // Markiere den DFA-Zustand als final
-        }
-      }
-
-      // Berechne die möglichen Übergänge für jedes Eingabesymbol
-      const symbols = this.getAllTransitionSymbols();
-
-      for (const symbol of symbols) {
-        // Berechne die neuen Zustände bei diesem Symbol
-        const nextNFAStates = EndlicherState.move2(
-          Array.from(currentNFAStates),
-          symbol
-        );
-        const nextNFAStateClosure = new Set(
-          EndlicherState.eClosure2(new Set(nextNFAStates))
-        );
-
-        const nextStateKey = this.getStateKey(Array.from(nextNFAStateClosure));
-
-        // Finde den Zielzustand im DFA oder erstelle ihn, falls er noch nicht existiert
-        let nextDFAState: EndlicherState | undefined = dfa.allStates.find(
-          (s) => s.name === nextStateKey
-        ) as EndlicherState;
-
-        if (!nextDFAState) {
-          nextDFAState = new EndlicherState(new Point(0, 0), 0); // Neuer Zustand
-          nextDFAState.name = nextStateKey;
-          dfa.allStates.push(nextDFAState);
-
-          // Überprüfe, ob der nächste Zustand einen Endzustand enthält
-          if (this.containsFinalState(nextNFAStateClosure)) {
-            dfa.finalStates.add(nextDFAState); // Markiere den Zustand als final
-          }
-        }
-
-        // Überprüfen, ob die Transition bereits existiert
-        let existingTransition = currentDFAState.transitions.find(
-          (transition) => transition.destination === nextDFAState
-        );
-
-        if (existingTransition) {
-          // Füge das Symbol zur existierenden Transition hinzu, falls es noch nicht vorhanden ist
-          if (!existingTransition.transitionSymbols.includes(symbol)) {
-            existingTransition.transitionSymbols.push(symbol);
-          }
-        } else {
-          // Füge die Transition vom aktuellen Zustand zu den nächsten Zuständen hinzu
-          const transition = new EndlicheTransition(
-            currentDFAState,
-            nextDFAState
-          );
-          transition.transitionSymbols.push(symbol); // Füge Symbol zur neuen Transition hinzu
-          currentDFAState.transitions.push(transition); // Füge die neue Transition zur Liste hinzu
-        }
-
-        // Falls diese Zustandskombination noch nicht verarbeitet wurde, füge sie zur Liste hinzu
-        if (!dfaStateMap.has(nextStateKey)) {
-          dfaStateMap.set(nextStateKey, nextNFAStateClosure);
-          unprocessedStates.push(nextNFAStateClosure);
-        }
-      }
-    }
-
-    // 4. Rückgabe des vollständigen DFA
-    return dfa;
-  }
-
-  // Hilfsfunktion zur Überprüfung, ob eine Menge von NFA-Zuständen einen Endzustand enthält
-  containsFinalState(states: Set<EndlicherState>): boolean {
-    for (const state of states) {
-      if (this.finalStates.has(state)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  getAllFinalStates(): EndlicherState[] {
-    // Return an array of all final states
-    return Array.from(this.finalStates) as EndlicherState[];
-  }
-
-  generateDFATable(): string[][] {
-    const dfaTable: string[][] = [];
-    const dfa = this.constructDFA(); // Call constructDFA once and store the result
-    const dfaStates = dfa.getAllStates();
-    const transitionSymbols = dfa.getAllTransitionSymbols();
-
-    // Add the header row
-    const headerRow = ['SDFA', ...transitionSymbols];
-    dfaTable.push(headerRow);
-
-    // Iterate through each DFA state
-    for (const dfaState of dfaStates) {
-      const row: string[] = [];
-
-      // Check if the state is a start state or an end state
-      let stateName = dfaState.name;
-
-      // Append (A) for start state
-      if (dfa.isStartState(dfaState)) {
-        stateName += ', (A)'; // Check if this state is a start state
-      }
-
-      // Append (E) for end state
-      if (dfa.isFinalState(dfaState)) {
-        stateName += ', (E)'; // Check if this state is an end state
-      }
-
-      row.push(stateName); // Add the modified state name to the row
-
-      // For each transition symbol, find the destination states
-      for (const symbol of transitionSymbols) {
-        const destinationStates = new Set(
-          dfaState.transitions
-            .filter(
-              (transition): transition is EndlicheTransition =>
-                transition instanceof EndlicheTransition &&
-                transition.includesSymbol(symbol)
-            )
-            .map((transition) => transition.destination.name) // Assuming 'destination' refers to the target state
-        );
-
-        // If the destination states set is empty, add "∅"
-        const stateList = Array.from(destinationStates).join(', ');
-
-        // Check if stateList is an empty string and replace it with ∅
-        row.push(stateList !== '' ? stateList : '∅');
-      }
-
-      const firstColumnIsEmpty = row[0] === '';
-      const allOtherColumnsAreEmptySets = row
-        .slice(1)
-        .every((cell) => cell === '∅');
-
-      if (!firstColumnIsEmpty && !allOtherColumnsAreEmptySets) {
-        dfaTable.push(row); // Add the row only if it doesn't meet the discard criteria
-      }
-    }
-    return dfaTable;
-  }
-
-  private getStateKey(states: EndlicherState[]): string {
-    return states
-      .map((state) => state.name)
-      .sort()
-      .join(', ');
-  }
-
-  private getAllTransitionSymbols(): string[] {
-    const symbols = new Set<string>();
-    for (const state of this.allStates) {
-      for (const transition of (state as EndlicherState).transitions) {
-        transition.transitionSymbols.forEach((symbol) => symbols.add(symbol));
-      }
-    }
-    return Array.from(symbols);
-  }
-
-  get uniqueTransitionSymbols(): string[] {
-    const symbolSet = new Set<string>();
-    this.constructDFA()
-      .getAllTransitions()
-      .forEach((transition) => {
-        transition.labels().forEach((label) => {
-          const symbols = label.text.split(',');
-          symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
-        });
-      });
-
-    return Array.from(symbolSet);
-  }
-
-  get dfaZustaende(): string[] {
-    const stateSet = new Set<string>();
-
-    this.getAllStates().forEach((state) => {
-      state.name.split(',').forEach((name) => {
-        stateSet.add(name.trim());
-      });
-    });
-
-    return Array.from(stateSet); // Convert the Set back to an array
   }
 
   override saveToLocalStorage(): void {
@@ -409,13 +396,13 @@ export class EndlicherAutomat extends StateMachine {
 
     // Add testcases
     for (const testcase of object.positiveTestcases) {
-      const newTestcase = new Testcase(automata);
+      const newTestcase = new InputTable(automata);
       newTestcase.input = testcase.input;
       automata.positiveTestcases.push(newTestcase);
     }
 
     for (const testcase of object.negativeTestcases) {
-      const newTestcase = new Testcase(automata);
+      const newTestcase = new InputTable(automata);
       newTestcase.input = testcase.input;
       automata.negativeTestcases.push(newTestcase);
     }
