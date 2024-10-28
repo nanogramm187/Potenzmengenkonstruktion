@@ -29,7 +29,7 @@
       <button (click)="setFocusedValue('(A)')">A</button>
       <button (click)="setFocusedValue('(E)')">E</button>
       <!-- Dynamic buttons for each state in automataStates -->
-      <button *ngFor="let state of automataStates" (click)="setFocusedValue(state)">
+      <button *ngFor="let state of dfaStates" (click)="setFocusedValue(state)">
         {{ state }}
       </button>
     </div>
@@ -43,7 +43,7 @@
       </thead>
       <tbody>
         <!-- Rows for each state in automataStates -->
-        <tr *ngFor="let state of automataStates">
+        <tr *ngFor="let state of dfaStates">
           <td>
             <!-- Input for the first cell of the row -->
             <input type="text" class="full-width-input" #firstCellInput (focus)="setFocusedCell(firstCellInput)" />

@@ -44,8 +44,8 @@ export class InputTableComponent implements AfterViewChecked {
     return this.stateMachine.uniqueTransitionSymbols;
   }
 
-  get automataStates(): string[] {
-    return this.stateMachine.automataStates;
+  get dfaStates(): string[] {
+    return this.stateMachine.dfaStates;
   }
 
   isDeterministic(): boolean {
@@ -164,20 +164,34 @@ export class InputTableComponent implements AfterViewChecked {
       cells.forEach((cell, cellIndex) => {
         const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
-          const inputValue = input.value
+          // Get and clean the input value (split, sort, and join)
+          const inputValueArray = input.value
             .trim()
             .toLowerCase()
-            .replace(/\s+/g, '');
-          const expectedValue = dfaTable[rowIndex + 1][cellIndex]
-            .toLowerCase()
-            .replace(/\s+/g, '');
+            .replace(/\s+/g, '')
+            .split(',')
+            .sort();
 
-          inputValue === expectedValue
-            ? (input.style.backgroundColor = CORRECT_COLOR)
-            : (input.style.backgroundColor = INCORRECT_COLOR);
+          // Get and clean the expected value (split, sort, and join)
+          const expectedValueArray = dfaTable[rowIndex + 1][cellIndex]
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .split(',')
+            .sort();
+
+          // Compare the sorted arrays
+          const isCorrect =
+            JSON.stringify(inputValueArray) ===
+            JSON.stringify(expectedValueArray);
+
+          // Set background color based on correctness
+          input.style.backgroundColor = isCorrect
+            ? CORRECT_COLOR
+            : INCORRECT_COLOR;
         }
       });
     });
+
     this.firstCellInput.nativeElement.focus();
   }
 

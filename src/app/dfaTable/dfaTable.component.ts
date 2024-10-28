@@ -24,14 +24,6 @@ export class DfaTableComponent {
     return this.service.stateMachine as EndlicherAutomat;
   }
 
-  get uniqueTransitionSymbols(): string[] {
-    return this.stateMachine.uniqueTransitionSymbols;
-  }
-
-  get automataStates(): string[] {
-    return this.stateMachine.automataStates;
-  }
-
   // Lifecycle hook: Initializes DFA table when the component is loaded
   ngOnInit(): void {
     this.dfaTable = this.stateMachine.generateDFATable();

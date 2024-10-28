@@ -50,16 +50,28 @@ export class EndlicherAutomat extends StateMachine {
 
   static epsilon = 'ε';
 
+  // Create a unique key for a set of states
+  private getStateKey(states: EndlicherState[]): string {
+    return states
+      .map((state) => state.name)
+      .sort()
+      .join(', ');
+  }
+
+  // Check if any of the given states are final states
+  containsFinalState(states: Set<EndlicherState>): boolean {
+    return Array.from(states).some((state) => this.finalStates.has(state));
+  }
+
   // Method to construct a DFA from this automaton
   constructDFA(): EndlicherAutomat {
     const dfa = new EndlicherAutomat();
+    let xPosition = 100;
 
     // Determine the start state of the DFA (epsilon closure of the NFA start state)
-    const startStateSet = new Set<EndlicherState>([
-      this.startState as EndlicherState,
-    ]);
-    const startStateClosure = EndlicherState.eClosure2(startStateSet);
-    const startStateClosureSet = new Set(startStateClosure);
+    const startStateClosureSet = new Set(
+      EndlicherState.eClosure2(new Set([this.startState as EndlicherState]))
+    );
 
     // Create a map to track state combinations in the DFA
     const dfaStateMap = new Map<string, Set<EndlicherState>>();
@@ -67,10 +79,11 @@ export class EndlicherAutomat extends StateMachine {
     dfaStateMap.set(startStateKey, startStateClosureSet);
 
     // Create the start state for the DFA
-    const startDFAState = new EndlicherState(new Point(0, 0), 0);
-    startDFAState.name = startStateKey; // Name des Startzustands setzen
+    const startDFAState = new EndlicherState(new Point(xPosition, 100), 0);
+    startDFAState.name = startStateKey || '∅'; // Assign ∅ only if stateKey is empty
     dfa.startState = startDFAState;
     dfa.allStates.push(startDFAState);
+    xPosition += 100;
 
     // Check if the start state is a final state
     if (this.containsFinalState(startStateClosureSet)) {
@@ -84,20 +97,24 @@ export class EndlicherAutomat extends StateMachine {
       const currentNFAStates = unprocessedStates.pop()!;
       const currentStateKey = this.getStateKey(Array.from(currentNFAStates));
 
+      // Ensure the state key is valid and only assign ∅ if truly empty
+      const validStateKey = currentStateKey !== '' ? currentStateKey : '∅';
+
       // Check if this state already exists in the DFA
       let currentDFAState: EndlicherState | undefined = dfa.allStates.find(
-        (s) => s.name === currentStateKey
+        (s) => s.name === validStateKey
       ) as EndlicherState;
 
       // If the state does not exist, create it
       if (!currentDFAState) {
-        currentDFAState = new EndlicherState(new Point(0, 0), 0); // Erstelle einen neuen EndlicherState
-        currentDFAState.name = currentStateKey;
+        currentDFAState = new EndlicherState(new Point(xPosition, 100), 0);
+        currentDFAState.name = validStateKey;
         dfa.allStates.push(currentDFAState);
+        xPosition += 100;
 
         // Check if the current state contains a final state
         if (this.containsFinalState(currentNFAStates)) {
-          dfa.finalStates.add(currentDFAState); // Markiere den DFA-Zustand als final
+          dfa.finalStates.add(currentDFAState);
         }
       }
 
@@ -116,19 +133,23 @@ export class EndlicherAutomat extends StateMachine {
 
         const nextStateKey = this.getStateKey(Array.from(nextNFAStateClosure));
 
+        // Ensure the state key is valid and only assign ∅ if truly empty
+        const validNextStateKey = nextStateKey !== '' ? nextStateKey : '∅';
+
         // Find the next DFA state or create it if it doesn't exist
         let nextDFAState: EndlicherState | undefined = dfa.allStates.find(
-          (s) => s.name === nextStateKey
+          (s) => s.name === validNextStateKey
         ) as EndlicherState;
 
         if (!nextDFAState) {
-          nextDFAState = new EndlicherState(new Point(0, 0), 0); // Neuer Zustand
-          nextDFAState.name = nextStateKey;
+          nextDFAState = new EndlicherState(new Point(xPosition, 100), 0);
+          nextDFAState.name = validNextStateKey;
           dfa.allStates.push(nextDFAState);
+          xPosition += 100;
 
           // Check if this new state is final
           if (this.containsFinalState(nextNFAStateClosure)) {
-            dfa.finalStates.add(nextDFAState); // Markiere den Zustand als final
+            dfa.finalStates.add(nextDFAState);
           }
         }
 
@@ -153,8 +174,8 @@ export class EndlicherAutomat extends StateMachine {
         }
 
         // If this state combination hasn't been processed yet, add it to the list
-        if (!dfaStateMap.has(nextStateKey)) {
-          dfaStateMap.set(nextStateKey, nextNFAStateClosure);
+        if (!dfaStateMap.has(validNextStateKey)) {
+          dfaStateMap.set(validNextStateKey, nextNFAStateClosure);
           unprocessedStates.push(nextNFAStateClosure);
         }
       }
@@ -162,11 +183,6 @@ export class EndlicherAutomat extends StateMachine {
 
     // Return the complete DFA
     return dfa;
-  }
-
-  // Check if any of the given states are final states
-  containsFinalState(states: Set<EndlicherState>): boolean {
-    return Array.from(states).some((state) => this.finalStates.has(state));
   }
 
   // Generate a table representing the DFA's states and transitions
@@ -209,24 +225,15 @@ export class EndlicherAutomat extends StateMachine {
 
         const stateList = Array.from(destinationStates).join(', ');
 
-        // If stateList is empty, replace with ∅
+        // Replace an empty stateList with the empty set symbol ∅
         row.push(stateList !== '' ? stateList : '∅');
       }
 
-      // Empty Columns wont be added
-      if (row[0] !== '' && !row.slice(1).every((cell) => cell === '∅')) {
-        dfaTable.push(row);
-      }
+      // Ensure the row is added to the table, even if it only contains empty set symbols
+      dfaTable.push(row);
     }
-    return dfaTable;
-  }
 
-  // Create a unique key for a set of states
-  private getStateKey(states: EndlicherState[]): string {
-    return states
-      .map((state) => state.name)
-      .sort()
-      .join(', ');
+    return dfaTable;
   }
 
   // Get all unique transition symbols from all states in the DFA
@@ -256,14 +263,16 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   // Returns an array of unique state names from all states
-  get automataStates(): string[] {
+  get dfaStates(): string[] {
     const stateSet = new Set<string>();
 
-    this.getAllStates().forEach((state) => {
-      state.name.split(',').forEach((name) => {
-        stateSet.add(name.trim());
+    this.constructDFA()
+      .getAllStates()
+      .forEach((state) => {
+        state.name.split(',').forEach((name) => {
+          stateSet.add(name.trim());
+        });
       });
-    });
 
     return Array.from(stateSet);
   }

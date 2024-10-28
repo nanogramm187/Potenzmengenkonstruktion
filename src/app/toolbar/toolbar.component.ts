@@ -8,6 +8,7 @@ import { StatemachineService } from '../../../statemachine/src/lib/statemachine/
 //import { TapeControlsComponent } from './tape-controls/tape-controls.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DfaTableComponent } from '../dfaTable/dfaTable.component';
+import { TutorialDialogComponent } from '../tutorial-dialog/tutorial-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -43,6 +44,14 @@ export class ToolbarComponent {
     this.service.stateMachine.description = description;
   }
   */
+
+  // Opens the Tutorial dialog when called
+  openTutorialTable() {
+    const dialogRef = this.dialog.open(TutorialDialogComponent, {
+      maxWidth: '70vw',
+      maxHeight: '90vh',
+    });
+  }
 
   // Opens the DFA Table dialog when called
   openDfaTable() {
