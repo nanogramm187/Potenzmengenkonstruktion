@@ -48,6 +48,10 @@ export class InputTableComponent implements AfterViewChecked {
     return this.stateMachine.dfaStates;
   }
 
+  get sortedDfaStates(): string[] {
+    return this.stateMachine.sortedDfaStates;
+  }
+
   isDeterministic(): boolean {
     return this.service.isDeterministic();
   }

@@ -262,8 +262,19 @@ export class EndlicherAutomat extends StateMachine {
     return Array.from(symbolSet);
   }
 
-  // Returns an array of unique state names from all states
+  // Returns an array of unique state names from all DFA states
   get dfaStates(): string[] {
+    const stateSet = new Set<string>();
+
+    this.constructDFA()
+      .getAllStates()
+      .forEach((state) => {
+        stateSet.add(state.name.trim());
+      });
+    return Array.from(stateSet);
+  }
+
+  get sortedDfaStates(): string[] {
     const stateSet = new Set<string>();
 
     this.constructDFA()
@@ -274,7 +285,13 @@ export class EndlicherAutomat extends StateMachine {
         });
       });
 
-    return Array.from(stateSet);
+    // Convert the Set to an array and sort it alphabetically
+    const sortedStates = Array.from(stateSet).sort((a, b) =>
+      a.localeCompare(b)
+    );
+
+    console.log(sortedStates);
+    return sortedStates;
   }
 
   override makeState(x: number, y: number, id: number): EndlicherState {
