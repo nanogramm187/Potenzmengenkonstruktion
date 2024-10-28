@@ -4,6 +4,19 @@
   padding: 10px;
 }
 
+.toggle-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 8px; 
+  padding-bottom: 15px;
+  align-items: center;
+}
+
+.mat-slide-toggle {
+  transform: scale(1.2);
+  margin: 10px;
+}
+
 .full-width-input {
   display: flex;
   width: 100%;

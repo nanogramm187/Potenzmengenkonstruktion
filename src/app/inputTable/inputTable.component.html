@@ -19,10 +19,16 @@
 </ng-template>
 
 <div class="table-container">
+ <!--Toggle-Button für den Lernmodus-->
+ <div class="toggle-container">
+  <mat-slide-toggle 
+    [(ngModel)]="isLearningMode" 
+    (change)="toggleLearningMode($event)">
+    {{'Hilfemodus'}}
+  </mat-slide-toggle>
+  <div id="suggestion-display">&nbsp;</div> 
+ </div>
   <div class="buttons">
-  <!-- Button to activate learning mode -->
-  <button (click)="learningMode()">Lernmodus aktivieren</button>
-  </div>
   <div>
     <div class="buttons">
       <!-- Buttons to set focused value to A and E -->

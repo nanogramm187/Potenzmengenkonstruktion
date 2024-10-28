@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 import { InputTableService } from './inputTable.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-inputTable',
@@ -22,6 +23,7 @@ import { InputTableService } from './inputTable.service';
     FormsModule,
     MatIconModule,
     MatButtonModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './inputTable.component.html',
   styleUrl: './inputTable.component.scss',
@@ -34,7 +36,8 @@ export class InputTableComponent implements AfterViewChecked {
 
   @ViewChild('firstCellInput', { static: false }) firstCellInput!: ElementRef;
   focusedInput: HTMLInputElement | null = null;
-  private isFirstFocusApplied: boolean = false;
+  isFirstFocusApplied: boolean = false;
+  isLearningMode: boolean = false;
 
   get stateMachine(): EndlicherAutomat {
     return this.service.stateMachine as EndlicherAutomat;
@@ -112,47 +115,53 @@ export class InputTableComponent implements AfterViewChecked {
     }
   }
 
-  // Suggests the correct input
   learningMode() {
     const dfaTable = this.stateMachine.generateDFATable();
     const tableRows = document.querySelectorAll('tbody tr');
-    const suggestions: {
-      rowIndex: number;
-      cellIndex: number;
-      correctValue: string;
-    }[] = [];
+    const suggestionDisplay = document.getElementById('suggestion-display');
 
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td');
       cells.forEach((cell, cellIndex) => {
         const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
-          const inputValue = input.value.trim().toLowerCase();
-          const expectedValue = dfaTable[rowIndex + 1][cellIndex].toLowerCase();
+          // Create new event listeners
+          const focusListener = () => {
+            const expectedValue = dfaTable[rowIndex + 1][cellIndex];
+            if (suggestionDisplay) {
+              suggestionDisplay.textContent = `Vorgeschlagener Wert: ${expectedValue}`;
+            }
+          };
 
-          if (inputValue !== expectedValue) {
-            suggestions.push({
-              rowIndex,
-              cellIndex,
-              correctValue: expectedValue.toUpperCase(),
-            });
-          }
+          const blurListener = () => {
+            if (suggestionDisplay) {
+              suggestionDisplay.textContent = ''; // Clear suggestion text completely
+            }
+          };
+
+          // Remove previous listeners to prevent duplicates
+          input.removeEventListener('focus', focusListener);
+          input.removeEventListener('blur', blurListener);
+
+          // Assign the new listeners
+          input.addEventListener('focus', focusListener);
+          input.addEventListener('blur', blurListener);
         }
       });
     });
+  }
 
-    // Highlight incorrect inputs with suggestions
-    if (suggestions.length > 0) {
-      suggestions.forEach((suggestion) => {
-        const { rowIndex, cellIndex, correctValue } = suggestion;
-        const cell = tableRows[rowIndex].querySelectorAll('td')[cellIndex];
-        const input = cell.querySelector('input') as HTMLInputElement | null;
+  toggleLearningMode(event: any) {
+    this.isLearningMode = event.checked;
+    const suggestionDisplay = document.getElementById('suggestion-display');
 
-        if (input) {
-          input.style.backgroundColor = 'orange';
-          input.setAttribute('title', `Vorschlag: ${correctValue}`);
-        }
-      });
+    if (this.isLearningMode) {
+      this.learningMode();
+    } else {
+      // Clear the suggestion display when toggling off
+      if (suggestionDisplay) {
+        suggestionDisplay.textContent = ''; // Clear suggestion text
+      }
     }
   }
 

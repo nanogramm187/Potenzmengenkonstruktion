@@ -290,7 +290,6 @@ export class EndlicherAutomat extends StateMachine {
       a.localeCompare(b)
     );
 
-    console.log(sortedStates);
     return sortedStates;
   }
 
