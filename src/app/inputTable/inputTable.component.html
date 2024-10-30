@@ -22,11 +22,12 @@
  <!--Toggle-Button für den Lernmodus-->
  <div class="toggle-container">
   <mat-slide-toggle 
+    color="primary"
     [(ngModel)]="isLearningMode" 
     (change)="toggleLearningMode($event)">
     {{'Hilfemodus'}}
   </mat-slide-toggle>
-  <div id="suggestion-display">&nbsp;</div> 
+  <div id="suggestion-display">Placeholder</div> 
  </div>
   <div class="buttons">
   <div>

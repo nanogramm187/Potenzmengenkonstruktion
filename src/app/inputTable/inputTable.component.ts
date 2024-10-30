@@ -133,19 +133,11 @@ export class InputTableComponent implements AfterViewChecked {
             }
           };
 
-          const blurListener = () => {
-            if (suggestionDisplay) {
-              suggestionDisplay.textContent = ''; // Clear suggestion text completely
-            }
-          };
-
           // Remove previous listeners to prevent duplicates
           input.removeEventListener('focus', focusListener);
-          input.removeEventListener('blur', blurListener);
 
           // Assign the new listeners
           input.addEventListener('focus', focusListener);
-          input.addEventListener('blur', blurListener);
         }
       });
     });
