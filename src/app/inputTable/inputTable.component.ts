@@ -1,7 +1,8 @@
 import {
   AfterViewChecked,
   Component,
-  ElementRef, input, OnInit,
+  ElementRef,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -10,12 +11,14 @@ import { FormsModule } from '@angular/forms';
 import { StatemachineService } from '../../../statemachine/src/lib/statemachine/statemachine.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import {EndlicherAutomat, EndlicherAutomatDelegate} from '../endlicherautomat/EndlicherAutomat';
+import {
+  EndlicherAutomat,
+  EndlicherAutomatDelegate,
+} from '../endlicherautomat/EndlicherAutomat';
 import { InputTableService } from './inputTable.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import {StateMachine} from "../../../statemachine/src/lib/statemachine/statemachine";
-import {transition} from "@angular/animations";
-import {EndlicheTransition} from "../endlicherautomat/EndlicheTransition";
+import { EndlicheTransition } from '../endlicherautomat/EndlicheTransition';
+import { Transition } from 'statemachine/src/lib/statemachine/stateconnections/Transition';
 
 @Component({
   selector: 'app-inputTable',
@@ -31,7 +34,9 @@ import {EndlicheTransition} from "../endlicherautomat/EndlicheTransition";
   templateUrl: './inputTable.component.html',
   styleUrl: './inputTable.component.scss',
 })
-export class InputTableComponent implements OnInit, AfterViewChecked, EndlicherAutomatDelegate {
+export class InputTableComponent
+  implements OnInit, AfterViewChecked, EndlicherAutomatDelegate
+{
   constructor(
     public service: StatemachineService,
     public inputTableService: InputTableService
@@ -121,72 +126,77 @@ export class InputTableComponent implements OnInit, AfterViewChecked, EndlicherA
   learningMode() {
     const dfaTable = this.stateMachine.generateDFATable();
     const tableRows = document.querySelectorAll('tbody tr');
-    const suggestionDisplay = document.getElementById('suggestion-display');
 
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td');
       cells.forEach((cell, cellIndex) => {
         const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
-          // Create new event listeners
           const focusListener = () => {
-            const expectedValue = dfaTable[rowIndex + 1][cellIndex];
-            if (suggestionDisplay) {
-              suggestionDisplay.textContent = `Vorgeschlagener Wert: ${expectedValue}`;
+            if (this.isLearningMode && cellIndex > 0) {
+              // Only apply for columns other than the first one
+              const expectedValue = dfaTable[rowIndex + 1][cellIndex];
+              const symbol = this.uniqueTransitionSymbols[cellIndex - 1]; // Adjust to get the correct transition symbol
+
+              this.highlightTransitions(symbol, expectedValue);
             }
           };
 
-          // Remove previous listeners to prevent duplicates
-          input.removeEventListener('focus', focusListener);
+          const blurListener = () => {
+            this.clearHighlights();
+          };
 
-          // Assign the new listeners
+          input.removeEventListener('focus', focusListener);
+          input.removeEventListener('blur', blurListener);
+
           input.addEventListener('focus', focusListener);
+          input.addEventListener('blur', blurListener);
         }
       });
     });
   }
 
+  highlightTransitions(symbol: string, targetStates: string) {
+    const allTransitions = this.stateMachine
+      .getAllStates()
+      .flatMap((state) => state.transitions);
+
+    // Filter transitions based on the symbol and target state names in expectedValue
+    const targetTransitions = allTransitions.filter(
+      (transition) =>
+        (transition as EndlicheTransition).transitionSymbols.includes(symbol) &&
+        targetStates.includes(
+          (transition as EndlicheTransition).destination.name
+        )
+    );
+    console.log(targetTransitions);
+    targetTransitions.forEach((transition) => {
+      transition.highlight = true;
+    });
+  }
+
+  clearHighlights() {
+    // Entfernt alle Hervorhebungen von Transitionen
+    const allTransitions = this.stateMachine
+      .getAllStates()
+      .flatMap((state) => state.transitions);
+    allTransitions.forEach((transition) => {
+      transition.highlight = false;
+    });
+  }
+
   toggleLearningMode(event: any) {
     this.isLearningMode = event.checked;
-    const suggestionDisplay = document.getElementById('suggestion-display');
-
     if (this.isLearningMode) {
       this.learningMode();
-
-      let allTransitions = this.stateMachine.getAllStates().flatMap(state => {
-        return state.transitions
-      })
-
-      console.log("symbols:")
-      console.log(allTransitions.flatMap((transition) => (transition as EndlicheTransition).transitionSymbols))
-
-      let cTranstions = allTransitions.filter((transition) => {
-        return (transition as EndlicheTransition).transitionSymbols.find((symbol) => {
-          return symbol == "c";
-        })
-      })
-
-      cTranstions.forEach((transition) => {
-        transition.highlight = true;
-      })
-
-      console.log("show help");
-      console.log(cTranstions)
-
-    } else {
-      // Clear the suggestion display when toggling off
-      if (suggestionDisplay) {
-        suggestionDisplay.textContent = ''; // Clear suggestion text
-      }
-
-      let allTransitions = this.stateMachine.getAllStates().flatMap(state => {
-        return state.transitions
-      })
-
-      allTransitions.forEach((transition) => {
-        transition.highlight = false;
-      })
     }
+  }
+
+  // Hilfsmethode zum Abrufen aller Transitionen
+  getAllTransitions(): Transition[] {
+    return this.stateMachine
+      .getAllStates()
+      .flatMap((state) => state.transitions);
   }
 
   // Compares the input table with table from dfa
