@@ -4,8 +4,12 @@ import { StateMachine } from '../../../statemachine/src/lib/statemachine/statema
 import { InputTable } from '../inputTable/inputTable';
 import { EndlicheTransition } from './EndlicheTransition';
 import { EndlicherState } from './EndlicherState';
+import { State } from "../../../statemachine/src/lib/statemachine/state";
 
 export class EndlicherAutomat extends StateMachine {
+
+  delegate?: EndlicherAutomatDelegate;
+
   set input(input: string) {
     this._input = input;
   }
@@ -15,35 +19,6 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   splitPosition = 0;
-
-  /*
-  skipToEnd() {
-    this.splitPosition = this._input.length;
-  }
-
-  nextStep() {
-    if (this.splitPosition < this._input.length) {
-      this.splitPosition += 1;
-    }
-  }
-
-  previousStep() {
-    if (this.splitPosition > 0) {
-      this.splitPosition -= 1;
-    }
-  }
-
-  reset() {
-    this.splitPosition = 0;
-  }
-
-  hasPreviousStep(): boolean {
-    return this.splitPosition > 0;
-  }
-
-  hasNextStep(): boolean {
-    return this.splitPosition < this._input.length;
-  }*/
 
   positiveTestcases: InputTable[] = [];
   negativeTestcases: InputTable[] = [];
@@ -67,6 +42,10 @@ export class EndlicherAutomat extends StateMachine {
   constructDFA(): EndlicherAutomat {
     const dfa = new EndlicherAutomat();
     let xPosition = 100;
+
+    if (!this.startState) {
+      return dfa;
+    }
 
     // Determine the start state of the DFA (epsilon closure of the NFA start state)
     const startStateClosureSet = new Set(
@@ -325,6 +304,7 @@ export class EndlicherAutomat extends StateMachine {
 
   override createNewInstance(): StateMachine {
     const newInstance = new EndlicherAutomat();
+    this.delegate?.onCreateNewInstanceFromJSON(newInstance);
     return newInstance;
   }
 
@@ -338,7 +318,10 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   override createInstanceFromJSON(object: any): StateMachine {
-    return this.fromJSON(object);
+    const stateMachine = this.fromJSON(object);
+    console.log("new instance state", stateMachine);
+    this.delegate?.onCreateInstanceFromJSON(stateMachine as EndlicherAutomat);
+    return stateMachine;
   }
 
   override saveToLocalStorage(): void {
@@ -437,4 +420,13 @@ export class EndlicherAutomat extends StateMachine {
 
     return automata;
   }
+
+  override activeStates(word: string): Set<State> {
+    return new Set<State>();
+  }
+}
+
+export interface EndlicherAutomatDelegate {
+  onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
+  onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
 }

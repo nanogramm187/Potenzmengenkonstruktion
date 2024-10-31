@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    baseURL: '/' + (window.location.pathname.split('/')[1] || '')
+    baseURL: 'http://localhost:4200'
 };

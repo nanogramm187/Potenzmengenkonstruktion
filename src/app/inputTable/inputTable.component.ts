@@ -1,7 +1,7 @@
 import {
   AfterViewChecked,
   Component,
-  ElementRef,
+  ElementRef, input, OnInit,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -10,9 +10,12 @@ import { FormsModule } from '@angular/forms';
 import { StatemachineService } from '../../../statemachine/src/lib/statemachine/statemachine.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
+import {EndlicherAutomat, EndlicherAutomatDelegate} from '../endlicherautomat/EndlicherAutomat';
 import { InputTableService } from './inputTable.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {StateMachine} from "../../../statemachine/src/lib/statemachine/statemachine";
+import {transition} from "@angular/animations";
+import {EndlicheTransition} from "../endlicherautomat/EndlicheTransition";
 
 @Component({
   selector: 'app-inputTable',
@@ -28,7 +31,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   templateUrl: './inputTable.component.html',
   styleUrl: './inputTable.component.scss',
 })
-export class InputTableComponent implements AfterViewChecked {
+export class InputTableComponent implements OnInit, AfterViewChecked, EndlicherAutomatDelegate {
   constructor(
     public service: StatemachineService,
     public inputTableService: InputTableService
@@ -149,11 +152,40 @@ export class InputTableComponent implements AfterViewChecked {
 
     if (this.isLearningMode) {
       this.learningMode();
+
+      let allTransitions = this.stateMachine.getAllStates().flatMap(state => {
+        return state.transitions
+      })
+
+      console.log("symbols:")
+      console.log(allTransitions.flatMap((transition) => (transition as EndlicheTransition).transitionSymbols))
+
+      let cTranstions = allTransitions.filter((transition) => {
+        return (transition as EndlicheTransition).transitionSymbols.find((symbol) => {
+          return symbol == "c";
+        })
+      })
+
+      cTranstions.forEach((transition) => {
+        transition.highlight = true;
+      })
+
+      console.log("show help");
+      console.log(cTranstions)
+
     } else {
       // Clear the suggestion display when toggling off
       if (suggestionDisplay) {
         suggestionDisplay.textContent = ''; // Clear suggestion text
       }
+
+      let allTransitions = this.stateMachine.getAllStates().flatMap(state => {
+        return state.transitions
+      })
+
+      allTransitions.forEach((transition) => {
+        transition.highlight = false;
+      })
     }
   }
 
@@ -214,10 +246,24 @@ export class InputTableComponent implements AfterViewChecked {
       });
     });
     this.focusedInput = null;
-    this.firstCellInput.nativeElement.focus();
+    //this.firstCellInput.nativeElement.focus();
   }
 
-  /** 
+  onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
+    this.resetTable();
+    endlicherAutomat.delegate = this;
+  }
+
+  ngOnInit(): void {
+    this.stateMachine.delegate = this;
+  }
+
+  onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
+    this.resetTable();
+    endlicherAutomat.delegate = this;
+  }
+
+  /**
   isStartStateDefined(): boolean {
     return this.service.isStartStateDefined();
   }
