@@ -17,8 +17,6 @@ import {
 } from '../endlicherautomat/EndlicherAutomat';
 import { InputTableService } from './inputTable.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { EndlicheTransition } from '../endlicherautomat/EndlicheTransition';
-import { Transition } from 'statemachine/src/lib/statemachine/stateconnections/Transition';
 
 @Component({
   selector: 'app-inputTable',
@@ -42,6 +40,8 @@ export class InputTableComponent
     public inputTableService: InputTableService
   ) {}
 
+  @ViewChild('AButton') aButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild('EButton') eButton!: ElementRef<HTMLButtonElement>;
   @ViewChild('firstCellInput', { static: false }) firstCellInput!: ElementRef;
   focusedInput: HTMLInputElement | null = null;
   isFirstFocusApplied: boolean = false;
@@ -79,6 +79,7 @@ export class InputTableComponent
     this.focusedInput = input;
   }
 
+  // Sets value in the focused cell
   setFocusedValue(value: string) {
     // Updates the focused input's value based on the button clicked
     if (this.focusedInput) {
@@ -123,6 +124,7 @@ export class InputTableComponent
     }
   }
 
+  // Shows expected states, transitions and start-/endbutton
   learningMode() {
     const dfaTable = this.stateMachine.generateDFATable();
     const tableRows = document.querySelectorAll('tbody tr');
@@ -133,21 +135,29 @@ export class InputTableComponent
         const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
           const focusListener = () => {
-            if (this.isLearningMode && cellIndex > 0) {
-              // Only apply for columns other than the first one
-              const expectedValue = dfaTable[rowIndex + 1][cellIndex];
-              const symbol = this.uniqueTransitionSymbols[cellIndex - 1]; // Adjust to get the correct transition symbol
-
-              this.highlightTransitions(symbol, expectedValue);
+            if (this.isLearningMode) {
+              // If first column, highlight states
+              if (cellIndex === 0) {
+                const expectedStateNames = dfaTable[rowIndex + 1][cellIndex]
+                  .split(',')
+                  .map((name) => name.trim());
+                this.highlightStates(expectedStateNames);
+              }
+              // For other columns, highlight transitions
+              else {
+                const startStates = dfaTable[rowIndex + 1][0]
+                  .split(',')
+                  .map((state) => state.trim());
+                const expectedValue = dfaTable[rowIndex + 1][cellIndex];
+                const symbol = this.uniqueTransitionSymbols[cellIndex - 1];
+                this.highlightTransitions(startStates, symbol, expectedValue);
+              }
             }
           };
 
           const blurListener = () => {
             this.clearHighlights();
           };
-
-          input.removeEventListener('focus', focusListener);
-          input.removeEventListener('blur', blurListener);
 
           input.addEventListener('focus', focusListener);
           input.addEventListener('blur', blurListener);
@@ -156,47 +166,83 @@ export class InputTableComponent
     });
   }
 
-  highlightTransitions(symbol: string, targetStates: string) {
-    const allTransitions = this.stateMachine
-      .getAllStates()
-      .flatMap((state) => state.transitions);
-
-    // Filter transitions based on the symbol and target state names in expectedValue
-    const targetTransitions = allTransitions.filter(
-      (transition) =>
-        (transition as EndlicheTransition).transitionSymbols.includes(symbol) &&
-        targetStates.includes(
-          (transition as EndlicheTransition).destination.name
-        )
-    );
-    console.log(targetTransitions);
-    targetTransitions.forEach((transition) => {
-      transition.highlight = true;
+  // Method to highlight buttons or states of the first column based on expected values
+  highlightStates(stateNames: string[]) {
+    // Highlight buttons
+    if (stateNames.includes('(A)')) {
+      this.aButton.nativeElement.style.backgroundColor = '#65a800';
+    }
+    if (stateNames.includes('(E)')) {
+      this.eButton.nativeElement.style.backgroundColor = '#65a800';
+    }
+    // Highlight ∅ button if necessary
+    if (stateNames.includes('∅')) {
+      const emptyButton = Array.from(document.querySelectorAll('button')).find(
+        (button) => button.innerText.trim() === '∅'
+      );
+      if (emptyButton) {
+        emptyButton.style.backgroundColor = '#65a800';
+      }
+    }
+    // Highlight states
+    this.stateMachine.getAllStates().forEach((state) => {
+      if (stateNames.includes(state.name)) state.highlight = true;
     });
   }
 
+  // Method to highlight transitions of every column except the first one based on expected values
+  highlightTransitions(
+    startStates: string[],
+    symbol: string,
+    targetStates: string
+  ) {
+    this.stateMachine
+      .getAllStates()
+      .flatMap((state) => state.transitions)
+      // Filter transitions based on start state, the symbol and target states in expectedValue
+      .filter(
+        (transition: any) =>
+          startStates.includes(transition.source.name) &&
+          transition.transitionSymbols.includes(symbol) &&
+          targetStates.includes(transition.destination.name)
+      )
+      .forEach((transition) => (transition.highlight = true));
+
+    // Highlight ∅ button if targetStates includes '∅'
+    if (targetStates.includes('∅')) {
+      document.querySelectorAll('button').forEach((button) => {
+        if (button.innerText.trim() === '∅') {
+          button.style.backgroundColor = '#65a800';
+        }
+      });
+    }
+  }
+
+  // Method to clear the highlights
   clearHighlights() {
-    // Entfernt alle Hervorhebungen von Transitionen
-    const allTransitions = this.stateMachine
-      .getAllStates()
-      .flatMap((state) => state.transitions);
-    allTransitions.forEach((transition) => {
-      transition.highlight = false;
+    // Clear transitions and states highlights
+    const allStates = this.stateMachine.getAllStates();
+    allStates.forEach((state) => {
+      state.highlight = false;
+      state.transitions.forEach((transition) => (transition.highlight = false));
+    });
+
+    // Clear buttons
+    this.aButton.nativeElement.style.backgroundColor = '';
+    this.eButton.nativeElement.style.backgroundColor = '';
+    document.querySelectorAll('button').forEach((button) => {
+      if (button.innerText.trim() === '∅') {
+        button.style.backgroundColor = '';
+      }
     });
   }
 
+  // Method to toggle the learning mode
   toggleLearningMode(event: any) {
     this.isLearningMode = event.checked;
     if (this.isLearningMode) {
       this.learningMode();
     }
-  }
-
-  // Hilfsmethode zum Abrufen aller Transitionen
-  getAllTransitions(): Transition[] {
-    return this.stateMachine
-      .getAllStates()
-      .flatMap((state) => state.transitions);
   }
 
   // Compares the input table with table from dfa
@@ -238,127 +284,48 @@ export class InputTableComponent
         }
       });
     });
-
-    this.firstCellInput.nativeElement.focus();
   }
 
   // Resets input and color in every cell
   resetTable() {
-    const tableRows = document.querySelectorAll('tbody tr');
-    tableRows.forEach((row) => {
-      const cells = row.querySelectorAll('td');
-      cells.forEach((cell) => {
-        const input = cell.querySelector('input');
-        if (input) {
-          (input as HTMLInputElement).value = '';
-          input.style.backgroundColor = 'white';
-        }
-      });
+    const inputs = document.querySelectorAll(
+      'tbody td input'
+    ) as NodeListOf<HTMLInputElement>;
+    inputs.forEach((input) => {
+      input.value = '';
+      input.style.backgroundColor = 'white';
     });
     this.focusedInput = null;
-    //this.firstCellInput.nativeElement.focus();
   }
 
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
     this.resetTable();
     endlicherAutomat.delegate = this;
+    // Temporarily disable learning mode and then re-enable it
+    const wasLearningModeEnabled = this.isLearningMode;
+    this.isLearningMode = false;
+
+    // Now re-enable learning mode if it was active before
+    if (wasLearningModeEnabled) {
+      setTimeout(() => {
+        this.isLearningMode = true;
+        this.learningMode(); // Reapply listeners and initialize learning mode on the new automaton
+      }, 0); // Using a timeout to ensure it's set up after DOM updates
+    }
   }
 
   ngOnInit(): void {
     this.stateMachine.delegate = this;
-  }
+    // Temporarily disable learning mode and then re-enable it
+    const wasLearningModeEnabled = this.isLearningMode;
+    this.isLearningMode = false;
 
-  onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
-    this.resetTable();
-    endlicherAutomat.delegate = this;
-  }
-
-  /**
-  isStartStateDefined(): boolean {
-    return this.service.isStartStateDefined();
-  }
-
-  get acceptingTestcases(): InputTable[] {
-    return (this.service.stateMachine as EndlicherAutomat).positiveTestcases;
-  }
-
-  set acceptingTestcases(testcases: InputTable[]) {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases =
-      testcases;
-  }
-
-  get notAcceptingTestcases(): InputTable[] {
-    return (this.service.stateMachine as EndlicherAutomat).negativeTestcases;
-  }
-
-  set notAcceptingTestcases(testcases: InputTable[]) {
-    (this.service.stateMachine as EndlicherAutomat).negativeTestcases =
-      testcases;
-  }
-
-  addAcceptingInput() {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.push(
-      new InputTable(this.service.stateMachine as EndlicherAutomat)
-    );
-  }
-
-  removeAcceptingInput(index: number) {
-    (this.service.stateMachine as EndlicherAutomat).positiveTestcases.splice(
-      index,
-      1
-    );
-  }
-
-  addNotAcceptingInput() {
-    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.push(
-      new InputTable(this.service.stateMachine as EndlicherAutomat)
-    );
-  }
-
-  removeNotAcceptingInput(index: number) {
-    (this.service.stateMachine as EndlicherAutomat).negativeTestcases.splice(
-      index,
-      1
-    );
-  }
-
-  getAcceptedWordsCount() {
-    let acceptedWordsCount = 0;
-    this.stateMachine.positiveTestcases.forEach((testcase) => {
-      if (testcase.isAccepting()) {
-        acceptedWordsCount++;
-      }
-    });
-    this.stateMachine.negativeTestcases.forEach((testcase) => {
-      if (!testcase.isAccepting()) {
-        acceptedWordsCount++;
-      }
-    });
-    return acceptedWordsCount;
-  }
-
-  getWordsCount() {
-    return (
-      this.stateMachine.positiveTestcases.length +
-      this.stateMachine.negativeTestcases.length
-    );
-  }
-
-  getAcceptedWordsPercentage() {
-    return !isNaN((this.getAcceptedWordsCount() / this.getWordsCount()) * 100)
-      ? ((this.getAcceptedWordsCount() / this.getWordsCount()) * 100).toFixed(1)
-      : '0.0';
-  }
-
-  getAcceptedWordsDivColour() {
-    let color: string = 'grey';
-    if (this.getWordsCount() && this.stateMachine.startState) {
-      color = 'red';
-      if (this.getWordsCount() == this.getAcceptedWordsCount()) {
-        color = 'green';
-      }
+    // Now re-enable learning mode if it was active before
+    if (wasLearningModeEnabled) {
+      setTimeout(() => {
+        this.isLearningMode = true;
+        this.learningMode(); // Reapply listeners and initialize learning mode on the new automaton
+      }, 0); // Using a timeout to ensure it's set up after DOM updates
     }
-    return color;
   }
-  */
 }

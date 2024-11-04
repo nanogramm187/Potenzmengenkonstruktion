@@ -4,10 +4,9 @@ import { StateMachine } from '../../../statemachine/src/lib/statemachine/statema
 import { InputTable } from '../inputTable/inputTable';
 import { EndlicheTransition } from './EndlicheTransition';
 import { EndlicherState } from './EndlicherState';
-import { State } from "../../../statemachine/src/lib/statemachine/state";
+import { State } from '../../../statemachine/src/lib/statemachine/state';
 
 export class EndlicherAutomat extends StateMachine {
-
   delegate?: EndlicherAutomatDelegate;
 
   set input(input: string) {
@@ -169,7 +168,7 @@ export class EndlicherAutomat extends StateMachine {
     const dfaTable: string[][] = [];
     const dfa = this.constructDFA();
     const dfaStates = dfa.getAllStates();
-    const transitionSymbols = dfa.getAllTransitionSymbols();
+    const transitionSymbols = dfa.uniqueTransitionSymbols;
 
     // Add the header row
     const headerRow = ['SDFA', ...transitionSymbols];
@@ -304,7 +303,6 @@ export class EndlicherAutomat extends StateMachine {
 
   override createNewInstance(): StateMachine {
     const newInstance = new EndlicherAutomat();
-    this.delegate?.onCreateNewInstanceFromJSON(newInstance);
     return newInstance;
   }
 
@@ -319,7 +317,6 @@ export class EndlicherAutomat extends StateMachine {
 
   override createInstanceFromJSON(object: any): StateMachine {
     const stateMachine = this.fromJSON(object);
-    console.log("new instance state", stateMachine);
     this.delegate?.onCreateInstanceFromJSON(stateMachine as EndlicherAutomat);
     return stateMachine;
   }
@@ -428,5 +425,4 @@ export class EndlicherAutomat extends StateMachine {
 
 export interface EndlicherAutomatDelegate {
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
-  onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
 }
