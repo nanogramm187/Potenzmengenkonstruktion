@@ -34,10 +34,4 @@ export class AppComponent {
   constructor(public service: StatemachineService) {
     service.stateMachine = new EndlicherAutomat();
   }
-
-  /** 
-  get testCaseViewIsVisible(): boolean {
-    return this.service.testCaseViewIsVisible;
-  }
-  */
 }

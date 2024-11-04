@@ -27,24 +27,6 @@ import { TutorialDialogComponent } from '../tutorial-dialog/tutorial-dialog.comp
 export class ToolbarComponent {
   constructor(public dialog: MatDialog, public service: StatemachineService) {}
 
-  /** 
-  get title(): string {
-    return this.service.stateMachine.title;
-  }
-
-  set title(title: string) {
-    this.service.stateMachine.title = title;
-  }
-
-  get description(): string {
-    return this.service.stateMachine.description;
-  }
-
-  set description(description: string) {
-    this.service.stateMachine.description = description;
-  }
-  */
-
   // Opens the Tutorial dialog when called
   openTutorialTable() {
     const dialogRef = this.dialog.open(TutorialDialogComponent, {

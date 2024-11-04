@@ -7,6 +7,7 @@ import { EndlicherState } from './EndlicherState';
 import { State } from '../../../statemachine/src/lib/statemachine/state';
 
 export class EndlicherAutomat extends StateMachine {
+  // Optional delegate for handling events or logic related to the automaton's state.
   delegate?: EndlicherAutomatDelegate;
 
   set input(input: string) {
@@ -171,8 +172,7 @@ export class EndlicherAutomat extends StateMachine {
     const transitionSymbols = dfa.uniqueTransitionSymbols;
 
     // Add the header row
-    const headerRow = ['SDFA', ...transitionSymbols];
-    dfaTable.push(headerRow);
+    dfaTable.push(['SDFA', ...transitionSymbols]);
 
     // Iterate through each DFA state
     for (const dfaState of dfaStates) {
@@ -191,20 +191,18 @@ export class EndlicherAutomat extends StateMachine {
 
       // For each transition symbol, find the destination states
       for (const symbol of transitionSymbols) {
-        const destinationStates = new Set(
-          dfaState.transitions
-            .filter(
-              (transition): transition is EndlicheTransition =>
-                transition instanceof EndlicheTransition &&
-                transition.includesSymbol(symbol)
-            )
-            .map((transition) => transition.destination.name) // Assuming 'destination' refers to the target state
-        );
+        const destinationStates = new Set<string>();
+        for (const transition of dfaState.transitions) {
+          if (
+            transition instanceof EndlicheTransition &&
+            transition.includesSymbol(symbol)
+          ) {
+            destinationStates.add(transition.destination.name);
+          }
+        }
 
-        const stateList = Array.from(destinationStates).join(', ');
-
-        // Replace an empty stateList with the empty set symbol ∅
-        row.push(stateList !== '' ? stateList : '∅');
+        const stateList = Array.from(destinationStates).join(', ') || '∅'; // Use ∅ if no states found
+        row.push(stateList);
       }
 
       // Ensure the row is added to the table, even if it only contains empty set symbols
@@ -232,8 +230,9 @@ export class EndlicherAutomat extends StateMachine {
       .getAllTransitions()
       .forEach((transition) => {
         transition.labels().forEach((label) => {
-          const symbols = label.text.split(',');
-          symbols.forEach((symbol) => symbolSet.add(symbol.trim()));
+          label.text
+            .split(',')
+            .forEach((symbol) => symbolSet.add(symbol.trim()));
         });
       });
 

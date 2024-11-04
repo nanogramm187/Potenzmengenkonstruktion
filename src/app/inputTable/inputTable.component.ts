@@ -15,7 +15,6 @@ import {
   EndlicherAutomat,
   EndlicherAutomatDelegate,
 } from '../endlicherautomat/EndlicherAutomat';
-import { InputTableService } from './inputTable.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
@@ -35,10 +34,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 export class InputTableComponent
   implements OnInit, AfterViewChecked, EndlicherAutomatDelegate
 {
-  constructor(
-    public service: StatemachineService,
-    public inputTableService: InputTableService
-  ) {}
+  constructor(public service: StatemachineService) {}
 
   @ViewChild('AButton') aButton!: ElementRef<HTMLButtonElement>;
   @ViewChild('EButton') eButton!: ElementRef<HTMLButtonElement>;
