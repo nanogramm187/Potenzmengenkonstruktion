@@ -120,6 +120,14 @@ export class InputTableComponent
     }
   }
 
+  // Method to toggle the learning mode
+  toggleLearningMode(event: any) {
+    this.isLearningMode = event.checked;
+    if (this.isLearningMode) {
+      this.learningMode();
+    }
+  }
+
   // Shows expected states, transitions and start-/endbutton
   learningMode() {
     const dfaTable = this.stateMachine.generateDFATable();
@@ -233,14 +241,6 @@ export class InputTableComponent
     });
   }
 
-  // Method to toggle the learning mode
-  toggleLearningMode(event: any) {
-    this.isLearningMode = event.checked;
-    if (this.isLearningMode) {
-      this.learningMode();
-    }
-  }
-
   // Compares the input table with table from dfa
   checkTable() {
     const dfaTable = this.stateMachine.generateDFATable();
@@ -294,9 +294,8 @@ export class InputTableComponent
     this.focusedInput = null;
   }
 
-  onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
-    this.resetTable();
-    endlicherAutomat.delegate = this;
+  ngOnInit(): void {
+    this.stateMachine.delegate = this;
     // Temporarily disable learning mode and then re-enable it
     const wasLearningModeEnabled = this.isLearningMode;
     this.isLearningMode = false;
@@ -310,8 +309,9 @@ export class InputTableComponent
     }
   }
 
-  ngOnInit(): void {
-    this.stateMachine.delegate = this;
+  onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
+    this.resetTable();
+    endlicherAutomat.delegate = this;
     // Temporarily disable learning mode and then re-enable it
     const wasLearningModeEnabled = this.isLearningMode;
     this.isLearningMode = false;

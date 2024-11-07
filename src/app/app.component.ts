@@ -8,7 +8,6 @@ import { CoreComponent } from '../../statemachine/src/public-api';
 import { StatemachineService } from '../../statemachine/src/lib/statemachine/statemachine.service';
 import { EndlicherAutomat } from './endlicherautomat/EndlicherAutomat';
 import { InputTableComponent } from './inputTable/inputTable.component';
-//import { TapeComponent } from './endlicherautomat/tape/tape.component';
 import { DfaTableComponent } from './dfaTable/dfaTable.component';
 
 @Component({
@@ -17,7 +16,6 @@ import { DfaTableComponent } from './dfaTable/dfaTable.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   imports: [
-    //TapeComponent,
     CommonModule,
     RouterOutlet,
     HeaderComponent,

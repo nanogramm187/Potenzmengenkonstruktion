@@ -38,6 +38,65 @@ export class EndlicherAutomat extends StateMachine {
     return Array.from(states).some((state) => this.finalStates.has(state));
   }
 
+  // Get all unique transition symbols from all states in the DFA
+  private getAllTransitionSymbols(): string[] {
+    const symbols = new Set<string>();
+    for (const state of this.allStates) {
+      for (const transition of (state as EndlicherState).transitions) {
+        transition.transitionSymbols.forEach((symbol) => symbols.add(symbol));
+      }
+    }
+    return Array.from(symbols);
+  }
+
+  // Get unique transition symbols used in the DFA
+  get uniqueTransitionSymbols(): string[] {
+    const symbolSet = new Set<string>();
+    this.constructDFA()
+      .getAllTransitions()
+      .forEach((transition) => {
+        transition.labels().forEach((label) => {
+          label.text
+            .split(',')
+            .forEach((symbol) => symbolSet.add(symbol.trim()));
+        });
+      });
+
+    return Array.from(symbolSet);
+  }
+
+  // Returns an array of unique state names from all DFA states
+  get dfaStates(): string[] {
+    const stateSet = new Set<string>();
+
+    this.constructDFA()
+      .getAllStates()
+      .forEach((state) => {
+        stateSet.add(state.name.trim());
+      });
+    return Array.from(stateSet);
+  }
+
+  // Returns an array of sorted unique state names from all DFA states
+  get sortedDfaStates(): string[] {
+    const stateSet = new Set<string>();
+
+    this.constructDFA()
+      .getAllStates()
+      .forEach((state) => {
+        state.name.split(',').forEach((name) => {
+          stateSet.add(name.trim());
+        });
+      });
+
+    // Convert the Set to an array and sort it alphabetically
+    const sortedStates = Array.from(stateSet).sort((a, b) =>
+      a.localeCompare(b)
+    );
+
+    return sortedStates;
+  }
+
   // Method to construct a DFA from this automaton
   constructDFA(): EndlicherAutomat {
     const dfa = new EndlicherAutomat();
@@ -159,7 +218,6 @@ export class EndlicherAutomat extends StateMachine {
         }
       }
     }
-
     // Return the complete DFA
     return dfa;
   }
@@ -210,64 +268,6 @@ export class EndlicherAutomat extends StateMachine {
     }
 
     return dfaTable;
-  }
-
-  // Get all unique transition symbols from all states in the DFA
-  private getAllTransitionSymbols(): string[] {
-    const symbols = new Set<string>();
-    for (const state of this.allStates) {
-      for (const transition of (state as EndlicherState).transitions) {
-        transition.transitionSymbols.forEach((symbol) => symbols.add(symbol));
-      }
-    }
-    return Array.from(symbols);
-  }
-
-  // Get unique transition symbols used in the DFA
-  get uniqueTransitionSymbols(): string[] {
-    const symbolSet = new Set<string>();
-    this.constructDFA()
-      .getAllTransitions()
-      .forEach((transition) => {
-        transition.labels().forEach((label) => {
-          label.text
-            .split(',')
-            .forEach((symbol) => symbolSet.add(symbol.trim()));
-        });
-      });
-
-    return Array.from(symbolSet);
-  }
-
-  // Returns an array of unique state names from all DFA states
-  get dfaStates(): string[] {
-    const stateSet = new Set<string>();
-
-    this.constructDFA()
-      .getAllStates()
-      .forEach((state) => {
-        stateSet.add(state.name.trim());
-      });
-    return Array.from(stateSet);
-  }
-
-  get sortedDfaStates(): string[] {
-    const stateSet = new Set<string>();
-
-    this.constructDFA()
-      .getAllStates()
-      .forEach((state) => {
-        state.name.split(',').forEach((name) => {
-          stateSet.add(name.trim());
-        });
-      });
-
-    // Convert the Set to an array and sort it alphabetically
-    const sortedStates = Array.from(stateSet).sort((a, b) =>
-      a.localeCompare(b)
-    );
-
-    return sortedStates;
   }
 
   override makeState(x: number, y: number, id: number): EndlicherState {

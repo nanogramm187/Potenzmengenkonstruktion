@@ -24,7 +24,7 @@ export class DfaTableComponent {
     return this.service.stateMachine as EndlicherAutomat;
   }
 
-  // Lifecycle hook: Initializes DFA table when the component is loaded
+  // Initializes DFA table when the component is loaded
   ngOnInit(): void {
     this.dfaTable = this.stateMachine.generateDFATable();
   }

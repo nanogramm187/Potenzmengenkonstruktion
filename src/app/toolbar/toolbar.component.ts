@@ -5,7 +5,6 @@ import { MenuComponent } from '../../../statemachine/src/lib/menu/menu.component
 import { TestcasebuttonComponent } from '../../../statemachine/src/lib/testcasebutton/testcasebutton.component';
 import { InputComponent } from '../../../statemachine/src/lib/input/input.component';
 import { StatemachineService } from '../../../statemachine/src/lib/statemachine/statemachine.service';
-//import { TapeControlsComponent } from './tape-controls/tape-controls.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DfaTableComponent } from '../dfaTable/dfaTable.component';
 import { TutorialDialogComponent } from '../tutorial-dialog/tutorial-dialog.component';
@@ -16,7 +15,6 @@ import { TutorialDialogComponent } from '../tutorial-dialog/tutorial-dialog.comp
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss',
   imports: [
-    //TapeControlsComponent,
     MenuComponent,
     TestcasebuttonComponent,
     MatToolbarModule,
