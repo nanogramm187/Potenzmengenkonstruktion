@@ -164,15 +164,17 @@ export class InputTableComponent
                   .split(/[\s,]+/)
                   .map((name) => name.trim());
                 this.highlightStates(expectedStateNames);
+                console.log(expectedStateNames);
               }
               // For other columns, highlight transitions
               else {
                 const startStates = dfaTable[rowIndex + 1][0]
-                  .split(',')
+                  .split(/[\s,]+/)
                   .map((state) => state.trim());
                 const expectedValue = dfaTable[rowIndex + 1][cellIndex];
                 const symbol = this.uniqueTransitionSymbols[cellIndex - 1];
                 this.highlightTransitions(startStates, symbol, expectedValue);
+                console.log(startStates, symbol, expectedValue);
               }
             }
           };
@@ -308,6 +310,11 @@ export class InputTableComponent
         alert('Glückwunsch! Alle Antworten sind korrekt.');
       }, 100);
     }
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    });
   }
 
   // Resets input and color in every cell
@@ -320,6 +327,11 @@ export class InputTableComponent
       input.style.backgroundColor = 'white';
     });
     this.focusedInput = null;
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -343,13 +355,11 @@ export class InputTableComponent
     // Temporarily disable learning mode and then re-enable it
     const wasLearningModeEnabled = this.isLearningMode;
     this.isLearningMode = false;
-
-    // Now re-enable learning mode if it was active before
     if (wasLearningModeEnabled) {
       setTimeout(() => {
         this.isLearningMode = true;
-        this.learningMode(); // Reapply listeners and initialize learning mode on the new automaton
-      }, 0); // Using a timeout to ensure it's set up after DOM updates
+        this.learningMode();
+      }, 0);
     }
   }
 }
