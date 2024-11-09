@@ -239,10 +239,10 @@ export class EndlicherAutomat extends StateMachine {
       // Check if the state is a start state or an end state
       let stateName = dfaState.name;
       if (dfa.isStartState(dfaState)) {
-        stateName += ', (A)';
+        stateName += ' (A)';
       }
       if (dfa.isFinalState(dfaState)) {
-        stateName += ', (E)';
+        stateName += ' (E)';
       }
 
       row.push(stateName); // Add to the row

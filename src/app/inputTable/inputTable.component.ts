@@ -16,6 +16,7 @@ import {
   EndlicherAutomatDelegate,
 } from '../endlicherautomat/EndlicherAutomat';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-inputTable',
@@ -27,6 +28,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatIconModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatDialogModule,
   ],
   templateUrl: './inputTable.component.html',
   styleUrl: './inputTable.component.scss',
@@ -61,6 +63,13 @@ export class InputTableComponent
 
   isDeterministic(): boolean {
     return this.service.isDeterministic();
+  }
+
+  // Method to show the info message
+  showAlert() {
+    alert(
+      'Falls der Hilfemodus bei gewissen Zellen nicht funktioniert, bitte wieder aus- und einschalten .'
+    );
   }
 
   // Focus on the first input after view is checked
@@ -124,7 +133,16 @@ export class InputTableComponent
   toggleLearningMode(event: any) {
     this.isLearningMode = event.checked;
     if (this.isLearningMode) {
+      this.service.showDeterministicStates = false;
       this.learningMode();
+    }
+  }
+
+  // Untoggle the slide toggle when the checkbox is checked
+  toggleCheckbox(event: any) {
+    this.service.showDeterministicStates = event.checked;
+    if (this.service.showDeterministicStates) {
+      this.isLearningMode = false;
     }
   }
 
@@ -143,7 +161,7 @@ export class InputTableComponent
               // If first column, highlight states
               if (cellIndex === 0) {
                 const expectedStateNames = dfaTable[rowIndex + 1][cellIndex]
-                  .split(',')
+                  .split(/[\s,]+/)
                   .map((name) => name.trim());
                 this.highlightStates(expectedStateNames);
               }
@@ -247,6 +265,7 @@ export class InputTableComponent
     const tableRows = document.querySelectorAll('tbody tr');
     const CORRECT_COLOR = 'rgb(52, 236, 52)';
     const INCORRECT_COLOR = 'red';
+    let allCorrect = true;
 
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td');
@@ -277,9 +296,18 @@ export class InputTableComponent
           input.style.backgroundColor = isCorrect
             ? CORRECT_COLOR
             : INCORRECT_COLOR;
+          if (!isCorrect) {
+            allCorrect = false;
+          }
         }
       });
     });
+    // Show congratulations popup if all cells are correct after they are colored
+    if (allCorrect) {
+      setTimeout(() => {
+        alert('Glückwunsch! Alle Antworten sind korrekt.');
+      }, 100);
+    }
   }
 
   // Resets input and color in every cell

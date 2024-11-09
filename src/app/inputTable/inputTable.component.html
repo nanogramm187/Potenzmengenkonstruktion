@@ -10,22 +10,30 @@
   <div>Der Automat ist nichtdeterministisch</div>
 
   <mat-checkbox
-    name="endState"
-    style="font-size: small; padding-bottom: 10px"
-    [(ngModel)]="service.showDeterministicStates">
-    <div>Zeige nichtdeterministische Zustände</div>
-  </mat-checkbox>
+  name="endState"
+  style="font-size: small; padding-bottom: 10px"
+  [(ngModel)]="service.showDeterministicStates"
+  (change)="toggleCheckbox($event)">
+  <div>Zeige nichtdeterministische Zustände</div>
+</mat-checkbox>
+
 </ng-template>
 
 <div class="table-container">
- <!--Toggle-Button für den Lernmodus-->
  <div class="toggle-container">
+  <!-- Toggle-Button für den Lernmodus -->
   <mat-slide-toggle 
     color="primary"
+    [(ngModel)]="isLearningMode"  
     (change)="toggleLearningMode($event)">
     {{'Hilfemodus'}}
   </mat-slide-toggle>
- </div>
+  <!-- Info Icon mit Klick-Ereignis -->
+  <mat-icon 
+    (click)="showAlert()" 
+    class="info-button">info
+  </mat-icon>
+</div>
   <div>
    <div>
     <div class="buttons">
