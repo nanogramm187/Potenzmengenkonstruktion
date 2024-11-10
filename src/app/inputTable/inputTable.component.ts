@@ -77,15 +77,14 @@ export class InputTableComponent
     this.focusedInput = input;
   }
 
-  // Sets value in the focused cell
   setFocusedValue(value: string) {
     // Updates the focused input's value based on the button clicked
     if (this.focusedInput) {
       const currentValue = this.focusedInput.value;
       const valuesArray = currentValue
-        .split(',')
-        .map((item) => item.trim())
-        .filter((item) => item);
+        .split(/[\s,]+/) // Split by spaces and commas
+        .map((item) => item.trim()) // Remove spaces around each item
+        .filter((item) => item); // Remove any empty items
 
       const valueIndex = valuesArray.findIndex(
         (item) => item.toLowerCase() === value.toLowerCase()
@@ -93,31 +92,47 @@ export class InputTableComponent
 
       // Toggle for value
       if (valueIndex !== -1) {
-        valuesArray.splice(valueIndex, 1);
+        valuesArray.splice(valueIndex, 1); // Remove the value if it exists
       } else {
-        valuesArray.push(value);
+        valuesArray.push(value); // Add the value if it doesn't exist
       }
 
-      // Sort values with special handling for '(a)' and '(e)'
-      const sortedArray = valuesArray.sort((a, b) => {
-        const specialOrder = ['(a)', '(e)'];
-        const aLower = a.toLowerCase();
-        const bLower = b.toLowerCase();
+      // Separate out the special cases for '(a)' and '(e)'
+      const normalValues = valuesArray.filter(
+        (item) => item.toLowerCase() !== '(a)' && item.toLowerCase() !== '(e)'
+      );
+      const aAndEValues = valuesArray.filter(
+        (item) => item.toLowerCase() === '(a)' || item.toLowerCase() === '(e)'
+      );
 
-        if (specialOrder.includes(aLower) && !specialOrder.includes(bLower)) {
-          return 1;
-        } else if (
-          !specialOrder.includes(aLower) &&
-          specialOrder.includes(bLower)
-        ) {
-          return -1;
+      // Ensure '(a)' comes before '(e)' if both are present
+      const aValue = aAndEValues.find((item) => item.toLowerCase() === '(a)');
+      const eValue = aAndEValues.find((item) => item.toLowerCase() === '(e)');
+
+      // Combine the values with '(a)' first and then '(e)'
+      const combinedValues = [...normalValues];
+      if (aValue) combinedValues.push(aValue); // Add '(a)' if it exists
+      if (eValue) combinedValues.push(eValue); // Add '(e)' if it exists
+
+      // Create a formatted array with special handling for '(a)' and '(e)'
+      const formattedArray = combinedValues.map((item, index) => {
+        // If it's the first value, just return it without a comma
+        if (index === 0) {
+          return item;
+        }
+
+        // For '(a)' and '(e)', add a space before it, for others add a comma and space
+        if (item.toLowerCase() === '(a)' || item.toLowerCase() === '(e)') {
+          return ' ' + item; // No comma, just space
         } else {
-          return a.localeCompare(b);
+          return ', ' + item; // Add comma and space for other items
         }
       });
 
-      this.focusedInput.value = sortedArray.join(', ');
+      // Join the formatted array into a single string and update the input's value
+      this.focusedInput.value = formattedArray.join(''); // Join without extra commas between values
 
+      // Refocus the input element
       this.focusedInput.focus();
     }
   }
