@@ -65,13 +65,6 @@ export class InputTableComponent
     return this.service.isDeterministic();
   }
 
-  // Method to show the info message
-  showAlert() {
-    alert(
-      'Falls der Hilfemodus bei gewissen Zellen nicht funktioniert, bitte wieder aus- und einschalten .'
-    );
-  }
-
   // Focus on the first input after view is checked
   ngAfterViewChecked() {
     if (!this.isFirstFocusApplied && this.firstCellInput) {
@@ -136,6 +129,13 @@ export class InputTableComponent
       this.service.showDeterministicStates = false;
       this.learningMode();
     }
+  }
+
+  // Method to show the info message
+  showAlert() {
+    alert(
+      'Falls der Hilfemodus bei neu generierten Zellen nicht funktioniert, bitte wieder aus- und einschalten .'
+    );
   }
 
   // Untoggle the slide toggle when the checkbox is checked
@@ -350,11 +350,20 @@ export class InputTableComponent
   }
 
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
+    this.initializeComponent(endlicherAutomat);
+  }
+
+  onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
+    this.initializeComponent(endlicherAutomat);
+  }
+
+  private initializeComponent(endlicherAutomat: EndlicherAutomat): void {
     this.resetTable();
     endlicherAutomat.delegate = this;
-    // Temporarily disable learning mode and then re-enable it
+
     const wasLearningModeEnabled = this.isLearningMode;
     this.isLearningMode = false;
+
     if (wasLearningModeEnabled) {
       setTimeout(() => {
         this.isLearningMode = true;

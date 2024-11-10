@@ -302,6 +302,8 @@ export class EndlicherAutomat extends StateMachine {
 
   override createNewInstance(): StateMachine {
     const newInstance = new EndlicherAutomat();
+    this.delegate?.onCreateNewInstanceFromJSON(newInstance);
+
     return newInstance;
   }
 
@@ -424,4 +426,5 @@ export class EndlicherAutomat extends StateMachine {
 
 export interface EndlicherAutomatDelegate {
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
+  onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
 }
