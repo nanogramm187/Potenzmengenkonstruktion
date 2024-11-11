@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../statemachine/src/lib/header/header.component';
@@ -9,6 +9,8 @@ import { StatemachineService } from '../../statemachine/src/lib/statemachine/sta
 import { EndlicherAutomat } from './endlicherautomat/EndlicherAutomat';
 import { InputTableComponent } from './inputTable/inputTable.component';
 import { DfaTableComponent } from './dfaTable/dfaTable.component';
+import { MatDialog } from '@angular/material/dialog';
+import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -26,10 +28,17 @@ import { DfaTableComponent } from './dfaTable/dfaTable.component';
     DfaTableComponent,
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'endlicherautomat';
 
-  constructor(public service: StatemachineService) {
+  constructor(public service: StatemachineService, public dialog: MatDialog) {
     service.stateMachine = new EndlicherAutomat();
+  }
+
+  ngOnInit(): void {
+    this.dialog.open(WelcomeDialogComponent, {
+      width: '70vh',
+      height: '50vh',
+    });
   }
 }
