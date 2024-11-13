@@ -50,7 +50,7 @@
         <tr>
           <th>SDFA</th>       
            <!-- Dynamic headers for each unique transition symbol -->
-          <th *ngFor="let symbol of uniqueTransitionSymbols">{{ symbol }}</th>
+          <th *ngFor="let symbol of uniqueDfaTransitionSymbols">{{ symbol }}</th>
         </tr>
       </thead>
       <tbody>
@@ -61,7 +61,7 @@
             <input type="text" class="full-width-input" #firstCellInput (focus)="setFocusedCell(firstCellInput)" />
           </td>
           <!-- Inputs for each unique transition symbol -->
-          <td *ngFor="let symbol of uniqueTransitionSymbols">
+          <td *ngFor="let symbol of uniqueDfaTransitionSymbols">
             <input type="text" class="full-width-input" #symbolInput (focus)="setFocusedCell(symbolInput)" />
           </td>
         </tr>

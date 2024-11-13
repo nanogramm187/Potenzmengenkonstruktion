@@ -38,7 +38,7 @@ export class EndlicherAutomat extends StateMachine {
     return Array.from(states).some((state) => this.finalStates.has(state));
   }
 
-  // Get all unique transition symbols from all states in the DFA
+  // Get all unique transition symbols from all states
   private getAllTransitionSymbols(): string[] {
     const symbols = new Set<string>();
     for (const state of this.allStates) {
@@ -50,9 +50,9 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   // Get unique transition symbols used in the DFA
-  get uniqueTransitionSymbols(): string[] {
+  get uniqueDfaTransitionSymbols(): string[] {
     const symbolSet = new Set<string>();
-    this.constructDFA()
+    this.constructDfa()
       .getAllTransitions()
       .forEach((transition) => {
         transition.labels().forEach((label) => {
@@ -69,7 +69,7 @@ export class EndlicherAutomat extends StateMachine {
   get dfaStates(): string[] {
     const stateSet = new Set<string>();
 
-    this.constructDFA()
+    this.constructDfa()
       .getAllStates()
       .forEach((state) => {
         stateSet.add(state.name.trim());
@@ -81,7 +81,7 @@ export class EndlicherAutomat extends StateMachine {
   get sortedDfaStates(): string[] {
     const stateSet = new Set<string>();
 
-    this.constructDFA()
+    this.constructDfa()
       .getAllStates()
       .forEach((state) => {
         state.name.split(',').forEach((name) => {
@@ -98,7 +98,7 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   // Method to construct a DFA from this automaton
-  constructDFA(): EndlicherAutomat {
+  constructDfa(): EndlicherAutomat {
     const dfa = new EndlicherAutomat();
     let xPosition = 100;
 
@@ -106,19 +106,19 @@ export class EndlicherAutomat extends StateMachine {
       return dfa;
     }
 
-    // Determine the start state of the DFA (epsilon closure of the NFA start state)
+    // Create a map to track state combinations in the DFA
+    const dfaStateMap = new Map<string, Set<EndlicherState>>();
+
+    // Determine the start state of the DFA (epsilon closure of the NFA start state) and add it to the map
     const startStateClosureSet = new Set(
       EndlicherState.eClosure2(new Set([this.startState as EndlicherState]))
     );
-
-    // Create a map to track state combinations in the DFA
-    const dfaStateMap = new Map<string, Set<EndlicherState>>();
     const startStateKey = this.getStateKey(Array.from(startStateClosureSet));
     dfaStateMap.set(startStateKey, startStateClosureSet);
 
     // Create the start state for the DFA
     const startDFAState = new EndlicherState(new Point(xPosition, 100), 0);
-    startDFAState.name = startStateKey || '∅'; // Assign ∅ only if stateKey is empty
+    startDFAState.name = startStateKey || '∅';
     dfa.startState = startDFAState;
     dfa.allStates.push(startDFAState);
     xPosition += 100;
@@ -161,12 +161,10 @@ export class EndlicherAutomat extends StateMachine {
 
       for (const symbol of symbols) {
         // Calculate new NFA states for this symbol
-        const nextNFAStates = EndlicherState.move2(
-          Array.from(currentNFAStates),
-          symbol
-        );
         const nextNFAStateClosure = new Set(
-          EndlicherState.eClosure2(new Set(nextNFAStates))
+          EndlicherState.eClosure2(
+            new Set(EndlicherState.move2(Array.from(currentNFAStates), symbol))
+          )
         );
 
         const nextStateKey = this.getStateKey(Array.from(nextNFAStateClosure));
@@ -223,11 +221,11 @@ export class EndlicherAutomat extends StateMachine {
   }
 
   // Generate a table representing the DFA's states and transitions
-  generateDFATable(): string[][] {
+  generateDfaTable(): string[][] {
     const dfaTable: string[][] = [];
-    const dfa = this.constructDFA();
+    const dfa = this.constructDfa();
     const dfaStates = dfa.getAllStates();
-    const transitionSymbols = dfa.uniqueTransitionSymbols;
+    const transitionSymbols = dfa.uniqueDfaTransitionSymbols;
 
     // Add the header row
     dfaTable.push(['SDFA', ...transitionSymbols]);
@@ -424,6 +422,7 @@ export class EndlicherAutomat extends StateMachine {
   }
 }
 
+// Defines methods for handling events when creating or initializing a new automaton
 export interface EndlicherAutomatDelegate {
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;
   onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void;

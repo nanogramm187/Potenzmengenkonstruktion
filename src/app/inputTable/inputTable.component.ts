@@ -49,8 +49,8 @@ export class InputTableComponent
     return this.service.stateMachine as EndlicherAutomat;
   }
 
-  get uniqueTransitionSymbols(): string[] {
-    return this.stateMachine.uniqueTransitionSymbols;
+  get uniqueDfaTransitionSymbols(): string[] {
+    return this.stateMachine.uniqueDfaTransitionSymbols;
   }
 
   get dfaStates(): string[] {
@@ -73,10 +73,12 @@ export class InputTableComponent
     }
   }
 
+  // Sets the currently focused input element.
   setFocusedCell(input: HTMLInputElement) {
     this.focusedInput = input;
   }
 
+  // Toggles a specified value within the focused input, managing special sorting for "(a)" and "(e)".
   setFocusedValue(value: string) {
     if (this.focusedInput) {
       const currentValue = this.focusedInput.value;
@@ -151,7 +153,7 @@ export class InputTableComponent
 
   // Shows expected states, transitions and start-/endbutton
   learningMode() {
-    const dfaTable = this.stateMachine.generateDFATable();
+    const dfaTable = this.stateMachine.generateDfaTable();
     const tableRows = document.querySelectorAll('tbody tr');
 
     tableRows.forEach((row, rowIndex) => {
@@ -175,7 +177,7 @@ export class InputTableComponent
                   .split(/[\s,]+/)
                   .map((state) => state.trim());
                 const expectedValue = dfaTable[rowIndex + 1][cellIndex];
-                const symbol = this.uniqueTransitionSymbols[cellIndex - 1];
+                const symbol = this.uniqueDfaTransitionSymbols[cellIndex - 1];
                 this.highlightTransitions(startStates, symbol, expectedValue);
                 console.log(startStates, symbol, expectedValue);
               }
@@ -266,7 +268,7 @@ export class InputTableComponent
 
   // Compares the input table with table from dfa
   checkTable() {
-    const dfaTable = this.stateMachine.generateDFATable();
+    const dfaTable = this.stateMachine.generateDfaTable();
     const tableRows = document.querySelectorAll('tbody tr');
     const CORRECT_COLOR = 'rgb(52, 236, 52)';
     const INCORRECT_COLOR = 'red';
@@ -339,17 +341,6 @@ export class InputTableComponent
 
   ngOnInit(): void {
     this.stateMachine.delegate = this;
-    // Temporarily disable learning mode and then re-enable it
-    const wasLearningModeEnabled = this.isLearningMode;
-    this.isLearningMode = false;
-
-    // Now re-enable learning mode if it was active before
-    if (wasLearningModeEnabled) {
-      setTimeout(() => {
-        this.isLearningMode = true;
-        this.learningMode(); // Reapply listeners and initialize learning mode on the new automaton
-      }, 0); // Using a timeout to ensure it's set up after DOM updates
-    }
   }
 
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {

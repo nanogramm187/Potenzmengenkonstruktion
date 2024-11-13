@@ -20,12 +20,13 @@ export class DfaTableComponent {
     private service: StatemachineService
   ) {}
 
+  // Gets automat through service
   get stateMachine(): EndlicherAutomat {
     return this.service.stateMachine as EndlicherAutomat;
   }
 
   // Initializes DFA table when the component is loaded
   ngOnInit(): void {
-    this.dfaTable = this.stateMachine.generateDFATable();
+    this.dfaTable = this.stateMachine.generateDfaTable();
   }
 }
