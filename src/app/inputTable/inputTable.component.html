@@ -62,7 +62,7 @@
           </td>
           <!-- Inputs for each unique transition symbol -->
           <td *ngFor="let symbol of uniqueDfaTransitionSymbols">
-            <input type="text" class="full-width-input" #symbolInput (focus)="setFocusedCell(symbolInput)" />
+            <input type="text" class="full-width-input" #symbolInput (focus)="setFocusedCell(symbolInput)"  />
           </td>
         </tr>
       </tbody>

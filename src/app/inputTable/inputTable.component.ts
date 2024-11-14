@@ -169,7 +169,7 @@ export class InputTableComponent
                   .split(/[\s,]+/)
                   .map((name) => name.trim());
                 this.highlightStates(expectedStateNames);
-                console.log(expectedStateNames);
+                // console.log(expectedStateNames);
               }
               // For other columns, highlight transitions
               else {
@@ -179,7 +179,7 @@ export class InputTableComponent
                 const expectedValue = dfaTable[rowIndex + 1][cellIndex];
                 const symbol = this.uniqueDfaTransitionSymbols[cellIndex - 1];
                 this.highlightTransitions(startStates, symbol, expectedValue);
-                console.log(startStates, symbol, expectedValue);
+                //  console.log(startStates, symbol, expectedValue);
               }
             }
           };
@@ -267,6 +267,113 @@ export class InputTableComponent
   }
 
   // Compares the input table with table from dfa
+  /*checkTable() {
+    /*
+    // Set von neuen Zuständen die überprüft werden dürfen.
+    let set: Set<string> = new Set(dfaTable[1]);
+    // 2d-Array von Korrektheit der Zellen.
+    let cells: boolean[][] = Array.from({ length: tableRows.length }, () =>
+      Array(dfaTable[0].length).fill(false)
+    );
+    
+    // Initialisiere das Set mit den neuen Zuständen, die bereits richtig sind.
+
+    tableRows.forEach((rows, rowIndex) => {
+      const tdRow = rows.querySelectorAll('td');
+      // Wenn das erste Element in der Reihe im Set enthalten ist, soll die Reihe überprüft werden.
+      if (set.has(tdRow[0].toString())) {
+        tdRow.forEach((column, columnIndex) => {
+          cells[rowIndex][columnIndex] =
+            dfaTable[rowIndex][columnIndex] == column.toString();
+        });
+      }
+    });
+ const dfaTable = this.stateMachine.generateDfaTable();
+    const tableRows = document.querySelectorAll('tbody tr');
+    const CORRECT_COLOR = 'rgb(52, 236, 52)';
+    const INCORRECT_COLOR = 'red';
+    let allCorrect = true;
+
+    // Nur die erste Zeile von dfaTable in RowSet einfügen
+    const RowSet = new Set(dfaTable[1]);
+    console.log(RowSet);
+
+    // Funktion zum Überprüfen einer Zeile
+    const checkRow = (rowIndex: number, row: Element) => {
+      const rowCells = row.querySelectorAll('td'); // Alle Zellen in der aktuellen Zeile
+
+      RowSet.forEach((value) => {
+        // Suche den Wert in der ersten Spalte von dfaTable
+        const dfaRowIndex = dfaTable.findIndex((dfaRow) => dfaRow[0] === value);
+
+        // Wenn der Wert gefunden wurde
+        if (dfaRowIndex !== -1) {
+          const dfaRow = dfaTable[dfaRowIndex];
+          let isMatch = true;
+
+          // Vergleiche jede Zelle der gefundenen Zeile mit der entsprechenden Zelle in der aktuellen Eingabezeile
+          rowCells.forEach((cell, cellIndex) => {
+            const input = cell.querySelector(
+              'input'
+            ) as HTMLInputElement | null;
+            if (input) {
+              const inputValueArray = input.value
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, '')
+                .split(',')
+                .sort();
+
+              const expectedValueArray = dfaRow[cellIndex]
+                .toLowerCase()
+                .replace(/\s+/g, '')
+                .split(',')
+                .sort();
+
+              if (
+                JSON.stringify(inputValueArray) !==
+                JSON.stringify(expectedValueArray)
+              ) {
+                isMatch = false;
+              }
+            }
+          });
+
+          // Wenn die Zeile übereinstimmt, lösche den Wert aus RowSet und färbe die gesamte Zeile grün
+          if (isMatch) {
+            RowSet.delete(value);
+            rowCells.forEach((cell) => {
+              const input = cell.querySelector(
+                'input'
+              ) as HTMLInputElement | null;
+              if (input) {
+                input.style.backgroundColor = CORRECT_COLOR;
+              }
+            });
+          }
+        }
+      });
+    };
+
+    // Alle Zeilen durchlaufen und überprüfen
+    tableRows.forEach((row, rowIndex) => {
+      checkRow(rowIndex, row);
+    });
+
+    // Show congratulations popup if all cells in the first row are correct after they are colored
+    if (allCorrect) {
+      setTimeout(() => {
+        alert('Glückwunsch! Alle Antworten sind korrekt.');
+      }, 100);
+    }
+
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    }, 100);
+  }
+*/
   checkTable() {
     const dfaTable = this.stateMachine.generateDfaTable();
     const tableRows = document.querySelectorAll('tbody tr');
@@ -274,47 +381,150 @@ export class InputTableComponent
     const INCORRECT_COLOR = 'red';
     let allCorrect = true;
 
+    // Initialisiere rowSet mit dem ersten Wert der zweiten Zeile
+    const rowSet = new Set([dfaTable[1][0]]);
+    const doneSet = new Set();
+    console.log('rowset', rowSet);
+    console.log('doneset', doneSet);
+
+    //help
+    const endStates = [this.stateMachine.finalStates];
+
+    console.log('name:', endStates);
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td');
-      cells.forEach((cell, cellIndex) => {
-        const input = cell.querySelector('input') as HTMLInputElement | null;
-        if (input) {
-          // Get and clean the input value (split, sort, and join)
-          const inputValueArray = input.value
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, '')
-            .split(',')
-            .sort();
+      const firstCellValue = cells[0].querySelector('input')?.value.trim();
 
-          // Get and clean the expected value (split, sort, and join)
-          const expectedValueArray = dfaTable[rowIndex + 1][cellIndex]
-            .toLowerCase()
-            .replace(/\s+/g, '')
-            .split(',')
-            .sort();
+      if (rowIndex === 0) {
+        const isFirstCellCorrect = firstCellValue && rowSet.has(firstCellValue);
 
-          // Compare the sorted arrays
-          const isCorrect =
-            JSON.stringify(inputValueArray) ===
-            JSON.stringify(expectedValueArray);
-
-          // Set background color based on correctness
-          input.style.backgroundColor = isCorrect
-            ? CORRECT_COLOR
-            : INCORRECT_COLOR;
-          if (!isCorrect) {
-            allCorrect = false;
-          }
+        if (!isFirstCellCorrect) {
+          cells.forEach((cell) => {
+            const input = cell.querySelector(
+              'input'
+            ) as HTMLInputElement | null;
+            if (input) {
+              input.style.backgroundColor = INCORRECT_COLOR;
+            }
+          });
+          allCorrect = false;
+          return;
         }
-      });
+
+        cells.forEach((cell, cellIndex) => {
+          const input = cell.querySelector('input') as HTMLInputElement | null;
+          if (input) {
+            const inputValueArray = input.value
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, '')
+              .split(',')
+              .sort();
+            const expectedValueArray = dfaTable[rowIndex + 1][cellIndex]
+              .toLowerCase()
+              .replace(/\s+/g, '')
+              .split(',')
+              .sort();
+
+            const isCorrect =
+              JSON.stringify(inputValueArray) ===
+              JSON.stringify(expectedValueArray);
+
+            input.style.backgroundColor = isCorrect
+              ? CORRECT_COLOR
+              : INCORRECT_COLOR;
+
+            if (isCorrect) {
+              let cellValue = dfaTable[rowIndex + 1][cellIndex];
+
+              // Überprüfe, ob der cellValue ein Endzustand ist und füge ' (E)' hinzu
+              if (endStates.includes(cellValue)) {
+                cellValue += ' (E)';
+              }
+
+              // Füge den Wert dem rowSet hinzu, falls er korrekt ist und noch nicht im doneSet steht
+              if (!doneSet.has(cellValue)) {
+                rowSet.add(cellValue);
+              }
+            } else {
+              allCorrect = false;
+            }
+          }
+        });
+      } else {
+        const isFirstCellCorrect = firstCellValue && rowSet.has(firstCellValue);
+
+        if (!isFirstCellCorrect) {
+          cells.forEach((cell) => {
+            const input = cell.querySelector(
+              'input'
+            ) as HTMLInputElement | null;
+            if (input) {
+              input.style.backgroundColor = INCORRECT_COLOR;
+            }
+          });
+          allCorrect = false;
+          return;
+        }
+
+        rowSet.delete(firstCellValue);
+        doneSet.add(firstCellValue);
+
+        const matchingRow = dfaTable.find((row) => row[0] === firstCellValue);
+
+        if (matchingRow) {
+          cells.forEach((cell, cellIndex) => {
+            const input = cell.querySelector(
+              'input'
+            ) as HTMLInputElement | null;
+            if (input) {
+              const inputValueArray = input.value
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, '')
+                .split(',')
+                .sort();
+              const expectedValueArray = matchingRow[cellIndex]
+                .toLowerCase()
+                .replace(/\s+/g, '')
+                .split(',')
+                .sort();
+
+              const isCorrect =
+                JSON.stringify(inputValueArray) ===
+                JSON.stringify(expectedValueArray);
+
+              input.style.backgroundColor = isCorrect
+                ? CORRECT_COLOR
+                : INCORRECT_COLOR;
+
+              if (isCorrect) {
+                let cellValue = matchingRow[cellIndex];
+
+                // Überprüfe, ob der cellValue ein Endzustand ist und füge ' (E)' hinzu
+                if (endStates.includes(cellValue)) {
+                  cellValue += ' (E)';
+                }
+
+                // Füge den Wert dem rowSet hinzu, falls er korrekt ist und noch nicht im doneSet steht
+                if (!doneSet.has(cellValue)) {
+                  rowSet.add(cellValue);
+                }
+              } else {
+                allCorrect = false;
+              }
+            }
+          });
+        }
+      }
     });
-    // Show congratulations popup if all cells are correct after they are colored
+
     if (allCorrect) {
       setTimeout(() => {
         alert('Glückwunsch! Alle Antworten sind korrekt.');
       }, 100);
     }
+
     setTimeout(() => {
       if (this.firstCellInput) {
         this.firstCellInput.nativeElement.focus();
