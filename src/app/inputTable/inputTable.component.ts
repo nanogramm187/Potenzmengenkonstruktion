@@ -133,13 +133,30 @@ export class InputTableComponent
     if (this.isLearningMode) {
       this.service.showDeterministicStates = false;
       this.learningMode();
+      setTimeout(() => {
+        if (this.firstCellInput) {
+          this.firstCellInput.nativeElement.focus();
+        }
+      });
+    } else {
+      const tableRows = document.querySelectorAll('tbody tr');
+
+      tableRows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        cells.forEach((cell) => {
+          const input = cell.querySelector('input') as HTMLInputElement | null;
+          if (input) {
+            input.disabled = false; // Aktiviert nur die angegebenen Zeilen
+          }
+        });
+      });
     }
   }
 
   // Method to show the info message
   showAlert() {
     alert(
-      'Falls der Hilfemodus bei neu generierten Zellen nicht funktioniert, bitte wieder aus- und einschalten .'
+      'Der Hilfemodus gibt dir Hinweise auf die richtige Lösung.\nFalls der Hilfemodus bei neu generierten Zellen nicht funktioniert, bitte einfach aus- und einschalten .'
     );
   }
 
@@ -151,10 +168,26 @@ export class InputTableComponent
     }
   }
 
-  // Shows expected states, transitions and start-/endbutton
+  // Shows expected states, transitions and start-/endbutton gradually
   learningMode() {
     const dfaTable = this.stateMachine.generateDfaTable();
     const tableRows = document.querySelectorAll('tbody tr');
+    const endStates = Array.from(this.stateMachine.finalStates).map(
+      (state: any) => state.name
+    );
+    let activeRows: number[] = [0];
+    this.activateRows(activeRows);
+
+    // Disable all inputs
+    tableRows.forEach((row) => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell) => {
+        const input = cell.querySelector('input') as HTMLInputElement | null;
+        if (input) {
+          input.disabled = true;
+        }
+      });
+    });
 
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td');
@@ -163,31 +196,52 @@ export class InputTableComponent
         if (input) {
           const focusListener = () => {
             if (this.isLearningMode) {
-              // If first column, highlight states
+              // Highlight states in first column
               if (cellIndex === 0) {
                 const expectedStateNames = dfaTable[rowIndex + 1][cellIndex]
                   .split(/[\s,]+/)
                   .map((name) => name.trim());
                 this.highlightStates(expectedStateNames);
-                // console.log(expectedStateNames);
-              }
-              // For other columns, highlight transitions
-              else {
+              } else {
+                // Highlight transitions in other columns
                 const startStates = dfaTable[rowIndex + 1][0]
                   .split(/[\s,]+/)
                   .map((state) => state.trim());
                 const expectedValue = dfaTable[rowIndex + 1][cellIndex];
                 const symbol = this.uniqueDfaTransitionSymbols[cellIndex - 1];
                 this.highlightTransitions(startStates, symbol, expectedValue);
-                //  console.log(startStates, symbol, expectedValue);
               }
             }
           };
-
           const blurListener = () => {
+            let inputValue = input.value.trim();
+            const expectedValue = dfaTable[rowIndex + 1][cellIndex];
+            // Add an (E) to value if it has an endState
+            if (inputValue === expectedValue) {
+              const inputParts = inputValue.split(/[\s,]+/);
+              const isEndState = inputParts.some((part) => {
+                return endStates.some((state: any) => {
+                  return state === part;
+                });
+              });
+              if (isEndState) {
+                inputValue += ' (E)';
+              }
+              // Add row that matches the first cell to the inputValue
+              const matchingRowIndex = dfaTable.findIndex(
+                (row) => row[0] === inputValue
+              );
+
+              // If valid, activate row
+              if (matchingRowIndex !== -1) {
+                if (!activeRows.includes(matchingRowIndex - 1)) {
+                  activeRows.push(matchingRowIndex - 1);
+                }
+                this.activateRows(activeRows);
+              }
+            }
             this.clearHighlights();
           };
-
           input.addEventListener('focus', focusListener);
           input.addEventListener('blur', blurListener);
         }
@@ -195,7 +249,22 @@ export class InputTableComponent
     });
   }
 
-  // Method to highlight buttons or states of the first column based on expected values
+  // Activates learningMode for specific rows
+  activateRows(activeRows: number[]) {
+    const tableRows = document.querySelectorAll('tbody tr');
+
+    tableRows.forEach((row, rowIndex) => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell) => {
+        const input = cell.querySelector('input') as HTMLInputElement | null;
+        if (input) {
+          input.disabled = !activeRows.includes(rowIndex);
+        }
+      });
+    });
+  }
+
+  // Highlights buttons or states of the first column based on expected values
   highlightStates(stateNames: string[]) {
     // Highlight buttons
     if (stateNames.includes('(A)')) {
@@ -219,7 +288,7 @@ export class InputTableComponent
     });
   }
 
-  // Method to highlight transitions of every column except the first one based on expected values
+  // Highlights transitions of every column except the first one based on expected values
   highlightTransitions(
     startStates: string[],
     symbol: string,
@@ -410,5 +479,10 @@ export class InputTableComponent
         this.learningMode();
       }, 0);
     }
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    });
   }
 }
