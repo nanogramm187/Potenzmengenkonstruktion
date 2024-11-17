@@ -156,7 +156,7 @@ export class InputTableComponent
   // Method to show the info message
   showAlert() {
     alert(
-      'Der Hilfemodus gibt dir Hinweise auf die richtige Lösung.\nFalls der Hilfemodus bei neu generierten Zellen nicht funktioniert, bitte einfach aus- und einschalten .'
+      'Der Lernmodus gibt dir Hinweise auf die richtige Lösung.\nFalls der Lernmodus bei neu generierten Zellen nicht funktioniert, bitte einfach aus- und einschalten .'
     );
   }
 
