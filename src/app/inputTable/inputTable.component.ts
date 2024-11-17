@@ -175,8 +175,6 @@ export class InputTableComponent
     const endStates = Array.from(this.stateMachine.finalStates).map(
       (state: any) => state.name
     );
-    let activeRows: number[] = [0];
-    this.activateRows(activeRows);
 
     // Disable all inputs
     tableRows.forEach((row) => {
@@ -188,6 +186,9 @@ export class InputTableComponent
         }
       });
     });
+
+    let activeRows: number[] = [0];
+    this.activateRows(activeRows);
 
     tableRows.forEach((row, rowIndex) => {
       const cells = row.querySelectorAll('td');
