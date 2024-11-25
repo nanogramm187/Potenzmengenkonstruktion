@@ -72,6 +72,12 @@ th, td {
   margin-bottom: 0px;
 }
 
+input:disabled {
+  background-color: rgb(221, 221, 221)!important  ;         
+  cursor: not-allowed;     
+}
+
+
 .buttons {
   display: flex;
   justify-content: center; 

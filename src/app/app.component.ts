@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.dialog.open(WelcomeDialogComponent, {
       width: '70vh',
-      height: '50vh',
+      height: '60vh',
     });
   }
 }
