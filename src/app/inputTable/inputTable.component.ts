@@ -127,11 +127,6 @@ export class InputTableComponent
     }
   }
 
-  // Normalizes input
-  normalizeValue(value: any) {
-    return value.trim().toLowerCase().replace(/\s+/g, '').split(',').sort();
-  }
-
   // Method to toggle the learning mode
   toggleLearningMode(event: any) {
     this.isLearningMode = event.checked;
@@ -193,15 +188,11 @@ export class InputTableComponent
     let activeRows: number[] = [0];
 
     // Disable all inputs
-    tableRows.forEach((row) => {
-      const cells = row.querySelectorAll('td');
-      cells.forEach((cell) => {
-        const input = cell.querySelector('input') as HTMLInputElement | null;
-        if (input) {
-          input.disabled = true;
-        }
-      });
-    });
+    tableRows.forEach((row) =>
+      row.querySelectorAll('td input').forEach((input) => {
+        (input as HTMLInputElement).disabled = true;
+      })
+    );
 
     // Activate already correct cells
     tableRows.forEach((row, rowIndex) => {
@@ -210,36 +201,40 @@ export class InputTableComponent
 
       cells.forEach((cell, cellIndex) => {
         const input = cell.querySelector('input') as HTMLInputElement | null;
-        if (input) {
-          const expectedValue = dfaTable[rowIndex + 1][cellIndex];
-          if (input.value.trim() !== expectedValue) {
-            rowIsCorrect = false;
-          }
-          let inputValue = input.value.trim();
-          if (inputValue === expectedValue) {
-            const inputParts = inputValue.split(/[\s,]+/);
-            const isEndState = inputParts.some((part) => {
-              return endStates.some((state: any) => {
-                return state === part;
-              });
-            });
-            if (isEndState) {
-              inputValue += ' (E)';
-            }
-            // Add row that matches the first cell to the inputValue
-            const matchingRowIndex =
-              dfaTable.findIndex((row) => row[0] === inputValue) - 1;
+        if (!input) return;
 
-            // If valid, activate row
-            if (matchingRowIndex !== -1) {
-              if (!activeRows.includes(matchingRowIndex)) {
-                activeRows.push(matchingRowIndex);
-              }
-              this.activateRows(activeRows);
-            }
-          } else {
-            input.value = '';
-          }
+        const expectedValue = this.normalizeValue(
+          dfaTable[rowIndex + 1]?.[cellIndex]
+        );
+        let inputValue = this.normalizeValue(input.value);
+
+        // Mark row as false and clear input if wrong
+        if (inputValue !== expectedValue) {
+          rowIsCorrect = false;
+          input.value = '';
+          return;
+        }
+
+        // Add (E) if endState in value
+        const inputParts = inputValue.split(/[\s,]+/);
+        const isEndState = inputParts.some((part) => {
+          return endStates.some((state: any) => {
+            return state === part;
+          });
+        });
+        if (isEndState) {
+          inputValue += ' (e)';
+        }
+
+        // Add row that matches the first cell to the inputValue
+        const matchingRowIndex =
+          dfaTable.findIndex(
+            (row) => this.normalizeValue(row[0]) === inputValue
+          ) - 1;
+
+        // If valid, activate row
+        if (matchingRowIndex > -1 && !activeRows.includes(matchingRowIndex)) {
+          activeRows.push(matchingRowIndex);
         }
       });
 
@@ -248,6 +243,8 @@ export class InputTableComponent
         activeRows.push(rowIndex);
       }
     });
+
+    // Activate rows
     this.activateRows(activeRows);
 
     //Highlight states, buttons and transitions
@@ -256,7 +253,7 @@ export class InputTableComponent
       cells.forEach((cell, cellIndex) => {
         const input = cell.querySelector('input') as HTMLInputElement | null;
         if (input) {
-          const focusListener = () => {
+          input.addEventListener('focus', () => {
             if (this.isLearningMode) {
               // Highlight states in first column
               if (cellIndex === 0) {
@@ -274,14 +271,14 @@ export class InputTableComponent
                 this.highlightTransitions(startStates, symbol, expectedValue);
               }
             }
-          };
-          input.addEventListener('focus', focusListener);
+          });
           input.addEventListener('blur', this.blurListener);
         }
       });
     });
   }
 
+  // Handles blur event in learningMode
   private blurListener = () => {
     const dfaTable = this.stateMachine.generateDfaTable();
     const tableRows = document.querySelectorAll('tbody tr');
@@ -296,87 +293,75 @@ export class InputTableComponent
       const cells = row.querySelectorAll('td');
       cells.forEach((cell, cellIndex) => {
         if (cellIndex === 0) return;
-        const input = cell.querySelector('input') as HTMLInputElement | null;
-        if (input) {
-          let inputValue = input.value.trim();
-          const expectedValue = dfaTable[rowIndex + 1][cellIndex];
-          // Add an (E) to value if it has an endState
-          if (inputValue === expectedValue) {
-            const inputParts = inputValue.split(/[\s,]+/);
-            const isEndState = inputParts.some((part) =>
-              endStates.includes(part)
-            );
-            if (isEndState) {
-              inputValue += ' (E)';
-            }
-            // Add row that matches the first cell to the inputValue
-            const matchingRowIndex =
-              dfaTable.findIndex((row) => row[0] === inputValue) - 1;
 
-            // If valid, activate row
-            if (matchingRowIndex !== -1) {
-              const inputElement = cells[0].querySelector(
-                'input'
-              ) as HTMLInputElement;
-              const firstCellValue = inputElement.value.trim();
-              const expectedFirstCellValue = dfaTable[rowIndex + 1][0];
-              if (firstCellValue === expectedFirstCellValue) {
-                if (!activeRows.includes(matchingRowIndex)) {
-                  activeRows.push(matchingRowIndex);
-                }
-              }
-            }
-          } else {
-            // Dont deactivate if the same value is present
-            const row = tableRows[rowIndex];
-            let shouldDeactivate = true;
-            const cells = row.querySelectorAll('td');
-            cells.forEach((cell, index) => {
-              const otherInput = cell.querySelector(
+        const input = cell.querySelector('input') as HTMLInputElement | null;
+        if (!input) return;
+
+        let inputValue = this.normalizeValue(input.value);
+        const expectedValue = this.normalizeValue(
+          dfaTable[rowIndex + 1][cellIndex]
+        );
+
+        // Add an (E) to value if it has an endState
+        if (inputValue === expectedValue) {
+          const inputParts = inputValue.split(/[\s,]+/);
+          const isEndState = inputParts.some((part) => {
+            return endStates.some((state: any) => {
+              return this.normalizeValue(state) === part;
+            });
+          });
+          if (isEndState) {
+            inputValue += ' (e)';
+          }
+
+          // Find row that matches the first cell to the inputValue
+          const matchingRowIndex =
+            dfaTable.findIndex(
+              (row) => this.normalizeValue(row[0]) === inputValue
+            ) - 1;
+
+          // Activate row if higher index and not already activated
+          if (
+            matchingRowIndex > rowIndex &&
+            !activeRows.includes(matchingRowIndex)
+          ) {
+            activeRows.push(matchingRowIndex);
+          }
+        } else {
+          // Find corresponding row
+          const matchingRowIndex =
+            dfaTable.findIndex(
+              (row) => this.normalizeValue(row[0]) === expectedValue
+            ) - 1;
+
+          // Deactivate row if conditions are met
+          if (
+            matchingRowIndex > 0 &&
+            matchingRowIndex !== rowIndex &&
+            matchingRowIndex > rowIndex
+          ) {
+            activeRows = activeRows.filter((r) => r !== matchingRowIndex);
+
+            // Clear input values for deactivated rows
+            const deactivatedRow = tableRows[matchingRowIndex];
+            deactivatedRow.querySelectorAll('td').forEach((cell) => {
+              const input = cell.querySelector(
                 'input'
               ) as HTMLInputElement | null;
-              if (otherInput && index !== cellIndex) {
-                const otherInputValue = otherInput.value.trim();
-                const otherExpectedValue = dfaTable[rowIndex + 1][index];
-                if (otherInputValue === otherExpectedValue) {
-                  shouldDeactivate = false;
-                }
+              if (input) {
+                input.value = '';
               }
             });
-            if (shouldDeactivate) {
-              const matchingRowIndex = dfaTable.findIndex(
-                (row) => row[0] === expectedValue
-              );
-              if (matchingRowIndex !== -1) {
-                const rowToDeactivate = matchingRowIndex - 1;
-                // Do not deactivate first row, the row we are in and the rows above
-                if (
-                  rowToDeactivate > 0 &&
-                  rowToDeactivate !== rowIndex &&
-                  rowToDeactivate > rowIndex
-                ) {
-                  activeRows = activeRows.filter((r) => r !== rowToDeactivate);
-                  const deactivatedRow = tableRows[rowToDeactivate];
-                  const deactivatedCells =
-                    deactivatedRow.querySelectorAll('td');
-                  deactivatedCells.forEach((cell) => {
-                    const input = cell.querySelector(
-                      'input'
-                    ) as HTMLInputElement | null;
-                    if (input) {
-                      input.value = ''; // Clear the input value
-                    }
-                  });
-                }
-              }
-            }
           }
         }
-        this.activateRows(activeRows);
-
-        this.clearHighlights();
       });
     });
+
+    // Activate rows and clear highlights
+    this.activateRows(activeRows);
+    this.clearHighlights();
+
+    // Reset input of deactivated rows
     tableRows.forEach((row) => {
       const cells = row.querySelectorAll('td');
       cells.forEach((cell) => {
@@ -384,10 +369,8 @@ export class InputTableComponent
         if (input) {
           const rowIndex = Array.from(tableRows).indexOf(row);
           const isRowActive = activeRows.includes(rowIndex);
-
-          // Clear input if the row is not active (i.e., it is deactivated)
           if (!isRowActive) {
-            input.value = ''; // Clear the input value for deactivated rows
+            input.value = '';
           }
         }
       });
@@ -480,80 +463,131 @@ export class InputTableComponent
     });
   }
 
-  // Compares the input table with table from dfa gradually
+  // Normalizes input
+  normalizeValue(value: any): string {
+    if (!value) return '';
+    return value
+      .toString()
+      .replace(/\s+/g, ' ')
+      .split(',')
+      .map((item: any) => item.trim().toLowerCase())
+      .sort()
+      .join(',');
+  }
+
+  // Compares the input table with table from dfa gradually or normally in learningMode
   checkTable() {
     const dfaTable = this.stateMachine.generateDfaTable();
+    const normalizedDfaTable = dfaTable.map((row) =>
+      row.map((cell) => this.normalizeValue(cell))
+    );
     const tableRows = document.querySelectorAll('tbody tr');
     const CORRECT_COLOR = 'lightgreen';
     const INCORRECT_COLOR = 'salmon';
     const endStates = Array.from(this.stateMachine.finalStates).map(
       (state: any) => state.name
     );
-    // Initialising rowSet with startState
-    const toDoSet = new Set([dfaTable[1][0]]);
-    const doneSet = new Set();
 
-    tableRows.forEach((row) => {
-      const cells = row.querySelectorAll('td');
-      const firstCellValue = cells[0].querySelector('input')?.value.trim();
-      const isFirstCellCorrect = firstCellValue && toDoSet.has(firstCellValue);
-
-      if (!isFirstCellCorrect) {
-        cells.forEach((cell) => {
-          const input = cell.querySelector('input') as HTMLInputElement | null;
-          if (input) {
-            input.style.backgroundColor = INCORRECT_COLOR;
-          }
-        });
-        return;
-      }
-
-      toDoSet.delete(this.normalizeValue(firstCellValue));
-      doneSet.add(this.normalizeValue(firstCellValue));
-
-      // Find row in dfaTable which corresponds to the current one
-      const matchingRow = dfaTable.find((row) => row[0] === firstCellValue);
-      if (matchingRow) {
+    // Compare exactly to dfaTable
+    const checkInLearningMode = () => {
+      tableRows.forEach((row, rowIndex) => {
+        const cells = row.querySelectorAll('td');
         cells.forEach((cell, cellIndex) => {
           const input = cell.querySelector('input') as HTMLInputElement | null;
           if (input) {
             const inputValueArray = this.normalizeValue(input.value);
             const expectedValueArray = this.normalizeValue(
-              matchingRow[cellIndex]
+              dfaTable[rowIndex + 1][cellIndex]
             );
-
-            const isCorrect =
-              JSON.stringify(inputValueArray) ===
-              JSON.stringify(expectedValueArray);
+            const isCorrect = inputValueArray === expectedValueArray;
             input.style.backgroundColor = isCorrect
               ? CORRECT_COLOR
               : INCORRECT_COLOR;
-
-            if (isCorrect) {
-              let cellValue = matchingRow[cellIndex];
-              const cellValueParts = cellValue.split(/[\s,]+/);
-
-              // Check if cellValue has endState
-              const isEndState = cellValueParts.some((part) => {
-                return endStates.some((state: any) => {
-                  return state === part;
-                });
-              });
-              if (isEndState) {
-                cellValue += ' (E)';
-              }
-
-              // Add the correct value to toDoSet if it has not been done already
-              if (!doneSet.has(cellValue)) {
-                toDoSet.add(cellValue);
-              }
-            }
           }
         });
-      }
-    });
+      });
+    };
 
-    // Show alert if every cell is correct
+    // Compare gradually to dfaTable
+    const checkInNormalMode = () => {
+      // Remember the value thats toDo and thats done
+      const toDoSet = new Set([this.normalizeValue(dfaTable[1][0])]);
+      const doneSet = new Set();
+
+      tableRows.forEach((row) => {
+        const cells = row.querySelectorAll('td');
+        const firstCellValue = cells[0].querySelector('input')?.value.trim();
+        const normalizedFirstCellValue = this.normalizeValue(firstCellValue);
+        const isFirstCellCorrect =
+          normalizedFirstCellValue && toDoSet.has(normalizedFirstCellValue);
+
+        // If first cell of a row is wrong, the whole row is wrong
+        if (!isFirstCellCorrect) {
+          cells.forEach((cell) => {
+            const input = cell.querySelector(
+              'input'
+            ) as HTMLInputElement | null;
+            if (input) {
+              input.style.backgroundColor = INCORRECT_COLOR;
+            }
+          });
+          return;
+        }
+
+        toDoSet.delete(normalizedFirstCellValue);
+        doneSet.add(normalizedFirstCellValue);
+
+        // Find the matching row in dfaTable using normalized values
+        const matchingRow = normalizedDfaTable.find(
+          (row) => this.normalizeValue(row[0]) === normalizedFirstCellValue
+        );
+
+        // Compare to row in dfaTable
+        if (matchingRow) {
+          cells.forEach((cell, cellIndex) => {
+            const input = cell.querySelector(
+              'input'
+            ) as HTMLInputElement | null;
+            if (input) {
+              const inputValue = this.normalizeValue(input.value);
+              const expectedValue = this.normalizeValue(matchingRow[cellIndex]);
+              const isCorrect = inputValue === expectedValue;
+              input.style.backgroundColor = isCorrect
+                ? CORRECT_COLOR
+                : INCORRECT_COLOR;
+
+              if (isCorrect) {
+                let cellValue = matchingRow[cellIndex];
+                const cellValueParts = cellValue.split(/[\s,]+/);
+
+                // Check if cellValue has endState
+                const isEndState = cellValueParts.some((part) => {
+                  return endStates.some((state: any) => {
+                    return this.normalizeValue(state) === part;
+                  });
+                });
+                if (isEndState) {
+                  cellValue += ' (e)';
+                }
+
+                // Add the correct value to toDoSet if it has not been done already
+                if (!doneSet.has(cellValue)) {
+                  toDoSet.add(cellValue);
+                }
+              }
+            }
+          });
+        }
+      });
+    };
+
+    if (this.isLearningMode) {
+      checkInLearningMode();
+    } else {
+      checkInNormalMode();
+    }
+
+    // Alert if every cell is right
     const allCorrect = Array.from(
       document.querySelectorAll('tbody td input')
     ).every((input) => {
@@ -571,6 +605,7 @@ export class InputTableComponent
   }
 
   // Resets input and color in every cell
+  // Disables cells based on learningMode
   resetTable() {
     const tableRows = document.querySelectorAll('tbody tr');
     tableRows.forEach((row, rowIndex) => {
@@ -580,11 +615,12 @@ export class InputTableComponent
         if (input) {
           input.value = '';
           input.style.backgroundColor = 'white';
-          // Disable all inputs except those in the first row (rowIndex !== 0)
           if (rowIndex !== 0 && this.isLearningMode) {
+            // Disable all inputs except those in the first row
             input.disabled = true;
           } else {
-            input.disabled = false; // Ensure first row inputs are enabled
+            // Disable no inputs
+            input.disabled = false;
           }
         }
       });
@@ -594,16 +630,15 @@ export class InputTableComponent
     this.focusFirstCellInput();
   }
 
+  // Assigns delegate to inputTable
   ngOnInit(): void {
     this.stateMachine.delegate = this;
   }
 
+  // Initializes and adapts to learningMode
   onCreateInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
     this.initializeComponent(endlicherAutomat);
-    const wasLearningModeEnabled = this.isLearningMode;
-    this.isLearningMode = false;
-
-    if (wasLearningModeEnabled) {
+    if (this.isLearningMode) {
       setTimeout(() => {
         this.isLearningMode = true;
         this.learningMode();
@@ -611,17 +646,20 @@ export class InputTableComponent
     }
   }
 
+  // Initializes and sets learningMode to false to minimize problems new generated cells
   onCreateNewInstanceFromJSON(endlicherAutomat: EndlicherAutomat): void {
     this.initializeComponent(endlicherAutomat);
     this.isLearningMode = false;
   }
 
+  // Resets table, initializes and focusses first cell
   private initializeComponent(endlicherAutomat: EndlicherAutomat): void {
     this.resetTable();
     endlicherAutomat.delegate = this;
     this.focusFirstCellInput();
   }
 
+  // Focusses first cell
   private focusFirstCellInput(): void {
     setTimeout(() => {
       if (this.firstCellInput) {
