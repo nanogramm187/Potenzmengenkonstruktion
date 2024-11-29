@@ -160,6 +160,10 @@ export class EndlicherAutomat extends StateMachine {
       const symbols = this.getAllTransitionSymbols();
 
       for (const symbol of symbols) {
+        if (symbol === 'ε') {
+          continue; // Simply skip this iteration of the loop
+        }
+
         // Calculate new NFA states for this symbol
         const nextNFAStateClosure = new Set(
           EndlicherState.eClosure2(
