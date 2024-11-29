@@ -202,34 +202,34 @@ export class InputTableComponent
       cells.forEach((cell, cellIndex) => {
         const input = cell.querySelector('input') as HTMLInputElement | null;
         if (!input) return;
-
-        const expectedValue = this.normalizeValue(
-          dfaTable[rowIndex + 1]?.[cellIndex]
+        const processedInputValue = this.processValue(input.value);
+        const processedExpectedValue = this.processValue(
+          dfaTable[rowIndex + 1][cellIndex]
         );
-        let inputValue = this.normalizeValue(input.value);
 
         // Mark row as false and clear input if wrong
-        if (inputValue !== expectedValue) {
+        if (processedInputValue !== processedExpectedValue) {
           rowIsCorrect = false;
           input.value = '';
           return;
         }
 
         // Add (E) if endState in value
-        const inputParts = inputValue.split(/[\s,]+/);
-        const isEndState = inputParts.some((part) => {
+        let cellValue = processedExpectedValue;
+        const cellValueParts = cellValue.split(/[\s,]+/);
+        const isEndState = cellValueParts.some((part) => {
           return endStates.some((state: any) => {
-            return state === part;
+            return this.normalizeValue(state) === part;
           });
         });
         if (isEndState) {
-          inputValue += ' (e)';
+          cellValue += '(e)';
         }
 
         // Add row that matches the first cell to the inputValue
         const matchingRowIndex =
           dfaTable.findIndex(
-            (row) => this.normalizeValue(row[0]) === inputValue
+            (row) => this.normalizeValue(row[0]) === cellValue
           ) - 1;
 
         // If valid, activate row
@@ -429,7 +429,7 @@ export class InputTableComponent
       .filter(
         (transition: any) =>
           startStates.includes(transition.source.name) &&
-          transition.transitionSymbols.includes(symbol) &&
+          (transition.transitionSymbols.includes(symbol) || 'ε') &&
           targetStates.includes(transition.destination.name)
       )
       .forEach((transition) => (transition.highlight = true));
@@ -464,7 +464,7 @@ export class InputTableComponent
   }
 
   // Normalizes input
-  normalizeValue(value: any): string {
+  private normalizeValue(value: any): string {
     if (!value) return '';
     return value
       .toString()
@@ -474,6 +474,17 @@ export class InputTableComponent
       .sort()
       .join(',');
   }
+
+  // Process value if start- or endstate is in it
+  private processValue = (value: string): string => {
+    if (!value) return '';
+    const normalizedValue = this.normalizeValue(value);
+    const match = normalizedValue.match(/\((a|e)\)/g);
+    const suffix = match ? match[0] : '';
+    const baseValue = normalizedValue.replace(/\((a|e)\)/g, '').trim();
+    const normalizedBase = this.normalizeValue(baseValue);
+    return `${normalizedBase}${suffix}`;
+  };
 
   // Compares the input table with table from dfa gradually or normally in learningMode
   checkTable() {
@@ -495,11 +506,12 @@ export class InputTableComponent
         cells.forEach((cell, cellIndex) => {
           const input = cell.querySelector('input') as HTMLInputElement | null;
           if (input) {
-            const inputValueArray = this.normalizeValue(input.value);
-            const expectedValueArray = this.normalizeValue(
+            const processedInputValue = this.processValue(input.value);
+            const processedExpectedValue = this.processValue(
               dfaTable[rowIndex + 1][cellIndex]
             );
-            const isCorrect = inputValueArray === expectedValueArray;
+
+            const isCorrect = processedInputValue === processedExpectedValue;
             input.style.backgroundColor = isCorrect
               ? CORRECT_COLOR
               : INCORRECT_COLOR;
@@ -510,17 +522,21 @@ export class InputTableComponent
 
     // Compare gradually to dfaTable
     const checkInNormalMode = () => {
-      // Remember the value thats toDo and thats done
-      const toDoSet = new Set([this.normalizeValue(dfaTable[1][0])]);
-      const doneSet = new Set();
+      // Remember the value that's toDo and that's done
+      const toDoSet = new Set([this.processValue(dfaTable[1][0])]); // Use processValue here
+      const doneSet = new Set([
+        this.processValue(dfaTable[1][0])
+          .replace(/\(a\)$/, '')
+          .trim(),
+      ]);
 
       tableRows.forEach((row) => {
         const cells = row.querySelectorAll('td');
-        const firstCellValue = cells[0].querySelector('input')?.value.trim();
-        const normalizedFirstCellValue = this.normalizeValue(firstCellValue);
+        const firstCellValue =
+          cells[0].querySelector('input')?.value?.trim() ?? '';
+        const processedFirstCellValue = this.processValue(firstCellValue); // Use processValue here
         const isFirstCellCorrect =
-          normalizedFirstCellValue && toDoSet.has(normalizedFirstCellValue);
-
+          processedFirstCellValue && toDoSet.has(processedFirstCellValue);
         // If first cell of a row is wrong, the whole row is wrong
         if (!isFirstCellCorrect) {
           cells.forEach((cell) => {
@@ -534,12 +550,11 @@ export class InputTableComponent
           return;
         }
 
-        toDoSet.delete(normalizedFirstCellValue);
-        doneSet.add(normalizedFirstCellValue);
-
-        // Find the matching row in dfaTable using normalized values
+        toDoSet.delete(processedFirstCellValue);
+        doneSet.add(processedFirstCellValue);
+        // Find the matching row in dfaTable using processed values
         const matchingRow = normalizedDfaTable.find(
-          (row) => this.normalizeValue(row[0]) === normalizedFirstCellValue
+          (row) => this.processValue(row[0]) == processedFirstCellValue // Use processValue here
         );
 
         // Compare to row in dfaTable
@@ -549,15 +564,16 @@ export class InputTableComponent
               'input'
             ) as HTMLInputElement | null;
             if (input) {
-              const inputValue = this.normalizeValue(input.value);
-              const expectedValue = this.normalizeValue(matchingRow[cellIndex]);
-              const isCorrect = inputValue === expectedValue;
+              const processedInputValue = this.processValue(input.value); // Use processValue here
+              const processedExpectedValue = this.processValue(
+                matchingRow[cellIndex]
+              );
+              const isCorrect = processedInputValue === processedExpectedValue;
               input.style.backgroundColor = isCorrect
                 ? CORRECT_COLOR
                 : INCORRECT_COLOR;
-
               if (isCorrect) {
-                let cellValue = matchingRow[cellIndex];
+                let cellValue = processedExpectedValue;
                 const cellValueParts = cellValue.split(/[\s,]+/);
 
                 // Check if cellValue has endState
@@ -567,7 +583,7 @@ export class InputTableComponent
                   });
                 });
                 if (isEndState) {
-                  cellValue += ' (e)';
+                  cellValue += '(e)';
                 }
 
                 // Add the correct value to toDoSet if it has not been done already
