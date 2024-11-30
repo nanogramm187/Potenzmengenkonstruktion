@@ -1,3 +1,5 @@
+// Nicht kommentierte Methoden des Codes stammt aus dem vorgegebenen Projekt "Endlicher Automat"
+
 import { Result } from '../../../statemachine/src/lib/statemachine/Result';
 import { Point } from '../../../statemachine/src/lib/statemachine/drawingprimitives/Point';
 import { StateMachine } from '../../../statemachine/src/lib/statemachine/statemachine';

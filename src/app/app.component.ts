@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
     service.stateMachine = new EndlicherAutomat();
   }
 
+  // Show welcome dialog
   ngOnInit(): void {
     this.dialog.open(WelcomeDialogComponent, {
       width: '70vh',

@@ -1,3 +1,5 @@
+// Nicht kommentierte Methoden des Codes stammt aus dem vorgegebenen Projekt "Endlicher Automat"
+
 import { EndlicherAutomat } from '../endlicherautomat/EndlicherAutomat';
 
 export class InputTable {

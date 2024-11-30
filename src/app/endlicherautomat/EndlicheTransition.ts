@@ -1,3 +1,5 @@
+//Dieser Code stammt aus dem vorgegebenen Projekt "Endlicher Automat"
+
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Transition } from '../../../statemachine/src/lib/statemachine/stateconnections/Transition';
 import { TransitionEditDialogComponent } from './transition-edit-dialog/transition-edit-dialog.component';

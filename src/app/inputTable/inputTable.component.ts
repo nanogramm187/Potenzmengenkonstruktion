@@ -1,3 +1,5 @@
+// Nicht kommentierte Methoden des Codes stammt aus dem vorgegebenen Projekt "Endlicher Automat"
+
 import {
   AfterViewChecked,
   Component,
@@ -71,6 +73,15 @@ export class InputTableComponent
       this.firstCellInput.nativeElement.focus();
       this.isFirstFocusApplied = true;
     }
+  }
+
+  // Focusses first cell
+  private focusFirstCellInput(): void {
+    setTimeout(() => {
+      if (this.firstCellInput) {
+        this.firstCellInput.nativeElement.focus();
+      }
+    });
   }
 
   // Sets the currently focused input element.
@@ -147,7 +158,8 @@ export class InputTableComponent
       });
     } else {
       const tableRows = document.querySelectorAll('tbody tr');
-      this.activateRows([...Array(tableRows.length).keys()]); // Activate all rows
+      // Activate all rows
+      this.activateRows([...Array(tableRows.length).keys()]);
 
       tableRows.forEach((row, i) => {
         const cells = row.querySelectorAll('td');
@@ -156,7 +168,7 @@ export class InputTableComponent
           if (input) {
             input.disabled = false;
             input.style.background = 'white';
-            input.removeEventListener('blur', this.blurListener); // Ensure the listener is removed
+            input.removeEventListener('blur', this.blurListener);
           }
         });
       });
@@ -335,11 +347,7 @@ export class InputTableComponent
             ) - 1;
 
           // Deactivate row if conditions are met
-          if (
-            matchingRowIndex > 0 &&
-            matchingRowIndex !== rowIndex &&
-            matchingRowIndex > rowIndex
-          ) {
+          if (matchingRowIndex > rowIndex) {
             activeRows = activeRows.filter((r) => r !== matchingRowIndex);
 
             // Clear input values for deactivated rows
@@ -425,7 +433,7 @@ export class InputTableComponent
     this.stateMachine
       .getAllStates()
       .flatMap((state) => state.transitions)
-      // Filter transitions based on start state, the symbol and target states in expectedValue
+      // Filter transitions based on start state, the symbol (and ε) and target states in expectedValue
       .filter(
         (transition: any) =>
           startStates.includes(transition.source.name) &&
@@ -523,7 +531,7 @@ export class InputTableComponent
     // Compare gradually to dfaTable
     const checkInNormalMode = () => {
       // Remember the value that's toDo and that's done
-      const toDoSet = new Set([this.processValue(dfaTable[1][0])]); // Use processValue here
+      const toDoSet = new Set([this.processValue(dfaTable[1][0])]);
       const doneSet = new Set([
         this.processValue(dfaTable[1][0])
           .replace(/\(a\)$/, '')
@@ -534,9 +542,10 @@ export class InputTableComponent
         const cells = row.querySelectorAll('td');
         const firstCellValue =
           cells[0].querySelector('input')?.value?.trim() ?? '';
-        const processedFirstCellValue = this.processValue(firstCellValue); // Use processValue here
+        const processedFirstCellValue = this.processValue(firstCellValue);
         const isFirstCellCorrect =
           processedFirstCellValue && toDoSet.has(processedFirstCellValue);
+
         // If first cell of a row is wrong, the whole row is wrong
         if (!isFirstCellCorrect) {
           cells.forEach((cell) => {
@@ -554,7 +563,7 @@ export class InputTableComponent
         doneSet.add(processedFirstCellValue);
         // Find the matching row in dfaTable using processed values
         const matchingRow = normalizedDfaTable.find(
-          (row) => this.processValue(row[0]) == processedFirstCellValue // Use processValue here
+          (row) => this.processValue(row[0]) == processedFirstCellValue
         );
 
         // Compare to row in dfaTable
@@ -564,7 +573,7 @@ export class InputTableComponent
               'input'
             ) as HTMLInputElement | null;
             if (input) {
-              const processedInputValue = this.processValue(input.value); // Use processValue here
+              const processedInputValue = this.processValue(input.value);
               const processedExpectedValue = this.processValue(
                 matchingRow[cellIndex]
               );
@@ -673,14 +682,5 @@ export class InputTableComponent
     this.resetTable();
     endlicherAutomat.delegate = this;
     this.focusFirstCellInput();
-  }
-
-  // Focusses first cell
-  private focusFirstCellInput(): void {
-    setTimeout(() => {
-      if (this.firstCellInput) {
-        this.firstCellInput.nativeElement.focus();
-      }
-    });
   }
 }

@@ -11,6 +11,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class WelcomeDialogComponent {
   constructor(public dialogRef: MatDialogRef<WelcomeDialogComponent>) {}
 
+  // Closes dialog
   closeDialog() {
     this.dialogRef.close();
   }
